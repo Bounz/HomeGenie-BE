@@ -49,7 +49,7 @@ namespace HomeGenie.Service
     {
         #region Private Fields declaration
 
-        private static readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
         private MigService migService;
         private WebServiceGateway webGateway;
@@ -1458,7 +1458,7 @@ namespace HomeGenie.Service
                         }
                         catch (Exception ex)
                         {
-                            _log.Error(ex);
+                            Log.Error(ex);
                         }
                     }
                 }

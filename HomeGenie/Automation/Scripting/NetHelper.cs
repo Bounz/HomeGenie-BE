@@ -251,7 +251,7 @@ namespace HomeGenie.Automation.Scripting
                         }
                         catch (Exception ex)
                         {
-                            Log.Trace(ex, "SendMessage: error sending email {0}");
+                            Log.Trace(ex, "SendMessage: error sending email");
                             Log.Error(ex);
                             HomeGenieService.LogError(Domains.HomeAutomation_HomeGenie_Automation, GetType().Name, ex.Message, "Exception.StackTrace", ex.StackTrace);
                             return false;
