@@ -80,8 +80,23 @@ that can be operated by the associated script.
 #### Script 
 
 The script code entered in this panel, will be executed on every occurrence of the
-event. The language used is *Javascript* and all HomeGenie *helper classes* that can be
-used in normal programs can also be used here.
+event. The language used is *Javascript* and all HomeGenie *helper classes* 
+accessible to automation programs can also be used here with the
+following objects:
+
+- `$$.modules` - ModulesHelper
+- `$$.program` - ProgramHelper
+- `$$.settings` - SettingsHelper
+- `$$.net` - NetHelper
+- `$$.serial` - SerialHelper
+- `$$.tcp` - TcpHelper
+- `$$.udp` - UdpHelper
+- `$$.mqtt` - MqttHelper
+- `$$.knx` - KnxHelper
+- `$$.scheduler` - SchedulerHelper
+
+See <a href="api/ape/annotated.html" target="_blank">Helper Class documentation</a> for a detailed description.
+
 In addition to that, an event script can use some special objects/methods:
 
 - `$$.boundModules`: 
@@ -96,6 +111,7 @@ function to store data for this event and that will be persisted across each occ
 - `$$.onUpdate(function(m,p))`:
 used to set an handler for listening to modules events. Once registered the handler will be called even
 if the event is not scheduled.
+- `$$.pause(seconds)`: pause the script for the given amount of time
 
 ### About cron expressions
 
