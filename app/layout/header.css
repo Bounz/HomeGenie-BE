@@ -15,6 +15,10 @@
 .second-row .title {
     font-size: 130%;
 }
+
+.title {
+    width: 250px;
+}
 .title .menu-toggle {
     width: 56px;
     text-align: center;
@@ -46,3 +50,6 @@
     font-size: 80%;
 }
 
+.subtitle {
+    font-size: 140%;
+}
