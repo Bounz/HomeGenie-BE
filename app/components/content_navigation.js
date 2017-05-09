@@ -45,8 +45,7 @@ zuix.controller(function (cp) {
                 smallScreen = true;
                 zuix.$('main').css('left', '0');
                 zuix.field('header-title').css('margin-left', '0');
-                zuix.field('toggle-menu').show()
-                    .animateCss('bounceInLeft', {duration: '0.2s'});
+                zuix.field('toggle-menu').show();
                 setTimeout(closeMenu, 1000);
             }
         } else {
@@ -74,6 +73,9 @@ zuix.controller(function (cp) {
                     closeMenu();
                 });
             }
+            zuix.field('toggle-menu').animateCss('rotateOut', { duration: '0.5s' }, function () {
+                this.find('i').html('arrow_back');
+            });
         }
     }
 
@@ -88,6 +90,9 @@ zuix.controller(function (cp) {
             if (smallScreen) {
                 overlay.hide();
             }
+            zuix.field('toggle-menu').animateCss('rotateOut', { duration: '0.5s' }, function () {
+                this.find('i').html('menu');
+            });
             cp.trigger('menu_close');
         }
     }
