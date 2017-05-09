@@ -7,7 +7,7 @@
   "bin": {},
   "scripts": {
     "test": "echo \"Error: not implemented\" && exit 1",
-    "start": "http-server html/"
+    "start": "http-server ./"
   },
   "dependencies": {},
   "devDependencies": {

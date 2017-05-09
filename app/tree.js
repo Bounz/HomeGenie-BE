@@ -152,7 +152,7 @@ var contentTree = {
                     }
                 }
             ]
-        },
+        }/*,
         {
             id: 'source',
             template: 'app/layout/drawer_menu_item',
@@ -170,7 +170,7 @@ var contentTree = {
                 icon: 'group',
                 link: 'https://plus.google.com/communities/116563910167155544886'
             }
-        }/*,
+        }*//*,
         {
              id: 'partners',
              template: 'app/layout/drawer_menu_item',

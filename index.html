@@ -1,10 +1,18 @@
 <!doctype html>
-<html class="no-js" lang="">
+<html lang="en">
 <head>
+
     <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
     <title>HomeGenie, Home Automation Server</title>
-    <meta name="description" content="">
+
+    <meta name="description" content="HomeGenie, the open source, programmable, home automation server for smart connected devices and applications." />
+    <meta name="keywords" lang="en-us" content="Home Automation,Domotics,Domotica,Z-Wave,X10,Insteon,RFXCom,LightwaveRF,Lightwave RF,433Mhz,RF,IR,ZWave,Raspberry Pi,GPIO,SPI,I2C,Weather,Macro,Scenarios,Automation,UPnP,DLNA,Control Point,Media Receiver,Aeon Labs,Fibaro,Marmitek,CM15,Z-Stick,CM11,SC9000,Philips Hue,Sensors,Voice Control,Open Source,Open Source Home Automation,Internet of Things,IoT,Server,Gateway" />
+
+    <meta name="author" content="Gene" />
+
+    <meta http-equiv="Content-Language" content="en-us" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -40,26 +48,47 @@
 </head>
 <body>
 
-<div class="main-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header mdl-shadow--6dp">
+    <header class="mdl-shadow--8dp">
 
-    <header class="main-header mdl-layout__header mdl-color--blue-800 mdl-color-text--blue-grey-50 mdl-shadow--6dp"
-            data-ui-include="app/layout/header"
-            data-ui-options="contentOptions.braces"></header>
-
-    <div class="main-drawer mdl-layout__drawer mdl-color--blue-grey-900 mdl-color-text--blue-grey-50 mdl-shadow--6dp">
-        <header layout="column spread-center" class="main-drawer-header mdl-shadow--6dp">
-            <div class="logo">HomeGenie</div>
-            <div class="logo-caption">
-                Home Automation Server
+        <div layout="row center-left" class="header-first-row mdl-color--blue-800 mdl-color-text--white">
+            <div class="header-title" layout="row center-left">
+                <a data-ui-field="toggle-menu" class="menu-toggle mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
+                    <i class="material-icons">menu</i>
+                </a>
+                <div self="size-x1" class="logo"><a title="HomeGenie Server Home" target="_self" href="http://www.homegenie.it">HomeGenie</a></div>
             </div>
-        </header>
-        <nav class="main-navigation mdl-navigation mdl-color--blue-grey-700 mdl-color-text--blue-grey-50 mdl-shadow--6dp">
-            <div data-ui-field="menu"></div>
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
-        </nav>
+            <div self="size-x1 sm-hide" class="header-buttons">
+                <a title="Community Forum on Google Plus" href="https://plus.google.com/communities/116563910167155544886" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-color--blue-50 mdl-js-ripple-effect mdl-shadow--2dp">
+                    <img src="images/fab-google-plus.png">
+                </a>
+                <a title="How-to videos on YouTube" href="https://www.youtube.com/user/geniebby" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-color--blue-50 mdl-js-ripple-effect mdl-shadow--2dp">
+                    <img src="images/fab-youtube.png">
+                </a>
+                <a title="Source Code on GitHUB" href="https://github.com/genielabs/HomeGenie" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-color--blue-50 mdl-js-ripple-effect mdl-shadow--2dp">
+                    <img src="images/fab-github.png">
+                </a>
+            </div>
+        </div>
+
+        <div layout="row center-center" class="header-second-row mdl-color--blue-900 mdl-color-text--white">
+            <div data-ui-field="header-title" class="title">Introduction</div>
+        </div>
+
+    </header>
+
+    <div data-ui-field="side-menu"
+         data-ui-load="app/components/content_navigation"
+         data-ui-options="contentOptions.navigator"
+         layout="column center-spread"
+         class="side-menu mdl-shadow--8dp">
+
+        <div self="size-x1" data-ui-field="menu"
+             class="side-menu mdl-color--blue-grey-700">
+        </div>
+
     </div>
-    <main data-ui-field="main" class="mdl-layout__content mdl-color--grey-100">
+
+    <main data-ui-field="main" class="mdl-color--grey-100">
 
         <div data-ui-load="app/components/content_loader"
              data-ui-options="contentOptions.loader"></div>
@@ -67,17 +96,16 @@
         <div self="size-xlarge" data-ui-field="content_pages"></div>
 
     </main>
-</div>
 
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+    <script>
+        (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+        function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+        e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+        e.src='https://www.google-analytics.com/analytics.js';
+        r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+        ga('create','UA-70634540-1','auto');ga('send','pageview');
+    </script>
 
-<!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-<script>
-    (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-    function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-    e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-    e.src='https://www.google-analytics.com/analytics.js';
-    r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-    ga('create','UA-70634540-1','auto');ga('send','pageview');
-</script>
 </body>
 </html>

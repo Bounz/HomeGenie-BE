@@ -1,5 +1,3 @@
-# Widgets
-
 ## Introduction
 
 Widgets are reusable and composite user interface components used to display data and information of a [module](programs.html#modules)
@@ -121,7 +119,7 @@ var mod = utils.GetModuleByDomainAddress(domain, address);
 
 // get a module parameter by name
 var level = utils.GetModulePropertyByName(mod, 'Status.Level');
-console.log('Module name = ' + mod.Name + ' Status.Level = ' + mod.Value);
+console.log('Module name = ' + mod.Name + ' Status.Level = ' + level.Value);
 
 // show a confirmation request popup
 utils.ConfirmPopup('Delete item', 'Are you sure?', function(confirmed) {

@@ -1,13 +1,13 @@
 ## Why HomeGenie?
 
-We can see bunch of new smart devices brought to the market everyday,
+We can see bunch of new smart devices brought to the market day by day,
 each of them implementing proprietary protocols and applications.
-So dealing with your smart devices it often means dealing with
-different applications making home automation not that effective.
+So, dealing with smart devices it often means dealing with
+different applications, making home automation not that effective.
 
-This is why *HomeGenie* server was specifically designed to find a reasonable
-good way of integrating current and future home automation technologies into
-one single piece of software.
+This is why *HomeGenie* server was specifically designed to find a
+reasonable way of integrating current and future home automation
+technologies into one single piece of software.
 
 <div class="media-container">
     <img self="size-medium" src="images/docs/dashboard_page_01.png">

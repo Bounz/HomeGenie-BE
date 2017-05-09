@@ -1,5 +1,6 @@
 .fab-menu {
     position: fixed;
-    bottom: 24px;
-    right:24px;
+    bottom: 16px;
+    right:16px;
+    z-index: 1000;
 }

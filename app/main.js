@@ -2,6 +2,7 @@ var CONST_BASE_URL = '/zuix_mdl_blog';
 var CONST_SITE_TITLE = 'Welcome to HomeGenie site';
 var CONST_STARTPAGE = '#/about';
 
+var contentNavigator = null;
 var contentLoader = null;
 var currentPage = null;
 
@@ -15,14 +16,25 @@ var contentOptions = {
         css: false,
         braces: true
     },
+    navigator: {
+        ready: function (ctx) {
+            contentNavigator = ctx;
+            contentNavigator.on('menu_open', function () {
+
+            }).on('menu_close', function () {
+
+
+            });
+        }
+    },
     loader: {
         ready: function (ctx) {
-            var mdlLayout = zuix.$('.mdl-layout');
-            var mdlDrawer = mdlLayout.find('.mdl-layout__drawer');
+            //var mdlLayout = zuix.$('.mdl-layout');
+            //var mdlDrawer = mdlLayout.find('.mdl-layout__drawer');
             contentLoader = ctx;
             contentLoader.on('pathChanged', function(e, path) {
-                if (mdlDrawer.attr('aria-hidden') == 'false')
-                    mdlLayout.get().MaterialLayout.toggleDrawer();
+                //if (mdlDrawer.attr('aria-hidden') == 'false')
+                //    mdlLayout.get().MaterialLayout.toggleDrawer();
                 showPage(path);
             });
             contentLoader.data(contentTree);
@@ -66,9 +78,9 @@ function showPage(path) {
         revealPage(pageContext);
     });
     // update the title bar and highlight current menu item
-    zuix.$('.main-navigation div > a').removeClass('current');
+    zuix.$('.side-menu div > a').removeClass('current');
     zuix.$.each(path, function (k, v) {
-        zuix.$('.main-navigation div[data-id="' + v + '"] > a').addClass('current');
+        zuix.$('.side-menu div[data-id="' + v + '"] > a').addClass('current');
     });
     zuix.field('header-title').html(item.data.title);
 }
@@ -144,7 +156,7 @@ zuix.hook('html:parse', function (data) {
         });
     }
     // Force opening of all non-local links in a new window
-    zuix.$('a[href*="://"]').attr('target','_blank');
+    zuix.$('a[href*="://"]:not([target])').attr('target','_blank');
     // Material Design Light integration - DOM upgrade
     if (/*this.options().mdl &&*/ typeof componentHandler !== 'undefined')
         componentHandler.upgradeElements(view.get());

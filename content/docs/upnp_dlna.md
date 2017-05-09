@@ -21,4 +21,3 @@ By adding Media Receivers to the control page, we'll also be able to control the
 [IMAGES DLNA MEDIA CONTROL]
 
 For a list of DLNA/UPnp Media Servers and Clients see [Wikipedia](http://en.wikipedia.org/wiki/List_of_UPnP_AV_media_servers_and_clients).
-
