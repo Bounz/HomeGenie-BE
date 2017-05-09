@@ -65,26 +65,12 @@ pre {
     margin: 24px !important;
 }
 
-.logo {
-    font-family: 'Lobster', cursive;
-    font-weight: 400;
-    font-size: 200%;
-    color: white;
-}
-.logo a {
-    color: white;
-}
-.logo-caption {
-    font-size: 80%;
-}
-
-.bigger {
-    font-size: 160%;
-    vertical-align: middle;
-}
-
-.mdl-layout__drawer-button {
-    color: white;
+main {
+    position: fixed;
+    top: 0; left: 250px;
+    bottom: 0; right: 0;
+    margin-top: 112px;
+    z-index: 0;
 }
 
 .main-layout {
@@ -92,53 +78,9 @@ pre {
     top:0; left:0; right:0; bottom:0;
 }
 
-.header-first-row {
-    height: 64px;
-    width: 100%;
-}
-.header-second-row {
-    height: 48px;
-    width: 100%;
-}
-.header-second-row .title {
-    font-size: 130%;
-}
-
-.header-title {
-    width: 250px;
-}
-.header-title .menu-toggle {
-    width: 56px;
-    text-align: center;
-    margin-right: 8px;
-    cursor: pointer;
-}
-.header-title .logo {
-    text-align: center;
-}
-.header-buttons {
-    width: 250px;
-    text-align: right;
-}
-.header-buttons .mdl-button {
-    margin-right: 16px;
-}
-
-.side-menu {
-    z-index: 10;
-}
-
-header {
-    position: relative;
-    z-index: 10;
-}
-
-main {
-    position: fixed;
-    top: 0; left: 250px;
-    bottom: 0; right: 0;
-    margin-top: 112px;
-    z-index: 0;
+.bigger {
+    font-size: 160%;
+    vertical-align: middle;
 }
 
 .content-padding {

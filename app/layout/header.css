@@ -1,0 +1,52 @@
+. {
+    position: relative;
+    z-index: 10;
+}
+
+.first-row {
+    height: 64px;
+    width: 100%;
+}
+.second-row {
+    height: 48px;
+    width: 100%;
+}
+
+.second-row .title {
+    font-size: 130%;
+}
+
+.title {
+    width: 250px;
+}
+.title .menu-toggle {
+    width: 56px;
+    text-align: center;
+    margin-right: 8px;
+    cursor: pointer;
+}
+.title .logo {
+    text-align: center;
+}
+.buttons {
+    width: 250px;
+    text-align: right;
+}
+.buttons .mdl-button {
+    margin-right: 16px;
+}
+
+
+.logo {
+    font-family: 'Lobster', cursive;
+    font-weight: 400;
+    font-size: 200%;
+    color: white;
+}
+.logo a {
+    color: white;
+}
+.logo-caption {
+    font-size: 80%;
+}
+

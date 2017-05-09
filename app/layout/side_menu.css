@@ -10,7 +10,7 @@
     padding: 16px 0 48px;
     font-family: 'Roboto Condensed', serif !important;
     font-size:110%;
-    z-index: 1000;
+    z-index: 10;
 }
 
 .side-menu .material-icons {
