@@ -2,6 +2,7 @@ zuix.controller(function (cp) {
 
     cp.init = function () {
         this.options().css = false;
+        this.options().html = false;
     };
 
     cp.create = function () {

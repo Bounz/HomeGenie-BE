@@ -28,6 +28,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.cyan-light_blue.min.css">
     <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+
     <!-- Flex Layout Attributes -->
     <link rel="stylesheet" href="css/flex-layout-attribute.min.css">
     <!-- Animate CSS -->
@@ -37,9 +38,11 @@
     <!-- Prism Syntax Highlighter -->
     <link rel="stylesheet" href="js/prism/prism.css">
     <script type="text/javascript" src="js/prism/prism.js"></script>
+
     <!-- ZUIX -->
     <!--script src="https://genielabs.github.io/zuix/js/zuix.min.js"></script-->
     <script src="js/zuix.js"></script>
+
     <!-- Main CSS,Js -->
     <link rel="stylesheet" href="css/main.css">
     <script src="app/main.js"></script>
@@ -48,54 +51,25 @@
 </head>
 <body>
 
-    <header class="mdl-shadow--8dp">
+    <header data-ui-include="app/layout/header"
+            class="mdl-shadow--8dp"></header>
 
-        <div layout="row center-left" class="header-first-row mdl-color--blue-800 mdl-color-text--white">
-            <div class="header-title" layout="row center-left">
-                <a data-ui-field="toggle-menu" class="menu-toggle mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
-                    <i class="material-icons">menu</i>
-                </a>
-                <div self="size-x1" class="logo"><a title="HomeGenie Server Home" target="_self" href="http://www.homegenie.it">HomeGenie</a></div>
-            </div>
-            <div self="size-x1 sm-hide" class="header-buttons">
-                <a title="Community Forum on Google Plus" href="https://plus.google.com/communities/116563910167155544886" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-color--blue-50 mdl-js-ripple-effect mdl-shadow--2dp">
-                    <img src="images/fab-google-plus.png">
-                </a>
-                <a title="How-to videos on YouTube" href="https://www.youtube.com/user/geniebby" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-color--blue-50 mdl-js-ripple-effect mdl-shadow--2dp">
-                    <img src="images/fab-youtube.png">
-                </a>
-                <a title="Source Code on GitHUB" href="https://github.com/genielabs/HomeGenie" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-color--blue-50 mdl-js-ripple-effect mdl-shadow--2dp">
-                    <img src="images/fab-github.png">
-                </a>
-            </div>
-        </div>
-
-        <div layout="row center-center" class="header-second-row mdl-color--blue-900 mdl-color-text--white">
-            <div data-ui-field="header-title" class="title">Introduction</div>
-        </div>
-
-    </header>
-
-    <div data-ui-field="side-menu"
-         data-ui-load="app/components/content_navigation"
-         data-ui-options="contentOptions.navigator"
-         layout="column center-spread"
-         class="side-menu mdl-shadow--8dp">
-
-        <div self="size-x1" data-ui-field="menu"
-             class="side-menu mdl-color--blue-grey-700">
-        </div>
-
-    </div>
+    <div data-ui-include="app/layout/side_menu"
+         data-ui-field="side-menu"
+         class="side-menu mdl-shadow--8dp"
+         layout="column center-spread"></div>
 
     <main data-ui-field="main" class="mdl-color--grey-100">
-
-        <div data-ui-load="app/components/content_loader"
-             data-ui-options="contentOptions.loader"></div>
 
         <div self="size-xlarge" data-ui-field="content_pages"></div>
 
     </main>
+
+    <div data-ui-load="app/components/content_loader"
+         data-ui-options="contentOptions.loader"><!--no-view--></div>
+
+    <div data-ui-load="app/components/content_navigation"
+         data-ui-options="contentOptions.navigator"><!--no-view--></div>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
     <script>

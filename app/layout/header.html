@@ -1,22 +1,23 @@
-<div class="mdl-layout__header-row">
-    <span data-ui-field="header-title" class="mdl-layout-title">{app.title}</span>
-    <div class="mdl-layout-spacer"></div>
-    <div class="logo"><a href="http://www.homegenie.it">HomeGenie</a></div>
-    <!--div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
-        <label class="mdl-button mdl-js-button mdl-button--icon" for="search">
-            <i class="material-icons">search</i>
-        </label>
-        <div class="mdl-textfield__expandable-holder">
-            <input class="mdl-textfield__input" type="text" id="search">
-            <label class="mdl-textfield__label" for="search">Enter your query...</label>
-        </div>
-    </div-->
-    <!--button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
-        <i class="material-icons">more_vert</i>
-    </button>
-    <ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="hdrbtn">
-        <li class="mdl-menu__item">About</li>
-        <li class="mdl-menu__item">Contact</li>
-        <li class="mdl-menu__item">Legal information</li>
-    </ul-->
+<div layout="row center-left" class="header-first-row mdl-color--blue-800 mdl-color-text--white">
+    <div class="header-title" layout="row center-left">
+        <a data-ui-field="toggle-menu" class="menu-toggle mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
+            <i class="material-icons">menu</i>
+        </a>
+        <div self="size-x1" class="logo"><a title="HomeGenie Server Home" target="_self" href="http://www.homegenie.it">HomeGenie</a></div>
+    </div>
+    <div self="size-x1 sm-hide" class="header-buttons">
+        <a title="Community Forum on Google Plus" href="https://plus.google.com/communities/116563910167155544886" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-color--blue-50 mdl-js-ripple-effect mdl-shadow--2dp">
+            <img src="images/fab-google-plus.png">
+        </a>
+        <a title="How-to videos on YouTube" href="https://www.youtube.com/user/geniebby" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-color--blue-50 mdl-js-ripple-effect mdl-shadow--2dp">
+            <img src="images/fab-youtube.png">
+        </a>
+        <a title="Source Code on GitHUB" href="https://github.com/genielabs/HomeGenie" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-color--blue-50 mdl-js-ripple-effect mdl-shadow--2dp">
+            <img src="images/fab-github.png">
+        </a>
+    </div>
+</div>
+
+<div layout="row center-center" class="header-second-row mdl-color--blue-900 mdl-color-text--white">
+    <div data-ui-field="header-title" class="title">Introduction</div>
 </div>

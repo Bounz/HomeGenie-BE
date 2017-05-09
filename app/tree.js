@@ -3,7 +3,7 @@ var contentTree = {
     main: [
         {
             id: 'about',
-            template: 'app/layout/drawer_menu_item',
+            template: 'app/layout/side_menu_item',
             data: {
                 title: 'Introduction',
                 icon: 'info_outline',
@@ -13,7 +13,7 @@ var contentTree = {
         },
         {
             id: 'get_started',
-            template: 'app/layout/drawer_menu_item',
+            template: 'app/layout/side_menu_item',
             data: {
                 title: 'Get started',
                 icon: 'build',
@@ -23,7 +23,7 @@ var contentTree = {
         },
         {
             id: 'clients',
-            template: 'app/layout/drawer_menu_item',
+            template: 'app/layout/side_menu_item',
             data: {
                 title: 'Clients',
                 icon: 'important_devices',
@@ -33,7 +33,7 @@ var contentTree = {
         },
         {
             id: 'docs',
-            template: 'app/layout/drawer_menu_item',
+            template: 'app/layout/side_menu_item',
             data: {
                 title: 'Documentation',
                 icon: 'import_contacts',
@@ -42,7 +42,7 @@ var contentTree = {
             list: [
                 {
                     id: 'setup',
-                    template: 'app/layout/drawer_menu_subitem',
+                    template: 'app/layout/side_menu_subitem',
                     data: {
                         title: 'Setup',
                         link: '#/docs/setup',
@@ -51,7 +51,7 @@ var contentTree = {
                 },
                 {
                     id: 'configure',
-                    template: 'app/layout/drawer_menu_subitem',
+                    template: 'app/layout/side_menu_subitem',
                     data: {
                         title: 'Configuration',
                         link: '#/docs/configure',
@@ -60,7 +60,7 @@ var contentTree = {
                 },
                 {
                     id: 'scenarios',
-                    template: 'app/layout/drawer_menu_subitem',
+                    template: 'app/layout/side_menu_subitem',
                     data: {
                         title: 'Scenarios',
                         link: '#/docs/scenarios',
@@ -69,7 +69,7 @@ var contentTree = {
                 },
                 {
                     id: 'remotes',
-                    template: 'app/layout/drawer_menu_subitem',
+                    template: 'app/layout/side_menu_subitem',
                     data: {
                         title: 'IR/RF remotes',
                         link: '#/docs/remotes',
@@ -78,7 +78,7 @@ var contentTree = {
                 },
                 {
                     id: 'scheduling',
-                    template: 'app/layout/drawer_menu_subitem',
+                    template: 'app/layout/side_menu_subitem',
                     data: {
                         title: 'Scheduling',
                         link: '#/docs/scheduling',
@@ -87,7 +87,7 @@ var contentTree = {
                 }/*,
                 {
                     id: 'upnp_dlna',
-                    template: 'app/layout/drawer_menu_subitem',
+                    template: 'app/layout/side_menu_subitem',
                     data: {
                         title: 'UPnP/DLNA',
                         link: '#/docs/upnp_dlna',
@@ -96,7 +96,7 @@ var contentTree = {
                 },
                 {
                     id: 'interconnect',
-                    template: 'app/layout/drawer_menu_subitem',
+                    template: 'app/layout/side_menu_subitem',
                     data: {
                         title: 'Interconnections',
                         link: '#/docs/interconnect',
@@ -107,7 +107,7 @@ var contentTree = {
         },
         {
             id: 'develop',
-            template: 'app/layout/drawer_menu_item',
+            template: 'app/layout/side_menu_item',
             data: {
                 title: 'Developing', // copy some stuff from old site and add second level contents
                 icon: 'extension',
@@ -117,7 +117,7 @@ var contentTree = {
                 ,
                 {
                     id: 'programs',
-                    template: 'app/layout/drawer_menu_subitem',
+                    template: 'app/layout/side_menu_subitem',
                     data: {
                         title: 'Programs (APP)',
                         link: '#/develop/programs',
@@ -126,7 +126,7 @@ var contentTree = {
                 },
                 {
                     id: 'widgets',
-                    template: 'app/layout/drawer_menu_subitem',
+                    template: 'app/layout/side_menu_subitem',
                     data: {
                         title: 'Widgets',
                         link: '#/develop/widgets',
@@ -135,7 +135,7 @@ var contentTree = {
                 },
                 {
                     id: 'ape',
-                    template: 'app/layout/drawer_menu_subitem',
+                    template: 'app/layout/side_menu_subitem',
                     data: {
                         title: 'Program API',
                         link: 'api/ape/annotated.html',
@@ -144,7 +144,7 @@ var contentTree = {
                 },
                 {
                     id: 'api',
-                    template: 'app/layout/drawer_menu_subitem',
+                    template: 'app/layout/side_menu_subitem',
                     data: {
                         title: 'Web API',
                         link: 'api/mig/overview.html',
@@ -155,7 +155,7 @@ var contentTree = {
         }/*,
         {
             id: 'source',
-            template: 'app/layout/drawer_menu_item',
+            template: 'app/layout/side_menu_item',
             data: {
                 title: 'Source',
                 icon: 'view_headline',
@@ -164,7 +164,7 @@ var contentTree = {
         },
         {
             id: 'community',
-            template: 'app/layout/drawer_menu_item',
+            template: 'app/layout/side_menu_item',
             data: {
                 title: 'Community', // System Integrators
                 icon: 'group',
@@ -173,7 +173,7 @@ var contentTree = {
         }*//*,
         {
              id: 'partners',
-             template: 'app/layout/drawer_menu_item',
+             template: 'app/layout/side_menu_item',
              data: {
                  title: 'Vendors/S.I.', // System Integrators
                  icon: 'business_center',
@@ -182,7 +182,7 @@ var contentTree = {
          },
          {
              id: 'archive',
-             template: 'app/layout/drawer_menu_item',
+             template: 'app/layout/side_menu_item',
              data: {
                  title: 'Archived',
                  icon: 'archive',
