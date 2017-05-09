@@ -17,13 +17,17 @@ var contentOptions = {
         braces: true
     },
     navigator: {
+        controlFields: {
+            menuButton: 'menu-button',
+            sideMenu: 'side-menu',
+            headerTitle: 'header-title'
+        },
         ready: function (ctx) {
             contentNavigator = ctx;
             contentNavigator.on('menu_open', function () {
-
+                // TODO: ...
             }).on('menu_close', function () {
-
-
+                // TODO: ...
             });
         }
     },

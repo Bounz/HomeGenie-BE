@@ -2,27 +2,40 @@ zuix.controller(function (cp) {
     var menuOpen = true;
     var smallScreen = false;
     var firstCheck = true;
+
     var overlay = null;
+    var menuButton = null;
+    var sideMenu = null;
+    var headerTitle = null;
+
+    var smallScreenOffset = 960;
 
     cp.init = function () {
         this.options().html = false;
         this.options().css = false;
     };
 
-    cp.create = function () {
-        window.addEventListener("resize", function () {
+    cp.create = function() {
+        var fields = cp.options().controlFields;
+        menuButton = zuix.field(fields.menuButton);
+        sideMenu = zuix.field(fields.sideMenu);
+        headerTitle = zuix.field(fields.headerTitle);
+        // listen to window resize event to make layout responsive
+        window.addEventListener('resize', function () {
             sizeCheck();
         });
-        zuix.field('toggle-menu').on('click', function () {
+        // toggle button click event to open/close menu
+        menuButton.on('click', function () {
             if (menuOpen)
                 closeMenu();
             else
                 openMenu();
         });
+        // add overlay for small screens when menu is open
         overlay = zuix.$(document.createElement('div'));
         overlay.css({
             'position': 'absolute',
-            'top': '64px',
+            'top': sideMenu.position().y+'px',
             'left': 0,
             'bottom': 0,
             'right': 0,
@@ -31,21 +44,21 @@ zuix.controller(function (cp) {
         }).on('click', function () {
             closeMenu();
         }).hide();
-        zuix.field('side-menu')
-            .css('z-index', 15)
+        sideMenu.css('z-index', 15)
             .parent().append(overlay.get());
+        // detect screen size and set large/small layout
         sizeCheck();
         firstCheck = false;
     };
 
     function sizeCheck() {
         var width = document.body.clientWidth;
-        if (width < 960) {
+        if (width < smallScreenOffset) {
             if (!smallScreen || firstCheck) {
                 smallScreen = true;
                 zuix.$('main').css('left', '0');
-                zuix.field('header-title').css('margin-left', '0');
-                zuix.field('toggle-menu').show();
+                headerTitle.css('margin-left', '0');
+                menuButton.show();
                 setTimeout(closeMenu, 1000);
             }
         } else {
@@ -54,26 +67,26 @@ zuix.controller(function (cp) {
                     overlay.hide();
                 smallScreen = false;
                 zuix.$('main').css('left', '250px');
-                zuix.field('header-title').css('margin-left', '250px');
-                zuix.field('toggle-menu').hide();
+                headerTitle.css('margin-left', '250px');
+                menuButton.hide();
                 openMenu();
             }
         }
     }
 
     function openMenu() {
-        zuix.field('side-menu').show();
+        sideMenu.show();
         if (!menuOpen) {
             menuOpen = true;
-            zuix.field('side-menu').animateCss('slideInLeft', { delay: '0.1s', duration: '0.3s' });
+            sideMenu.animateCss('slideInLeft', { delay: '0.1s', duration: '0.3s' });
             cp.trigger('menu_open');
             if (smallScreen) {
                 overlay.show().animateCss('fadeIn');
-                zuix.field('side-menu').find('a').one('click', function() {
+                sideMenu.find('a').one('click', function() {
                     closeMenu();
                 });
             }
-            zuix.field('toggle-menu').animateCss('rotateOut', { duration: '0.5s' }, function () {
+            menuButton.animateCss('rotateOut', { duration: '0.5s' }, function () {
                 this.find('i').html('arrow_back');
             });
         }
@@ -82,7 +95,7 @@ zuix.controller(function (cp) {
     function closeMenu() {
         if (menuOpen && smallScreen) {
             menuOpen = false;
-            zuix.field('side-menu').animateCss('slideOutLeft', { delay: '0.1s', duration: '0.3s' }, function () {
+            sideMenu.animateCss('slideOutLeft', { delay: '0.1s', duration: '0.3s' }, function () {
                 if (!menuOpen) {
                     this.hide();
                 }
@@ -90,7 +103,7 @@ zuix.controller(function (cp) {
             if (smallScreen) {
                 overlay.hide();
             }
-            zuix.field('toggle-menu').animateCss('rotateOut', { duration: '0.5s' }, function () {
+            menuButton.animateCss('rotateOut', { duration: '0.5s' }, function () {
                 this.find('i').html('menu');
             });
             cp.trigger('menu_close');
