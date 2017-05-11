@@ -1,6 +1,6 @@
-## Interconnections
+## Sharing modules each other between HG servers
 
-### When to use more than just one HomeGenie server?
+[...]
 
 There are a couple of scenarios where interconnections may become useful. 
 For instance, if we placed the main HG server in the basement but we would like to control it using an IR remote from the living room. 

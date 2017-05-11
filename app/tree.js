@@ -84,7 +84,7 @@ var contentTree = {
                         link: '#/docs/scheduling',
                         file: 'content/docs/scheduling.md'
                     }
-                }/*,
+                },
                 {
                     id: 'upnp_dlna',
                     template: 'app/layout/side_menu_subitem',
@@ -93,7 +93,7 @@ var contentTree = {
                         link: '#/docs/upnp_dlna',
                         file: 'content/docs/upnp_dlna.md'
                     }
-                },
+                }/*,
                 {
                     id: 'interconnect',
                     template: 'app/layout/side_menu_subitem',

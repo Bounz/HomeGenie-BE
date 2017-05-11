@@ -1,23 +1,27 @@
-## Controlling DLNA/UPnP devices
+<div class="content-margin" align="center">
+    <iframe self="size-medium" height="440" src="https://www.youtube.com/embed/ygilmTwLSJ0?rel=0" frameborder="0" allowfullscreen></iframe>
+</div>
 
-### Media servers, receivers and UPnP lighting
+## Controlling media servers and players
 
-HomeGenie also has built-in UPnP/DLNA support and act as a
-Media Controller to script and control your media devices
-and UPnP lighting. 
-Sharing your media from room to room and from device to device has never been easier.
-From *Configure->Groups* and Modules section we can add to the control page our media
-devices by selecting the Add Module option from the Actions menu.
+HomeGenie can be used as a control point for DLNA/UPnP devices such as:
 
-[IMAGES ADDING UPNP DEVICES]
+- Routers / Media Servers
+- Smart TVs / Media Players
+- UPnP switches and lights
 
-Then we will be able to browse Media Servers from the control page (either from the
-web interface or the mobile client) and send pictures, videos and music to any Media Receiver.
+Media servers and players in the network are automatically detected
+and can be added like other modules to *[control groups](#/docs/configure)*.
 
-[IMAGES DLNA MEDIA BROWSING]
+From there we can browse media files (pictures, music and videos) and play
+them to any media player/renderer in the local network.
+This can be done either from the web interface or the mobile client.
 
-By adding Media Receivers to the control page, we'll also be able to control them.
 
-[IMAGES DLNA MEDIA CONTROL]
+<div class="media-container">
+    <img self="size-medium" title="Web UI - Media Server Widget" src="images/docs/media_server_widget_00.png">
+</div>
 
-For a list of DLNA/UPnp Media Servers and Clients see [Wikipedia](http://en.wikipedia.org/wiki/List_of_UPnP_AV_media_servers_and_clients).
+DLNA/UPnP commands can also be stored in a script with *[Record Macro](#/docs/scenarios)*
+functionality or manually by using *[UPnP API](./api/mig/mig_api_upnp.html)* 
+and then recalled within a *[scenario](#/docs/scenarios)*.

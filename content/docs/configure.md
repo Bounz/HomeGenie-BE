@@ -1,6 +1,8 @@
 ## Configuring groups
 
-Smart devices and services (also simply called *modules*) can be organized into groups.
+Smart devices and services (also simply called *modules*) can be organized
+into *control groups*.
+
 From the **<i class="material-icons">settings</i>Configure** menu 
 select the **<i class="material-icons">dashboard</i>Groups** option to
 add and manage groups.
@@ -41,7 +43,7 @@ To enable this widget it is required to enter a *service API key* that can be ob
 described in its option popup (see picture below).
 
 <div class="media-container">
-    <img self="size-medium" alt="Weather configuration dialog" src="images/docs/weather_options_01.png">
+    <img self="size-medium" title="Weather configuration dialog" src="images/docs/weather_options_01.png">
 </div>
 
 After entering the location name and a valid API key, press the **<i class="material-icons">autorenew</i>Restart** button.
@@ -68,7 +70,7 @@ The following video explain how to use this feature.
 In the picture below, you can see options for the *Security Alarm Widget*. It can be configured to send e-mails when the alarm is triggered and/or to run an automation program when the system is armed/disarmed/triggered.
 
 <div class="media-container">
-    <img alt="Alarm System Options" src="images/docs/alarm_system_01.png">
+    <img title="Alarm System Options" src="images/docs/alarm_system_01.png">
 </div>
 -->
 
@@ -97,7 +99,7 @@ When this options is enabled, the device will react to any of the following even
   the device it will turn **off** if no events is detected for more than the specified amount of time (seconds)
 
 <div class="media-container">
-    <img self="size-medium" alt="Widget Features/Options" src="images/docs/widget_options_01.gif">
+    <img self="size-medium" title="Widget Features/Options" src="images/docs/widget_options_01.gif">
 </div>
 
 

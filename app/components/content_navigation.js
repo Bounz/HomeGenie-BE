@@ -86,8 +86,8 @@ zuix.controller(function (cp) {
                     closeMenu();
                 });
             }
-            menuButton.animateCss('rotateOut', { duration: '0.5s' }, function () {
-                this.find('i').html('arrow_back');
+            menuButton.animateCss('rotateOut', { duration: '0.25s' }, function () {
+                this.find('i').html('arrow_back').animateCss('rotateIn', { duration: '0.25s' });
             });
         }
     }
@@ -103,8 +103,8 @@ zuix.controller(function (cp) {
             if (smallScreen) {
                 overlay.hide();
             }
-            menuButton.animateCss('rotateOut', { duration: '0.5s' }, function () {
-                this.find('i').html('menu');
+            menuButton.animateCss('rotateOut', { duration: '0.25s' }, function () {
+                this.find('i').html('menu').animateCss('rotateIn', { duration: '0.25s' });
             });
             cp.trigger('menu_close');
         }

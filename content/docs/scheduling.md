@@ -8,7 +8,7 @@ for the day. By clicking the date text, we can choose a different
 date so to display programmed events for any given day.
 
 <div class="media-container">
-    <img self="size-medium" src="images/docs/scheduler_calendar_01.png">
+    <img self="size-medium" title="Scheduler - Calendar View" src="images/docs/scheduler_calendar_01.png">
 </div>
 
 The time-line of an event will have a yellow bar to indicate the time ranges
@@ -33,7 +33,7 @@ An event should at least define the occurrences, while modules and script are
 optional.
 
 <div class="media-container">
-    <img self="size-medium" src="images/docs/scheduler_wizard_01.png">
+    <img self="size-medium" title="Scheduler - Cron Event Wizard" src="images/docs/scheduler_wizard_01.png">
 </div>
 
 
