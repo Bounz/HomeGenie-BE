@@ -1,3 +1,7 @@
+## Introduciton
+
+`[...] // TODO: intro about A.P.E. - Automation Program Engine`
+
 ## Automation Programs
 
 *Automation Programs* can be used either for simple tasks like creating scenarios, or more complex tasks like integrating
@@ -12,7 +16,7 @@ new devices and services into *HG* and extending system functionalities.<br/>
 
 Program Editor can be accessed from the *Automation* section of the **Configure** menu. There, automation programs are
 conveniently organized into groups. New automation programs can be created by choosing a group and then selecting the
-*Add program* option from the *Action* menu located in the down-right corner.
+*Add program* option from the *Action* menu located in the bottom-right corner.
 An automation program can be coded using one of the following programming languages:
 
 - C#
@@ -20,8 +24,8 @@ An automation program can be coded using one of the following programming langua
 - Python
 - Ruby
 
-all languages can use the same set of [Helper Classes](api/ape/annotated.html) to access *HG* resources or external services
-in the same way.
+Despite of the selected language, all programs can use the same set of [Helper Classes](api/ape/annotated.html)
+to access *HG* resources or external services in the same way.
 
 ### Example - Turning off lights in a given group
 
@@ -48,20 +52,31 @@ lights = hg.Modules.InGroup("Porch")
 lights.Off()
 ```
 
-so all of them are very similar, just using own language specific syntax. A few remarks:
+so all of these are very similar, just using own language specific syntax.
 
-- **hg.** prefix can be omitted when using C#, but must be used for all other languages
-- **camelCase** coding practice can be adopted for *Javascript* programs
+#### Remarks
 
-Some [Helper Classes](api/ape/annotated.html) functions may require a callback function as argument. It might be useful to
-show how callback functions can be passed in the various language flavours.<br/>
-The following example is using [SystemStarted](api/ape/a00001.html#afcf0d379d8dd2da00c2adf1c3c9996f3) helper function that
-requires a callback as argument.
+The **hg.** prefix, used to address *[Helper Classes](api/ape/annotated.html)*,
+can be omitted when using C# but must be used for all other languages.
 
-### Example - Using delegates in different language flavours
+The **camelCase** coding practice can be adopted for *Javascript* programs
+when calling helper methods.
+
+Some *[Helper Class](api/ape/annotated.html)* methods may require a 
+callback function as an argument.
+The following examples show how callbacks can be passed in the various
+language flavours.
+
+
+### Example - Using callbacks in different languages
+
+The [When.SystemStarted](api/ape/a00001.html#afcf0d379d8dd2da00c2adf1c3c9996f3) method
+requires a callback as argument:
 
 ```javascript
-// Output a speech message from the speaker after *HG* is started and ready.
+// Output a speech message from the speaker
+// right after HomeGenie is started and ready.
+
 // C#
 When.SystemStarted(()=>{
     Program.Say("HomeGenie is now ready!");
@@ -88,7 +103,8 @@ started_fn = lambda {
 hg.When.SystemStarted(started_fn)
 ```
 
-Further documentation about specific syntax of each language can be found on the following pages (or just googlin'):
+Further documentation about specific syntax of each language can be found
+on the following pages (or just searching the web):
 
 - [C#](https://msdn.microsoft.com/en-us/library/aa645597%28v=vs.71%29.aspx)
 - Javascript - [Jint](https://github.com/sebastienros/jint)
@@ -97,12 +113,17 @@ Further documentation about specific syntax of each language can be found on the
 
 ## Program Code and Startup Code
 
-An automation program is splitted into two piece of code. The *Program Code*, which is the main program code,
-and the *Startup Code* (also called *Trigger Code* in previous HG release).
-*Startup Code* is a piece of code that can be used to set various program options and also to tell *HG* when to run the
-program by using the [Program.Run](api/ape/a00009.html#a34a937a2bc052615d27137c3663d10c6) instruction in it.
-When the program is idle (not running), the *Startup Code* is evaluated every second or as soon as any event is raised
-in the system.
+An automation program is split into two parts. The *Program Code*, which
+is the main code, and the *Startup Code*.
+
+*Startup Code* is a piece of code that can be used to set various program
+options and also to tell *HG* when to run the main program code by using
+the [Program.Run](api/ape/a00009.html#a34a937a2bc052615d27137c3663d10c6)
+instruction in it.
+
+When the program is idle (thus the program code is not running),
+the *Startup Code* is evaluated every minute or as soon as a new event
+occurs in the system.
 
 ### Example - Startup Code
 
@@ -121,13 +142,20 @@ if (Scheduler.IsScheduling("0 7 * * *"))
 
 The use of these command is described later in this page.
 
-**NOTE:** when [Program.Run](api/ape/a00009.html#a34a937a2bc052615d27137c3663d10c6) is called in the *Startup Code*,
-the program's code will run only after that *Startup Code* reaches it's end. So it's a good practice not to put any
+#### Remarks
+
+when [Program.Run](api/ape/a00009.html#a34a937a2bc052615d27137c3663d10c6)
+is called in the *Startup Code*,
+the program's code will run only after that *Startup Code* reaches it's
+end. So it's a good practice not to put any
 long-time consuming operation or infinite loop in the *Startup Code*.
-<br/>
-*Startup Code* and *Program Code* are not running in the same scope. Data between them that can be shared by using
-[Modules parameters](api/ape/a00004.html#a016f9d7512c4407acbfc2d7c72d02a17) and other structures such as
-[Program Store](api/ape/a00009.html#a111c3e247c9a22cf44e032bfb568f876) and [System Settings](api/ape/a00012.html).
+
+*Startup Code* and *Program Code* are not running in the same scope.
+Data between them that can be shared by using
+[Modules parameters](api/ape/a00004.html#a016f9d7512c4407acbfc2d7c72d02a17)
+and other structures such as
+[Program Store](api/ape/a00009.html#a111c3e247c9a22cf44e032bfb568f876)
+and [System Settings](api/ape/a00012.html).
 
 <a name="modules"></a>
 

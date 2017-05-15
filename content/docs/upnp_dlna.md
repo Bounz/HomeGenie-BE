@@ -17,7 +17,6 @@ From there we can browse media files (pictures, music and videos) and play
 them to any media player/renderer in the local network.
 This can be done either from the web interface or the mobile client.
 
-
 <div class="media-container">
     <img self="size-medium" title="Web UI - Media Server Widget" src="images/docs/media_server_widget_00.png">
 </div>

@@ -152,6 +152,7 @@ zuix.hook('html:parse', function (data) {
             data.content = parsedHtml;
     }
 }).hook('view:process', function (view) {
+
     // Prism code syntax highlighter
     if (this.options().prism && typeof Prism !== 'undefined') {
         view.find('code').each(function (i, block) {
@@ -159,13 +160,16 @@ zuix.hook('html:parse', function (data) {
             Prism.highlightElement(block);
         });
     }
+
     // Force opening of all non-local links in a new window
     zuix.$('a[href*="://"]:not([target])').attr('target','_blank');
+
     // Material Design Light integration - DOM upgrade
     if (/*this.options().mdl &&*/ typeof componentHandler !== 'undefined')
         componentHandler.upgradeElements(view.get());
 
     //zuix.componentize(view);
+
 });
 
 // animateCss extension method for ZxQuery
