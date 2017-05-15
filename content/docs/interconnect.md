@@ -21,7 +21,7 @@ Following that paradigm, a single HomeGenie unit can thus be imagined
 as a *[nerve cell](https://en.wikipedia.org/wiki/Neuron)* that process
 and transmit information through event signals.
 The way those information are processed by a local unit is governed by
-the **APE** ([Automation Program Engine](#/develop/programs)) and by all
+the **APE** ([Automation Programs' Engine](#/develop/programs)) and by all
 programs defined into it.
 
 In fact, automation programs can receive signals (events) from any local or
@@ -82,21 +82,44 @@ the module address.
 
 #### Remarks
 
-`[...] // TODO: add note about user/pass protection and remote modules controlling`
+When using events forwarding, in order to be able to control modules of
+an interconnected server, the HTTP security settings must be the same on both endpoints.
 
 ### Interconnecting via MQTT
 
-`[...]`
+Another way of interconnecting servers is by using the *MQTT Network* program.
+While the event forwarding approach is meant to work as a *one-to-one*
+interconnection, this method allows *many-to-many* interconnections.
 
-<!--
+In fact this approach relays on the MQTT service which is a sort of
+"chat" service for sensors, smart devices and machines in general.
 
-### Centralized or decentralized?
+In this scenario interconnected servers will publish module
+events through an MQTT service and that will so be received by all other
+servers connected to the same MQTT network.
+ 
+In order for this to work we then need an MQTT service endpoint that
+must be configured in the MQTT Network settings dialog.
 
-`[...]`
+<div class="media-container">
+    <img self="size-medium" src="images/docs/interconnections_04b.png" />
+</div>
 
-More in general, by interconnecting more HomeGenie boxes we can:
+The MQTT service can be provided by a stand-alone server or it can also
+be installed as an additional feature from "Interfaces/Protocols" category
+of HomeGenie package repository (see *"Installing additional drivers and features"*
+in the [Setup](#/docs/setup) page), in which case the HomeGenie server itself
+will provide the MQTT service.
 
-- Balance and distribute all automation tasks between HG servers and still see the whole as a single entity
-- Design our home automation network as centralized or make it behave like a grid network, or a mix of both
+<div class="media-container">
+    <img self="size-medium" src="images/docs/interconnections_04.png" />
+</div>
 
--->
+After *MQTT Network* is properly configured, we can then choose the modules
+to be shared with the other servers connected to the same MQTT network,
+by activating "Publish module on MQTT network" checkbox from the settings'
+popup of each module.
+
+<div class="media-container">
+    <img self="size-medium" src="images/docs/interconnections_05.png" />
+</div>

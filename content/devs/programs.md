@@ -1,6 +1,10 @@
-## Introduciton
+<!--
 
-`[...] // TODO: intro about A.P.E. - Automation Program Engine`
+## Introduction
+
+`[...] // TODO: intro about A.P.E. - Automation Programs' Engine`
+
+-->
 
 ## Automation Programs
 

@@ -27,7 +27,7 @@
    <div id="projectname">Helper Class Reference
    &#160;<span id="projectnumber">1.1 beta (r494)</span>
    </div>
-   <div id="projectbrief">HomeGenie - Automation Program Engine SDK</div>
+   <div id="projectbrief">HomeGenie - Automation Programs' Engine SDK</div>
   </td>
  </tr>
  </tbody>
@@ -50,8 +50,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
                onmouseout="return searchBox.OnSearchSelectHide()"
                alt=""/>
           <input type="text" id="MSearchField" value="Search" accesskey="S"
-               onfocus="searchBox.OnSearchFieldFocus(true)" 
-               onblur="searchBox.OnSearchFieldFocus(false)" 
+               onfocus="searchBox.OnSearchFieldFocus(true)"
+               onblur="searchBox.OnSearchFieldFocus(false)"
                onkeyup="searchBox.OnSearchFieldChange(event)"/>
           </span><span class="right">
             <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="search/close.png" alt=""/></a>
@@ -77,7 +77,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
-<iframe src="javascript:void(0)" frameborder="0" 
+<iframe src="javascript:void(0)" frameborder="0"
         name="MSearchResults" id="MSearchResults">
 </iframe>
 </div>
@@ -99,7 +99,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <p>Modules Manager Helper class.<br />
 Offers methods for filtering, selecting and operate on a group of modules.<br />
-Class instance accessor: <b>Modules</b>  
+Class instance accessor: <b>Modules</b>
  <a href="a00006.html#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for ModulesManager:</div>
@@ -239,7 +239,7 @@ Class instance accessor: <b>Modules</b> </p>
 <div class="line">    .InDomain(<span class="stringliteral">&quot;HomeAutomation.ZWave&quot;</span>)</div>
 <div class="line">    .OfDeviceType(<span class="stringliteral">&quot;Light,Dimmer&quot;</span>)</div>
 <div class="line">    .Off();</div>
-</div><!-- fragment --> 
+</div><!-- fragment -->
 </div>
 </div>
 <a class="anchor" id="acb888a9ca79f9ea7f206666136f74b3a"></a>
@@ -266,7 +266,7 @@ Class instance accessor: <b>Modules</b> </p>
 </dl>
 <p>Example: </p><div class="fragment"><div class="line"><span class="comment">// turn on X10 units A2 and B5</span></div>
 <div class="line">Modules.WithAddress(<span class="stringliteral">&quot;A2,B5&quot;</span>).On();</div>
-</div><!-- fragment --> 
+</div><!-- fragment -->
 </div>
 </div>
 <a class="anchor" id="a17cd327304a10586b174526541291fbc"></a>
@@ -293,7 +293,7 @@ Class instance accessor: <b>Modules</b> </p>
 </dl>
 <p>Example: </p><div class="fragment"><div class="line"><span class="comment">// turn off ceiling light</span></div>
 <div class="line">Modules.WithName(<span class="stringliteral">&quot;Ceiling Light&quot;</span>).Off();</div>
-</div><!-- fragment --> 
+</div><!-- fragment -->
 </div>
 </div>
 <a class="anchor" id="a2a6978a61bb3814a3ebec51343078388"></a>
@@ -320,7 +320,7 @@ Class instance accessor: <b>Modules</b> </p>
 </dl>
 <p>Example: </p><div class="fragment"><div class="line"><span class="comment">// turn on all lights and appliances</span></div>
 <div class="line">Modules.OfDeviceType(<span class="stringliteral">&quot;Light,Dimmer,Switch&quot;</span>).On();</div>
-</div><!-- fragment --> 
+</div><!-- fragment -->
 </div>
 </div>
 <a class="anchor" id="ac0054513e11de5db226eea17c45badc7"></a>
@@ -346,7 +346,7 @@ Class instance accessor: <b>Modules</b> </p>
   </dd>
 </dl>
 <p>Example: </p><div class="fragment"><div class="line">Modules.InGroup(<span class="stringliteral">&quot;Living Room,Kitchen&quot;</span>).Off();</div>
-</div><!-- fragment --> 
+</div><!-- fragment -->
 </div>
 </div>
 <a class="anchor" id="a821a23ab5cec13c447d8e8a38e3fce9d"></a>
@@ -374,7 +374,7 @@ Class instance accessor: <b>Modules</b> </p>
 <p>Example: </p><div class="fragment"><div class="line"><span class="comment">// select all modules with Sensor.Temperature parameter and get the average temperature value</span></div>
 <div class="line">var averagetemperature = Modules.WithParameter(<span class="stringliteral">&quot;Sensor.Temperature&quot;</span>).Temperature;</div>
 <div class="line">Program.Notify(<span class="stringliteral">&quot;Average Temperature&quot;</span>, averagetemperature);</div>
-</div><!-- fragment --> 
+</div><!-- fragment -->
 </div>
 </div>
 <a class="anchor" id="aee44d6b7a86132df6f5061d88511d34a"></a>
@@ -401,7 +401,7 @@ Class instance accessor: <b>Modules</b> </p>
 </dl>
 <p>Example: </p><div class="fragment"><div class="line"><span class="comment">// Turn on all Security System sirens</span></div>
 <div class="line">Modules.WithFeature(<span class="stringliteral">&quot;HomeGenie.SecurityAlarm&quot;</span>).On();</div>
-</div><!-- fragment --> 
+</div><!-- fragment -->
 </div>
 </div>
 <a class="anchor" id="a19fb24de76a9f074763c29b594768003"></a>
@@ -428,7 +428,7 @@ Class instance accessor: <b>Modules</b> </p>
 </dl>
 <p>Example: </p><div class="fragment"><div class="line"><span class="comment">// Turn off all modules not having the &quot;EnergySavingMode&quot; feature</span></div>
 <div class="line">Modules.WithoutFeature(<span class="stringliteral">&quot;EnergyManagement.EnergySavingMode&quot;</span>).Off();</div>
-</div><!-- fragment --> 
+</div><!-- fragment -->
 </div>
 </div>
 <a class="anchor" id="a0c9e7edc3d82a1ddd31e8abfa45e1e53"></a>
@@ -459,7 +459,7 @@ Class instance accessor: <b>Modules</b> </p>
 <div class="line">            <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// continue iterating</span></div>
 <div class="line">});</div>
 <div class="line">Program.Notify(<span class="stringliteral">&quot;Current power load&quot;</span>, total_watts_load + <span class="stringliteral">&quot; watts&quot;</span>);</div>
-</div><!-- fragment --> 
+</div><!-- fragment -->
 </div>
 </div>
 <a class="anchor" id="af2529d5b7105c1fdae419462ab305cea"></a>
@@ -478,7 +478,7 @@ Class instance accessor: <b>Modules</b> </p>
 <p>Returns the module in the current selection. If the current selection contains more than one element, the first element will be returned. </p>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="a00004.html" title="Module Helper class. This class is a module instance wrapper and it is used as return value of Module...">ModuleHelper</a></dd></dl>
 <p>Example: </p><div class="fragment"><div class="line">var strobeAlarm = Modules.WithName(<span class="stringliteral">&quot;Strobe Alarm&quot;</span>).Get();        </div>
-</div><!-- fragment --> 
+</div><!-- fragment -->
 </div>
 </div>
 <a class="anchor" id="a15bd3f45509c68eb271307accb7e51aa"></a>
@@ -507,7 +507,7 @@ Class instance accessor: <b>Modules</b> </p>
 <div class="line">Modules.OfDeviceType(<span class="stringliteral">&quot;Light&quot;</span>).Command(<span class="stringliteral">&quot;Control.On&quot;</span>).Execute();</div>
 <div class="line"><span class="comment">// set all dimmers to 50%</span></div>
 <div class="line">Modules.OfDeviceType(<span class="stringliteral">&quot;Dimmer&quot;</span>).Command(<span class="stringliteral">&quot;Control.Level&quot;</span>).Set(<span class="stringliteral">&quot;50&quot;</span>);</div>
-</div><!-- fragment --> 
+</div><!-- fragment -->
 </div>
 </div>
 <a class="anchor" id="ae2a5f73768623bd1d7fd0aea0ad08af7"></a>
@@ -539,7 +539,7 @@ Class instance accessor: <b>Modules</b> </p>
 <div class="line">    .Command(<span class="stringliteral">&quot;Control.Level&quot;</span>)</div>
 <div class="line">    .IterationDelay(0.1)</div>
 <div class="line">    .Set(40);</div>
-</div><!-- fragment --> 
+</div><!-- fragment -->
 </div>
 </div>
 <a class="anchor" id="a7f34d94a5f366637496d3e157ad7ed08"></a>
@@ -775,7 +775,7 @@ Class instance accessor: <b>Modules</b> </p>
 <p>The level (percentage value 0-100).</p>
 <p>Example: </p><div class="fragment"><div class="line"><span class="comment">// Set the level of all modules with EnergySavingMode flag enabled to 40%</span></div>
 <div class="line">Modules.WithFeature(<span class="stringliteral">&quot;EnergyManagement.EnergySavingMode&quot;</span>).Level = 40;</div>
-</div><!-- fragment --> 
+</div><!-- fragment -->
 </div>
 </div>
 <a class="anchor" id="a1389fe69ea6d92b826312fdceedd374e"></a>

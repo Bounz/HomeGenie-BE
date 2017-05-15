@@ -27,7 +27,7 @@ and through which we can interact with it.
 
 Depending on the type, a different widget will be used to display each *module*.
 In every case we can configure a *module* by pressing the **<i class="material-icons">settings</i>**
-button in the upper right corner of its widget. This will popup a dialog for configuring its options.
+(settings) button in the upper right corner of its widget. This will popup a dialog for configuring its options.
 
 Let's now see how to configure each of them.
 
