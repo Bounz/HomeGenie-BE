@@ -1,27 +1,41 @@
-<!--
-
 ## Introduction
+
+<!--
 
 `[...] // TODO: intro about A.P.E. - Automation Programs' Engine`
 
 -->
 
-## Automation Programs
+What really makes of HomeGenie an home automation software is the set of
+automation programs that are shipped with its factory settings.
 
-*Automation Programs* can be used either for simple tasks like creating scenarios, or more complex tasks like integrating
-new devices and services into *HG* and extending system functionalities.<br/> 
+If we disable all those programs, HomeGenie will just turn into
+a dumb box, only capable of switching on and off devices on user request.
 
-<div class="media-container">
-    <img self="size-medium" src="https://lh3.googleusercontent.com/i_DtXr1NEVuA1J4CLpC1_GHsY9zUHFMUCM2CQUoN4vn028zP6vQ3kCwAfMdX7ULKOA_LuKb9oiwqaq6xk3ROyNrv0h88iDieR5bMV96oAExtyF2kOIBih0qhEwkX3e-vJaOZxgyanc_vNiZZUvTFews0L94AQcSVQxUsLBQxuZcK9FuE03-tkDhNQFxX-Hxv4CNQgeJ5W-H_9huh8WzyA9W6GlNgkJ8DaAdn1Bw1VJwj7w-9lo-evUYrNHcWDw1oWwkzYdpO5HJEtpHM0-Dl56R2GeO62ZKNAW0HOvopCWF0yKQtuzJ3DOecHuV8_hoZghnh6PGBERtZwk9_bVbfIrO7pUJW9F8WeUU9txWfRiMgerMqGc9lMZqgt7st3vq_NAnzadMg3dMDjx2LfzfREEjRwm6Oi-wPuAsSc9ZFHseW6qPiyfhKhMJmscZhxWFzCyywo_69tB5LaGXS_1z9ZB9CxefqXynheq9JDiaXQo88_ppVWulXSKMujmAKQcIFbgRjx8DxZlkMxspGhp49cY0cSBQy2eRin-AZVCbDGV4=w1172-h783-no" />
-</div>
+This is because the core of HomeGenie is a *generic purpose* automation
+engine that is called A.P.E., the Automation Programs' Engine and that
+does not provide intelligence of any sort by itself.
 
+So, what really specialize the use of HomeGenie for a particular purpose
+or another, are all the automation programs that are defined into it.
+
+All functionality described so far, like *Smart Lights* or the *Security
+Alarm System*, are in fact implemented through automation programs that
+we can also explore and modify from the web user interface.
+
+We'll then see how automation programs can be used either to accomplish
+simple tasks like creating scenarios or more complex tasks like integrating
+new devices or services.
 
 ## Program Editor
 
-Program Editor can be accessed from the *Automation* section of the **Configure** menu. There, automation programs are
-conveniently organized into groups. New automation programs can be created by choosing a group and then selecting the
-*Add program* option from the *Action* menu located in the bottom-right corner.
-An automation program can be coded using one of the following programming languages:
+Program Editor can be accessed from the *Automation* section of the **Configure*
+menu. There, automation programs are conveniently organized into groups.
+New automation programs can be created by choosing a group and then
+selecting the *Add program* option from the *Action* menu located in the
+bottom-right corner.
+An automation program can be coded using one of the following programming
+languages:
 
 - C#
 - Javascript
@@ -30,6 +44,10 @@ An automation program can be coded using one of the following programming langua
 
 Despite of the selected language, all programs can use the same set of [Helper Classes](api/ape/annotated.html)
 to access *HG* resources or external services in the same way.
+
+<div class="media-container">
+    <img self="size-medium" src="https://lh3.googleusercontent.com/i_DtXr1NEVuA1J4CLpC1_GHsY9zUHFMUCM2CQUoN4vn028zP6vQ3kCwAfMdX7ULKOA_LuKb9oiwqaq6xk3ROyNrv0h88iDieR5bMV96oAExtyF2kOIBih0qhEwkX3e-vJaOZxgyanc_vNiZZUvTFews0L94AQcSVQxUsLBQxuZcK9FuE03-tkDhNQFxX-Hxv4CNQgeJ5W-H_9huh8WzyA9W6GlNgkJ8DaAdn1Bw1VJwj7w-9lo-evUYrNHcWDw1oWwkzYdpO5HJEtpHM0-Dl56R2GeO62ZKNAW0HOvopCWF0yKQtuzJ3DOecHuV8_hoZghnh6PGBERtZwk9_bVbfIrO7pUJW9F8WeUU9txWfRiMgerMqGc9lMZqgt7st3vq_NAnzadMg3dMDjx2LfzfREEjRwm6Oi-wPuAsSc9ZFHseW6qPiyfhKhMJmscZhxWFzCyywo_69tB5LaGXS_1z9ZB9CxefqXynheq9JDiaXQo88_ppVWulXSKMujmAKQcIFbgRjx8DxZlkMxspGhp49cY0cSBQy2eRin-AZVCbDGV4=w1172-h783-no" />
+</div>
 
 ### Example - Turning off lights in a given group
 

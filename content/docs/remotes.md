@@ -6,8 +6,8 @@ is still a quick and comfortable way for controlling devices.
 HomeGenie support X10 RF remotes and IR controller/remotes supported by [LIRC](http://www.lirc.org/)
 or other IR gateways that can be found in the *Package Manager*.
 
-See the video at the end of in the [Setup](#/setup) page for instruction on
-installing additional drivers though the *Package Manager*.
+See the video at the end of in the [Setup](#/docs/setup) page for instruction on
+installing additional drivers using the *Package Manager*.
 
 The video below shows how to use an infrared remote to control lights and switches.
 
