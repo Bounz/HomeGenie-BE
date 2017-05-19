@@ -1,12 +1,6 @@
 ## Introduction
 
-<!--
-
-`[...] // TODO: intro about A.P.E. - Automation Programs' Engine`
-
--->
-
-What really makes of HomeGenie an home automation software is the set of
+What really makes of HomeGenie an *home automation* software is the set of
 automation programs that are shipped with its factory settings.
 
 If we disable all those programs, HomeGenie will just turn into
@@ -21,7 +15,8 @@ or another, are all the automation programs that are defined into it.
 
 All functionality described so far, like *Smart Lights* or the *Security
 Alarm System*, are in fact implemented through automation programs that
-we can also explore and modify from the web user interface.
+we can also explore and modify from the web user interface using the
+*Program Editor*.
 
 We'll then see how automation programs can be used either to accomplish
 simple tasks like creating scenarios or more complex tasks like integrating
@@ -29,7 +24,7 @@ new devices or services.
 
 ## Program Editor
 
-Program Editor can be accessed from the *Automation* section of the **Configure*
+The *Program Editor* can be accessed from the *Automation* section of the **Configure*
 menu. There, automation programs are conveniently organized into groups.
 New automation programs can be created by choosing a group and then
 selecting the *Add program* option from the *Action* menu located in the

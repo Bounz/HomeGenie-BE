@@ -1,40 +1,82 @@
 ## Introduction
 
-Widgets are reusable and composite user interface components used to display data and information of a [module](programs.html#modules)
-and that may also contain UI controls (such as buttons, sliders, ...) for interacting with them. 
-Widgets use [MVC](https://it.wikipedia.org/wiki/Model-View-Controller) design pattern, where the *View* is the HTML text
-used for displaying the widget in the *UI*, the *Model* is small javascript code that access data of the bound module and
-renders them to the view, and the *Controller* is the automation program that [receives commands](programs.html#commands)
-from the View (upon user interaction) or other agents and implement the business logic of the module.
+We've learned so far that automation programs, smart devices and services
+are abstracted in HomeGenie as generic *modules*.
+Depending on the type, a module can then be presented to the end-user in
+the web interface with a different *widget*.
 
-<div align="center">
-    <img src="https://lh3.googleusercontent.com/xk4VUQpkCMiGHkomxHRZPpy5cdfKBZReAtQDtpSxDGYCP5KTefdSSnc0gsb974OukbEoFwfJi_M6Lr7BFuMJV-Eh6dPc5OMJ5yZJPTe-QX0aEk_lBpiMqiL3dMIXlSLs7qUqYfnyNGceQWH4LhqhQypg0Gdnd1vZAKFBSBsJsca9dcxn_276z4RZXBRDXtf6hfCOBPB4jJnKFUPylC9oR2Jpz4T_VHPZk6LYWQv9nxhkLFGFjmQ6N7_rvuFpY7WO8EfFsWwTFblwH0qC8KkSQs0dByqZEABV1G00zCDH0S74r8qBwWRZ4YKMWtGfUSO3bn8BEFcZI80zi2KBQtJ1bZwoU2Xm2IKxpo7FRRLsF8GljHIMadG_aUrl--Zy_9zkPvbcQwK1iHIULlOmEUqe5VVYvxAqNp0sxNphKp_LvTuRmcTNFBWmhI6iKdzr3XN5xikgjQ1vyxbfnsI-Mr52XGbijRPgo0HjjKx7P1e-eaOtVboTUQRZCsB6M03N5Kqryrq9MgWft123-APpmf0VAeKEEz3onQq_LSxKQJq3qlU=w1172-h783-no" width="640" />
+For example, to display a light dimmer module, the *dimmer* widget will 
+be used as it will be for all modules of the same type. 
+
+<div class="media-container">
+    <img _self_="size-small" src="images/docs/widgets_dimmer_type.png" />
 </div>
+
+So, *widgets* are reusable UI components that are employed to display data
+and information of a bound *module* and that may also contain some controls
+(such as buttons, sliders, ...) for interacting with it. 
+
+Technically speaking a widget is made out of two piece of code:
+one is the *HTML* code for the view, which so determine how the widget will
+looks like in the user interface; the other is the *Javascript* code that
+will determine actions to be taken upon user interaction or when a parameter
+of the bound module is updated.
+
+We'll now see how to explore, customize and create widgets by using
+the integrated *Widget Editor*.
+
 
 ## Widget Editor
 
-So, while the *Program Editor* can be used to implement the *Controller* part in the [MVC](https://it.wikipedia.org/wiki/Model-View-Controller),
-the *Widget Editor* is used to implement the *View* and the *Model* part.
-Widget Editor can be accessed from the *Automation* section of the **Configure** menu. New widget can be created selecting
-the *Add widget* option from the *Action* menu located in the down-right corner.
-So a widget is formed by two parts: the first, which represents the *View*, is HTML text; the second, which represents
-the *Model*, is Javascript code.
+*Widget Editor* is accessible from the **Configure &rarr; Automation** menu.
+The main page lists all widgets that are currently available in the system.
+To edit an existing widget simply press it from the list, while to create
+a new one select the *Add widget* option from the *Action* menu located in
+the bottom-right corner.
 
-The *Widget Editor* has a preview panel, just below the HTML editor, that will show a preview of the currently
-inserted HTML text. In order for it to work, a **bound module** has to be selected from the *"bind to module"* selector.
-The preview can then be updated by hitting ```CTRL+S``` keys or by clicking the *Preview* button.
+<div class="media-container">
+    <img self="size-medium" src="images/docs/widgets_editor_list.png" />
+</div>
 
-## The View - HTML
+Widgets are identified by a 3 parts path consisting of `brand`/`category`/`name`.
+An example is `homegenie`/`generic`/`dimmer` :
 
-When designing a widget's *View* a couple of guide-lines have to be considered:
+- **brand:** *homegenie* **category:** *generic* **name:** *dimmer*
 
-- do not use the ```id``` attribute for referencing HTML elements; use a ```data-ui-field``` attribute instead
-- prefer using **CSS** classes provided with *HG*, which are [jQuery Mobile CSS classes](https://api.jquerymobile.com/classes/) and the ones defined by
-[*HG* CSS](https://github.com/genielabs/HomeGenie/blob/master/BaseFiles/Common/html/css/my.css#L206)
-- since *HG UI* is based on [jQuery Mobile](http://jquerymobile.com/), prefer using this framework instead of plain HTML;
-other frameworks/plugins can also be used next to [jQuery Mobile](http://jquerymobile.com/), these are listed later on this chapter
+When editing a widget we can see two panels. One is the code editor that can
+be switched from HTML to Javascript, while the other one is the preview
+panel where the widget is actually displayed and that we can use to
+test its functionality.
 
-### Example - Basic Widget container
+<div class="media-container" data-ui-load="app/components/gallery">
+    <img self="size-medium" src="images/docs/widgets_editor_html.png">
+    <img self="size-medium" src="images/docs/widgets_editor_js.png">
+    <!--img self="size-medium" src="images/docs/widgets_editor_params.png"-->
+</div>
+
+To test the widget we first have to choose a module to bind to from the
+select menu right above the preview.
+We can also simulate change of module parameters by clicking the **<i class="material-icons">menu</i>**
+button that is located next to the bound module select menu.
+
+
+### The View - HTML
+
+When designing the widget's *View* a few guide-lines have to be considered:
+
+- never use the `id` attribute for elements that have to be referenced in
+the *Javascript* code; use the `data-ui-field` attribute instead
+- prefer the use of *CSS* classes provided by *HG UI*, which are [jQuery Mobile's CSS classes](https://api.jquerymobile.com/classes/)
+and the ones defined by standard [HG's CSS file](https://github.com/genielabs/HomeGenie/blob/master/BaseFiles/Common/html/css/my.css#L265)
+- since *HG UI* is based on [jQuery Mobile](http://jquerymobile.com/),
+prefer using this framework instead of plain HTML; there are a couple of
+other frameworks/plugins that can also be used next to [jQuery Mobile](http://jquerymobile.com/)
+and that are listed at the end of this page
+
+While editing the HTML code, to update the widget preview hit `CTRL+S`
+keys or by pressing the **<i class="material-icons">check_circle</i>Run/Preview** button.
+
+#### Example - HTML code for a basic widget container
 ```html
 <!-- main widget container -->
 <div data-ui-field="widget" 
@@ -48,13 +90,68 @@ other frameworks/plugins can also be used next to [jQuery Mobile](http://jquerym
 </div>
 ```
 
-## The Model - Javascript
 
-The javascript code takes care of updating the data displayed in the widget and also of sending proper commands when
-the user click buttons and other controls (if any).
-This is implemented as a json object that is formatted as shown in the example below.
+### The Controller - Javascript
 
-### Example - Minimal javascript code for a widget
+The javascript code takes care of updating the data displayed in the
+widget's view and also of sending proper commands when the user presses
+buttons and other controls that might be implemented in it.
+
+The current version of the widget *Javascript* controller is called **v2**.
+
+`[ // TODO: explain the '$$' widget context object ]`
+
+
+```javascript
+/*
+# Quick-Reference for v2 widgets
+
+ "$$" is the widget class instance object
+
+ Widget class methods and properties:
+
+ Get the jQuery element for a "data-ui" field
+   $$.field('<widget_field_name>')
+
+ Get the jQuery element in the main document
+   $$.field('<document_tree_selector>', true)
+
+ Call HG API Web Service 
+   $$.apiCall('<api_method>', function(response){ ... })
+
+ Get the bound module object
+   $$.module
+
+ Get a parameter of the bound module
+   $$.module.prop('<param_name>')
+   e.g.: $$.module.prop('Status.Level')
+
+ Invoke a module command
+   $$.module.command('<api_command>', '<command_options>', function(response) { ... })
+   e.g.: $$.module.command('Control.Off')
+
+ Shorthand for HG.Ui
+   $$.ui
+
+ Shorthand for HG.WebApp.Utility
+   $$.util
+
+ Shorthand for HG.WebApp.Locales
+   $$.locales
+
+ Blink a widget field and the status led image (if present)
+   $$.signalActity('<widget_field_name>') 
+
+ For a reference of HomeGenie Javascript API see:
+   https://github.com/genielabs/HomeGenie/tree/master/BaseFiles/Common/html/js/api
+
+*/
+```
+
+The old version of widget's *Javascript* code that is called **v1**, is
+implemented as a json object that is formatted as shown in the example below.
+
+#### Example - Minimal javascript code for v1 widgets
 
 ```javascript
 [{
@@ -96,20 +193,30 @@ This is implemented as a json object that is formatted as shown in the example b
 }]
 ```
 
-The only mandatory fields in the Javascript code are *IconImage* and *RenderView*. 
+The only mandatory fields in the Javascript code of a *v1* widget are
+*IconImage* and *RenderView*:
 
-**IconImage** is the image used to identify the widget in the *UI*. See
-[List of HG UI icons](https://github.com/genielabs/HomeGenie/tree/master/BaseFiles/Common/html/pages/control/widgets/homegenie/generic/images).<br />
+- **IconImage** is the image used to identify the widget in the *UI*. See
+[List of HG UI icons](https://github.com/genielabs/HomeGenie/tree/master/BaseFiles/Common/html/pages/control/widgets/homegenie/generic/images).
+- **RenderView** is a function that *HG UI* will call everytime the
+bound module is updated, passing to it the parameter `cuid`, which is the
+**id** attribute of the widget's container and the `module` parameter,
+which is a reference to the bound module.<br/>
+The `module` object has the following property fields: `Domain`, `Address`,
+`Name`, `Description`, `Properties`.
 
-**RenderView** if a function that *HG UI* will call everytime the module is updated, passing to it the **id** of the widget 
-container (*cuid*) and a reference to the bound module object (*module*).<br/>
-The module object has the following fields: ```Domain```, ```Address```, ```Name```, ```Description```, ```Properties```.
+As shown in the *ButtonClicked* handler, in most cases, when the user
+click a widget control, an API request is made. The end-point of the
+request will be usually an automation program that is [listening](programs.html#commands)
+to API calls for that module domain.
 
-As shown in the *ButtonClicked* handler, in most cases, when the user click a widget control, an API request is made. The
-end-point of the request will be usually an automation program that is [listening](programs.html#commands) to API calls
-for that module domain.
+Prefer using **v2** implementation since the **v1** implementation might
+be deprecated at some point. 
 
-### HG Javascript API - Common functions
+Both *v1* and *v2* widgets can use *HG Javascript API*.
+
+#### HG Javascript API - Common functions
+
 ```javascript
 // use the "Utility" namespace
 var utils = HG.WebApp.Utility;
