@@ -4,7 +4,7 @@ The default server installation includes a web user interface that can be used e
 This is mainly intended for administration purposes to configure and access all aspect of the system.
 
 <div class="media-container">
-    <img self="size-medium" src="images/docs/dashboard_page_01.png">
+    <img self="size-medium" src="images/docs/dashboard_page_01.jpg">
 </div>
 
 <a name="HomeGeniePlus"></a>
@@ -31,14 +31,14 @@ Specifically designed to be a Control Panel for the end-user, **HomeGenie Plus**
 #### Screenshots - Phone
 
 <div class="media-container" data-ui-load="app/components/gallery">
-    <!--img self="size-medium" src="images/hgplus/hg_phone_00.png" /-->
-    <img self="size-medium" src="images/hgplus/hg_phone_01.png" />
-    <img self="size-medium" src="images/hgplus/hg_phone_02.png" />
-    <img self="size-medium" src="images/hgplus/hg_phone_03.png" />
-    <img self="size-medium" src="images/hgplus/hg_phone_04.png" />
-    <img self="size-medium" src="images/hgplus/hg_phone_05.png" />
-    <img self="size-medium" src="images/hgplus/hg_phone_06.png" />
-    <img self="size-medium" src="images/hgplus/hg_phone_07.png" />
+    <!--img self="size-medium" src="images/hgplus/hg_phone_00.jpg" /-->
+    <img self="size-medium" src="images/hgplus/hg_phone_01.jpg" />
+    <img self="size-medium" src="images/hgplus/hg_phone_02.jpg" />
+    <img self="size-medium" src="images/hgplus/hg_phone_03.jpg" />
+    <img self="size-medium" src="images/hgplus/hg_phone_04.jpg" />
+    <img self="size-medium" src="images/hgplus/hg_phone_05.jpg" />
+    <img self="size-medium" src="images/hgplus/hg_phone_06.jpg" />
+    <img self="size-medium" src="images/hgplus/hg_phone_07.jpg" />
 </div>
 
 
@@ -46,19 +46,19 @@ Specifically designed to be a Control Panel for the end-user, **HomeGenie Plus**
 
 <div class="media-container" data-ui-load="app/components/gallery">
     <img self="size-medium" src="images/hgplus/hgplus_13.jpg" />
-    <img self="size-medium" src="images/hgplus/hg_tablet_01.png" />
-    <img self="size-medium" src="images/hgplus/hg_tablet_02.png" />
-    <img self="size-medium" src="images/hgplus/hg_tablet_03.png" />
-    <img self="size-medium" src="images/hgplus/hg_tablet_05.png" />
-    <img self="size-medium" src="images/hgplus/hg_tablet_06.png" />
-    <img self="size-medium" src="images/hgplus/hg_tablet_08.png" />
+    <img self="size-medium" src="images/hgplus/hg_tablet_01.jpg" />
+    <img self="size-medium" src="images/hgplus/hg_tablet_02.jpg" />
+    <img self="size-medium" src="images/hgplus/hg_tablet_03.jpg" />
+    <img self="size-medium" src="images/hgplus/hg_tablet_05.jpg" />
+    <img self="size-medium" src="images/hgplus/hg_tablet_06.jpg" />
+    <img self="size-medium" src="images/hgplus/hg_tablet_08.jpg" />
     <img self="size-medium" src="images/hgplus/hgplus_04.jpg" />
     <img self="size-medium" src="images/hgplus/hgplus_05.jpg" />
     <img self="size-medium" src="images/hgplus/hgplus_06.jpg" />
     <img self="size-medium" src="images/hgplus/hgplus_07.jpg" />
     <img self="size-medium" src="images/hgplus/hgplus_08.jpg" />
     <img self="size-medium" src="images/hgplus/hgplus_09.jpg" />
-    <img self="size-medium" src="images/hgplus/hgplus_11.png" />
+    <img self="size-medium" src="images/hgplus/hgplus_11.jpg" />
     <img self="size-medium" src="images/hgplus/hgplus_12.jpg" />
     <img self="size-medium" src="images/hgplus/hgplus_14.jpg" />
 </div>

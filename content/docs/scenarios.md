@@ -6,7 +6,7 @@ we can use the *Record Macro* functionality which is found in *Actions* menu
 of the groups' page.
 
 <div class="media-container">
-    <img self="size-medium" title="Macro recording funcionality" src="images/docs/macro_record_01.png">
+    <img self="size-medium" title="Macro recording funcionality" src="images/docs/macro_record_01.jpg">
 </div>
 
 When **Record Macro** option is active, every action taken (eg. controlling lights/switches

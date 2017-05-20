@@ -14,9 +14,9 @@ From this page we can add/sort *modules* in the group, change the wallpaper, ren
 delete it. 
 
 <div class="media-container" data-ui-load="app/components/gallery">
-    <img self="size-medium" src="images/docs/configure_menu.png">
-    <img self="size-medium" src="images/docs/groups_add_group.png">
-    <img self="size-medium" src="images/docs/groups_add_module.png">
+    <img self="size-medium" src="images/docs/configure_menu.jpg">
+    <img self="size-medium" src="images/docs/groups_add_group.jpg">
+    <img self="size-medium" src="images/docs/groups_add_module.jpg">
 </div>
 
 
@@ -43,7 +43,7 @@ To enable this widget it is required to enter a *service API key* that can be ob
 described in its option popup (see picture below).
 
 <div class="media-container">
-    <img self="size-medium" title="Weather configuration dialog" src="images/docs/weather_options_01.png">
+    <img self="size-medium" title="Weather configuration dialog" src="images/docs/weather_options_01.jpg">
 </div>
 
 After entering the location name and a valid API key, press the **<i class="material-icons">autorenew</i>Restart** button.
@@ -70,7 +70,7 @@ The following video explain how to use this feature.
 In the picture below, you can see options for the *Security Alarm Widget*. It can be configured to send e-mails when the alarm is triggered and/or to run an automation program when the system is armed/disarmed/triggered.
 
 <div class="media-container">
-    <img title="Alarm System Options" src="images/docs/alarm_system_01.png">
+    <img title="Alarm System Options" src="images/docs/alarm_system_01.jpg">
 </div>
 -->
 
@@ -99,7 +99,7 @@ When this options is enabled, the device will react to any of the following even
   the device it will turn **off** if no events is detected for more than the specified amount of time (seconds)
 
 <div class="media-container">
-    <img self="size-medium" title="Widget Features/Options" src="images/docs/widget_options_01.gif">
+    <img self="size-medium" title="Widget Features/Options" src="images/docs/widget_options_01.jpg">
 </div>
 
 

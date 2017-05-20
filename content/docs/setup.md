@@ -4,7 +4,7 @@ After [HomeGenie installation](#/get_started), you can access the dashboard and 
 pages by entering in your web browser the address of the computer where *HG* is installed:
 
 <div class="media-container">
-    <img self="size-medium" title="Administration page url" src="images/docs/admin_page_url.png">
+    <img self="size-medium" title="Administration page url" src="images/docs/admin_page_url.jpg">
 </div>
 
 In the upper left corner of the user interface there are the main navigation buttons,
@@ -22,7 +22,7 @@ and a couple of *virtual* sensors and lights.
 This preset configuration is a fully playable demo that can be useful to learn *HomeGenie* basics.
 
 <div class="media-container">
-    <img self="size-medium" title="Dashboard" src="images/docs/dashboard_page_01.png">
+    <img self="size-medium" title="Dashboard" src="images/docs/dashboard_page_01.jpg">
 </div>
 
 
@@ -34,7 +34,7 @@ The picture below shows a typical setup which integrates both **X10** and **Z-Wa
 devices.
 
 <div class="media-container">
-    <img self="size-medium" title="Dashboard" src="images/docs/system_settings_01.png">
+    <img self="size-medium" title="Dashboard" src="images/docs/system_settings_01.jpg">
 </div>
 
 ### Installing additional drivers and features

@@ -59,7 +59,7 @@ There are various types of event forwarding:
 - `Meter.Watts` - smart metering devices value updates
 
 <div class="media-container">
-    <img self="size-medium" src="images/docs/interconnections_01.png" />
+    <img self="size-medium" src="images/docs/interconnections_01.jpg" />
 </div>
 
 After activating the type of forwarding we want to use, we can configure
@@ -69,7 +69,7 @@ All modules generating events matching the type of activated forwarding programs
 will be so exported to the remote server as well.
 
 <div class="media-container">
-    <img self="size-medium" src="images/docs/interconnections_02.png" />
+    <img self="size-medium" src="images/docs/interconnections_02.jpg" />
 </div>
 
 On the remote server end, all modules originated from this interconnection will
@@ -77,7 +77,7 @@ have the prefix `HGIC:<interconnected_server_ip>.` in the *domain* field of
 the module address.
 
 <div class="media-container">
-    <img self="size-medium" src="images/docs/interconnections_03.png" />
+    <img self="size-medium" src="images/docs/interconnections_03.jpg" />
 </div>
 
 #### Remarks
@@ -102,7 +102,7 @@ In order for this to work we then need an MQTT service endpoint that
 must be configured in the MQTT Network settings dialog.
 
 <div class="media-container">
-    <img self="size-medium" src="images/docs/interconnections_04b.png" />
+    <img self="size-medium" src="images/docs/interconnections_04b.jpg" />
 </div>
 
 The MQTT service can be provided by a stand-alone server or it can also
@@ -112,7 +112,7 @@ in the [Setup](#/docs/setup) page), in which case the HomeGenie server itself
 will provide the MQTT service.
 
 <div class="media-container">
-    <img self="size-medium" src="images/docs/interconnections_04.png" />
+    <img self="size-medium" src="images/docs/interconnections_04.jpg" />
 </div>
 
 After *MQTT Network* is properly configured, we can then choose the modules
@@ -121,5 +121,5 @@ by activating "Publish module on MQTT network" checkbox from the settings'
 popup of each module.
 
 <div class="media-container">
-    <img self="size-medium" src="images/docs/interconnections_05.png" />
+    <img self="size-medium" src="images/docs/interconnections_05.jpg" />
 </div>

@@ -9,7 +9,7 @@ For example, to display a light dimmer module, the *dimmer* widget will
 be used as it will be for all modules of the same type. 
 
 <div class="media-container">
-    <img _self_="size-small" src="images/docs/widgets_dimmer_type.png" />
+    <img _self_="size-small" src="images/docs/widgets_dimmer_type.jpg" />
 </div>
 
 So, *widgets* are reusable UI components that are employed to display data
@@ -35,7 +35,7 @@ a new one select the **<i class="material-icons">add_circle</i>Add widget** opti
 from the *actions menu* located in the bottom-right corner.
 
 <div class="media-container">
-    <img self="size-medium" src="images/docs/widgets_editor_list.png" />
+    <img self="size-medium" src="images/docs/widgets_editor_list.jpg" />
 </div>
 
 Widgets are identified by a 3 parts path consisting of `brand`/`category`/`name`.
@@ -49,9 +49,9 @@ panel where the widget is actually displayed and that we can use to
 test its functionality.
 
 <div class="media-container" data-ui-load="app/components/gallery">
-    <img self="size-medium" src="images/docs/widgets_editor_html.png">
-    <img self="size-medium" src="images/docs/widgets_editor_js.png">
-    <!--img self="size-medium" src="images/docs/widgets_editor_params.png"-->
+    <img self="size-medium" src="images/docs/widgets_editor_html.jpg">
+    <img self="size-medium" src="images/docs/widgets_editor_js.jpg">
+    <!--img self="size-medium" src="images/docs/widgets_editor_params.jpg"-->
 </div>
 
 In order to test the widget we first have to choose a module to bind to

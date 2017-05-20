@@ -10,7 +10,7 @@ reasonable way of integrating current and future home automation
 technologies into one single piece of software.
 
 <div class="media-container">
-    <img self="size-medium" src="images/docs/dashboard_page_01.png">
+    <img self="size-medium" src="images/docs/dashboard_page_01.jpg">
 </div>
 
 ### Extensible solution that lasts
@@ -26,14 +26,14 @@ improving of functionality, adding new widgets or integrating
 new devices/services, can be done directly from the web user interface.
 
 <div class="media-container">
-    <img self="size-medium" src="images/docs/program_editor_01.png" />
+    <img self="size-medium" src="images/docs/program_editor_01.jpg" />
 </div>
 
 Already many additional widgets, drivers and automation programs are available
 through the *Package Repository* that can be browsed from the web interface.
 
 <div class="media-container">
-    <img self="size-medium" src="images/docs/package_repos.png" />
+    <img self="size-medium" src="images/docs/package_repos.jpg" />
 </div>
 
 
