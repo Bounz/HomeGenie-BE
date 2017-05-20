@@ -30,16 +30,16 @@ the integrated *Widget Editor*.
 
 *Widget Editor* is accessible from the **Configure &rarr; Automation** menu.
 The main page lists all widgets that are currently available in the system.
-To edit an existing widget simply press it from the list, while to create
-a new one select the *Add widget* option from the *Action* menu located in
-the bottom-right corner.
+To edit an existing widget simply tap it from the list, while to create
+a new one select the **<i class="material-icons">add_circle</i>Add widget** option
+from the *actions menu* located in the bottom-right corner.
 
 <div class="media-container">
     <img self="size-medium" src="images/docs/widgets_editor_list.png" />
 </div>
 
 Widgets are identified by a 3 parts path consisting of `brand`/`category`/`name`.
-An example is `homegenie`/`generic`/`dimmer` :
+For example the *light dimmer* widget is identified by `homegenie`/`generic`/`dimmer`:
 
 - **brand:** *homegenie* **category:** *generic* **name:** *dimmer*
 
@@ -54,9 +54,10 @@ test its functionality.
     <!--img self="size-medium" src="images/docs/widgets_editor_params.png"-->
 </div>
 
-To test the widget we first have to choose a module to bind to from the
-select menu right above the preview.
-We can also simulate change of module parameters by clicking the **<i class="material-icons">menu</i>**
+In order to test the widget we first have to choose a module to bind to
+from the select menu right above the preview.
+We can also simulate the change of a module parameter, to see how the
+widget reacts, by clicking the **<i class="material-icons">menu</i>**
 button that is located next to the bound module select menu.
 
 
@@ -74,7 +75,7 @@ other frameworks/plugins that can also be used next to [jQuery Mobile](http://jq
 and that are listed at the end of this page
 
 While editing the HTML code, to update the widget preview hit `CTRL+S`
-keys or by pressing the **<i class="material-icons">check_circle</i>Run/Preview** button.
+keys or press the **<i class="material-icons">check_circle</i>Run/Preview** button.
 
 #### Example - HTML code for a basic widget container
 ```html
@@ -85,7 +86,7 @@ keys or by pressing the **<i class="material-icons">check_circle</i>Run/Preview*
     <h1>Simple widget with a button</h1>
     <input data-ui-field="test-btn" type="button" class="ui-btn" />
     <br/>
-    Module Name: <span data-ui-field="name">...</span>
+    Status: <span data-ui-field="status">...</span>
      <!-- widget content end -->
 </div>
 ```
@@ -93,42 +94,136 @@ keys or by pressing the **<i class="material-icons">check_circle</i>Run/Preview*
 
 ### The Controller - Javascript
 
-The javascript code takes care of updating the data displayed in the
+The *Javascript* code takes care of updating the data displayed in the
 widget's view and also of sending proper commands when the user presses
 buttons and other controls that might be implemented in it.
 
-The current version of the widget *Javascript* controller is called **v2**.
+In this *Javascript* code, the `$$` object is the widget instance
+object that is used to implement the widget life-cycle and that holds
+other properties and objects used in the widget context, such as the
+bound module and some utility methods to handle most common tasks.
 
-`[ // TODO: explain the '$$' widget context object ]`
+The following is the *Javascript* code skeleton required to implement the
+widget life's cycle:s
+
+```javascript
+// this field is used to provide infos about the widget
+$$.widget {
+    name   : 'Simple widget',
+    version: '1.0',
+    author : 'Foo Bar',
+    release: '2016-05-06',
+    icon   : 'path/to/some/icon/image.png'
+}
+
+// called after the widget is loaded
+$$.onStart = function() {
+}
+
+// called each time the UI needs to be fully updated
+$$.onRefresh = function() {
+}
+
+// called each time a parameter of the bound module is updated
+$$.onUpdate = function(parameter, value) {
+}
+
+// called when the widget is requested to stop/dispose
+$$.onStop = function() {
+}
+```
+
+Other objects and properties available through the `$$` object are:
+
+#### `$$.field(...)`
+
+This method is used to get the *jQuery* object for the widget's element 
+having the `data-ui-field` attribute set to the given `<field_name>`.
+
+**Syntax**
+```javascript
+$$.field('<field_name>')
+```
+**Example**
+```javascript
+// use of $$.field in the onStart method to register
+// the click event handler for the button 'test-btn'
+// (see the HTML code in the previous example)
+$$.onStart = function() {
+  // button click handler
+  $$.field('text-btn').on('click', function () {
+    $$.field('status').html('button clicked!');
+  });
+}
+```
+
+#### `$$.module`
+
+Returns the module object bound to the widget.
+
+**Module Properties** (example instance)
+
+```javascript
+$$.module => {
+    Domain: "HomeAutomation.PhilipsHue",
+    Address: "1",
+    Name: "Porch Light",
+    Description: "module description",
+    DeviceType: "Dimmer"
+}
+```
+
+**Module Methods**
+
+- `$$.module.prop('<name>')`<br/>
+Gets the module's property specified by `<name>`.<br/>
+**Example**
+```javascript
+var level = $$.module.prop('Status.Level');
+if (level != null) {
+    console.log('Module level:', level.Value);
+    console.log('     updated:', level.UpdateTime);
+}
+```
+- `$$.module.command('<api_command>', '<options>', <callback_fn>)`<br/>
+Invokes the given `<api_command>` on the module.<br/>
+**Example**
+```javascript
+// turn off the module
+$$.module.command('Control.Off');
+// set dimmer level to 50%
+$$.module.command('Control.Level', '50', function(res) {
+    console.log('command response:', res);
+});
+```
+
+#### `$$.apiCall(...)`
+
+Invokes a <a href="api/mig/overview.html" target="_blank">Web API</a> method.
+
+**Syntax**
+```javascript
+$$.apiCall('<api_method>', 
+           '<domain>', 
+           '<address>', 
+           '<method_options>', 
+           <callback_fn>)
+```
+**Example**
+```javascript
+// TODO: add some examples
+```
+
+...
 
 
 ```javascript
 /*
-# Quick-Reference for v2 widgets
-
- "$$" is the widget class instance object
-
- Widget class methods and properties:
-
- Get the jQuery element for a "data-ui" field
-   $$.field('<widget_field_name>')
+# Quick-Reference for other methods/properties
+# exposed by '$$' object
 
  Get the jQuery element in the main document
    $$.field('<document_tree_selector>', true)
-
- Call HG API Web Service 
-   $$.apiCall('<api_method>', function(response){ ... })
-
- Get the bound module object
-   $$.module
-
- Get a parameter of the bound module
-   $$.module.prop('<param_name>')
-   e.g.: $$.module.prop('Status.Level')
-
- Invoke a module command
-   $$.module.command('<api_command>', '<command_options>', function(response) { ... })
-   e.g.: $$.module.command('Control.Off')
 
  Shorthand for HG.Ui
    $$.ui
@@ -142,14 +237,20 @@ The current version of the widget *Javascript* controller is called **v2**.
  Blink a widget field and the status led image (if present)
    $$.signalActity('<widget_field_name>') 
 
- For a reference of HomeGenie Javascript API see:
-   https://github.com/genielabs/HomeGenie/tree/master/BaseFiles/Common/html/js/api
-
 */
 ```
 
-The old version of widget's *Javascript* code that is called **v1**, is
-implemented as a json object that is formatted as shown in the example below.
+
+### Old widget version 
+
+The *Javascript* code implementation discussed so far is the recommended
+way for writing a widget's controller and it is called **v2**.
+Anyway there are still a few widgets that might use an old way for writing
+the widget's controller.
+
+This old version of widget's controller, which is called **v1**, is
+implemented as a JSON object that is formatted as shown in the example
+below:
 
 #### Example - Minimal javascript code for v1 widgets
 
@@ -258,6 +359,8 @@ progs.Run(programId, options, fuction(response){
     // handle response here...
 });
 ```
+
+## HomeGenie Javascript API
 
 See [HG Javascript API on github](https://github.com/genielabs/HomeGenie/tree/master/BaseFiles/Common/html/js/api) for a complete
 list of available namespaces and commands.
