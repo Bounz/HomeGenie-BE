@@ -24,7 +24,7 @@
 <img src="images/logos/winicon.png" alt="" style="margin-right:10px" width="82" align="left">
 <div layout="column center-spread">
 <h3>Windows Installer</h3>
-<span>Vista / Win7 / Win8</span>
+<span>Vista / Win7 / Win8 / Win10</span>
 </div>
 </a>
 
