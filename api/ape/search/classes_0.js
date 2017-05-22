@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['eventshelper',['EventsHelper',['../a00001.html',1,'HomeGenie::Automation::Scripting']]]
+  ['eventshelper',['EventsHelper',['../a00002.html',1,'HomeGenie::Automation::Scripting']]]
 ];
