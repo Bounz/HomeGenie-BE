@@ -108,7 +108,7 @@ widget life's cycle:s
 
 ```javascript
 // this field is used to provide infos about the widget
-$$.widget {
+$$.widget = {
     name   : 'Simple widget',
     version: '1.0',
     author : 'Foo Bar',
