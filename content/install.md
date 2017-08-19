@@ -1,10 +1,10 @@
 ## Download HomeGenie Server
 
-<div align="center" class="content-margin">Current release is <strong>v1.1-525</strong></div>
+<div align="center" class="content-margin">Current release is <strong>v1.1-526</strong> <em>(August 19, 2017)</em></div>
 
 <div self="size-small center" layout="rows top-spread">
 
-<a layout="row center-left" href="https://github.com/genielabs/HomeGenie/releases/download/v1.1-beta.525/homegenie-beta_1.1.r525_all.deb" title="Download HomeGenie for Debian Linux" style="height:120px;margin:8px" class="mdl-shadow--8dp mdl-button mdl-js-button mdl-js-ripple-effect">
+<a layout="row center-left" href="https://github.com/genielabs/HomeGenie/releases/download/v1.1-beta.526/homegenie-beta_1.1.r526_all.deb" title="Download HomeGenie for Debian Linux" style="height:120px;margin:8px" class="mdl-shadow--8dp mdl-button mdl-js-button mdl-js-ripple-effect">
 <img src="images/logos/luxicon.png" alt="" style="margin-right:10px" align="left" width="82" align="left">
 <div layout="column center-spread">
 <h3>Linux .deb</h3>
@@ -12,7 +12,7 @@
 </div>
 </a>
 
-<a layout="row center-left" href="https://github.com/genielabs/HomeGenie/releases/download/v1.1-beta.525/homegenie_1_1_beta_r525.tgz" title="Download HomeGenie platform agnostic archive" style="height:120px;margin:8px" class="mdl-shadow--8dp mdl-button mdl-js-button mdl-js-ripple-effect">
+<a layout="row center-left" href="https://github.com/genielabs/HomeGenie/releases/download/v1.1-beta.526/homegenie_1_1_beta_r526.tgz" title="Download HomeGenie platform agnostic archive" style="height:120px;margin:8px" class="mdl-shadow--8dp mdl-button mdl-js-button mdl-js-ripple-effect">
 <img src="images/logos/macicon.png" alt="" style="margin-right:10px" align="left" width="82" align="left">
 <div layout="column center-spread">
 <h3>Platform agnostic .tgz</h3>
@@ -20,7 +20,7 @@
 </div>
 </a>
 
-<a layout="row center-left" href="https://github.com/genielabs/HomeGenie/releases/download/v1.1-beta.525/HomeGenie_1_1_beta_r525.exe" title="Download HomeGenie for Windows" style="height:120px;margin:8px" class="mdl-shadow--8dp mdl-button mdl-js-button mdl-js-ripple-effect">
+<a layout="row center-left" href="https://github.com/genielabs/HomeGenie/releases/download/v1.1-beta.526/HomeGenie_1_1_beta_r526.exe" title="Download HomeGenie for Windows" style="height:120px;margin:8px" class="mdl-shadow--8dp mdl-button mdl-js-button mdl-js-ripple-effect">
 <img src="images/logos/winicon.png" alt="" style="margin-right:10px" width="82" align="left">
 <div layout="column center-spread">
 <h3>Windows Installer</h3>
@@ -47,10 +47,10 @@ The UI can be also opened by right clicking on the tray icon.
 Download _.deb package_ file and install it by double clicking on it, or by using gdebi command line tool:
 
 ```bash
-wget https://github.com/genielabs/HomeGenie/releases/download/v1.1-beta.525/homegenie-beta_1.1.r525_all.deb
+wget https://github.com/genielabs/HomeGenie/releases/download/v1.1-beta.526/homegenie-beta_1.1.r526_all.deb
 sudo apt-get update
 sudo apt-get install gdebi-core
-sudo gdebi homegenie-beta_1.1.r525_all.deb
+sudo gdebi homegenie-beta_1.1.r526_all.deb
 ```
 
 HomeGenie will be installed in the _/usr/local/bin/homegenie_ foder.
@@ -111,8 +111,8 @@ sudo apt-get install arduino-mk empty-expect
 Enter the following command terminal
 
 ```bash
-wget https://github.com/genielabs/HomeGenie/releases/download/v1.1-beta.525/homegenie_1_1_beta_r525.tgz
-tar xzvf homegenie_1_1_beta_r525.tgz
+wget https://github.com/genielabs/HomeGenie/releases/download/v1.1-beta.526/homegenie_1_1_beta_r526.tgz
+tar xzvf homegenie_1_1_beta_r526.tgz
 ```
 
 #### Running HomeGenie
