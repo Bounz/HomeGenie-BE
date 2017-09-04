@@ -39,7 +39,7 @@ namespace HomeGenie.Service.Constants
         public const string SchedulerModuleUpdateStart
             = "Scheduler.OnModuleUpdateStart";
         public const string SchedulerModuleUpdateEnd
-        = "Scheduler.OnModuleUpdateEnd";
+            = "Scheduler.OnModuleUpdateEnd";
         public const string SchedulerError
             = "Scheduler.Error";
         public const string SchedulerScriptStatus
@@ -62,12 +62,24 @@ namespace HomeGenie.Service.Constants
         // commonly used parameters
         public const string StatusLevel
             = "Status.Level";
-        public const string MeterWatts
-            = "Meter.Watts";
-        public const string VirtualMeterWatts
-            = "VirtualMeter.Watts";
         public const string MeterAny
             = "Meter.";
+        public const string MeterWatts
+            = "Meter.Watts";
+        public const string SensorTemperature
+            = "Sensor.Temperature";
+        public const string SensorLuminance
+            = "Sensor.Luminance";
+        public const string SensorHumidity
+            = "Sensor.Humidity";
+        public const string SensorAlarm
+            = "Sensor.Alarm";
+        public const string SensorTamper
+            = "Sensor.Tamper";
+        public const string SensorMotionDetect
+            = "Sensor.MotionDetect";
+        public const string VirtualMeterWatts
+            = "VirtualMeter.Watts";
         public const string WidgetDisplayModule
             = "Widget.DisplayModule";
         public const string VirtualModuleParentId

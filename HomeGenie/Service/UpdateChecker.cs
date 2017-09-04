@@ -133,16 +133,39 @@ namespace HomeGenie.Service
             SslPolicyErrors sslPolicyErrors
         )
         {
-            string gitHubCertificateHash = "CF059889CAFF8ED85E5CE0C2E4F7E6C3C750DD5C";
-            string remoteCertificateHash = certificate.GetCertHashString();
             if (sslPolicyErrors == SslPolicyErrors.None)
             {
                 return true;
             }
-            // verify against api.github.com certificate hash string
-            else if (sslPolicyErrors == SslPolicyErrors.RemoteCertificateChainErrors && remoteCertificateHash == gitHubCertificateHash)
+            // Work-around missing certificates
+            string remoteCertificateHash = certificate.GetCertHashString();
+            List<string> acceptedCertificates = new List<string>() {
+                // Amazon AWS github files hosting
+                "89E471D8A4977D0D9C6E67E557BF36A74A5A01DB",
+                // github.com
+                "D79F076110B39293E349AC89845B0380C19E2F8B",
+                // api.github.com
+                "CF059889CAFF8ED85E5CE0C2E4F7E6C3C750DD5C",
+                "358574EF6735A7CE406950F3C0F680CF803B2E19",
+                // genielabs.github.io
+                "CCAA484866460E91532C9C7C232AB1744D299D33"
+            };
+            // try to load acceptedCertificates from file "certaccept.xml"
+            try
             {
-                Console.WriteLine("Applied github certificate issue work-around.");
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<string>));
+                using (StringReader stringReader = new StringReader(File.ReadAllText("certaccept.xml")))
+                {
+                    List<string> cert = (List<string>)xmlSerializer.Deserialize(stringReader);
+                    acceptedCertificates.Clear();
+                    acceptedCertificates.AddRange(cert);
+                }
+            } catch { }
+            // verify against accepted certificate hash strings
+            if (sslPolicyErrors == SslPolicyErrors.RemoteCertificateChainErrors 
+                && acceptedCertificates.Contains(remoteCertificateHash))
+            {
+                Console.WriteLine("Applied 'SSL certificates issue' work-around.");
                 return true;
             }
             else
@@ -168,7 +191,11 @@ namespace HomeGenie.Service
             // TODO: SSL connection certificate validation:
             // TODO: this is just an hack to fix certificate issues happening sometimes on api.github.com site,
             // TODO: not meant to be used in production enviroment
-            ServicePointManager.ServerCertificateValidationCallback = Validator;
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+            {
+                // TODO: this is just an hack to fix certificate issues on mono < 4.0,
+                ServicePointManager.ServerCertificateValidationCallback = Validator;
+            }
         }
 
         public bool Check()
@@ -453,7 +480,7 @@ namespace HomeGenie.Service
             var status = InstallStatus.Success;
             bool restartRequired = false;
             string oldFilesPath = Path.Combine("_update", "oldfiles");
-            string newFilesPath = Path.Combine("_update", "files", "HomeGenie");
+            string newFilesPath = Path.Combine("_update", "files", "HomeGenie_update");
             string fullReleaseFolder = Path.Combine("_update", "files", "homegenie");
             if (Directory.Exists(fullReleaseFolder))
             {
@@ -477,20 +504,29 @@ namespace HomeGenie.Service
                         using (var md5 = MD5.Create())
                         {
                             string localHash, remoteHash = "";
-                            using (var stream = File.OpenRead(destinationFile))
+                            try
                             {
-                                localHash = BitConverter.ToString(md5.ComputeHash(stream));
+                                // Try getting files' hash
+                                using (var stream = File.OpenRead(destinationFile))
+                                {
+                                    localHash = BitConverter.ToString(md5.ComputeHash(stream));
+                                }
+                                using (var stream = File.OpenRead(file))
+                                {
+                                    remoteHash = BitConverter.ToString(md5.ComputeHash(stream));
+                                }
+                                if (localHash != remoteHash)
+                                {
+                                    processFile = true;
+                                    //Console.WriteLine("CHANGED {0}", destinationFile);
+                                    //Console.WriteLine("   - LOCAL  {0}", localHash);
+                                    //Console.WriteLine("   - REMOTE {0}", remoteHash);
+                                }
                             }
-                            using (var stream = File.OpenRead(file))
+                            catch (Exception e)
                             {
-                                remoteHash = BitConverter.ToString(md5.ComputeHash(stream));
-                            }
-                            if (localHash != remoteHash)
-                            {
-                                processFile = true;
-                                //Console.WriteLine("CHANGED {0}", destinationFile);
-                                //Console.WriteLine("   - LOCAL  {0}", localHash);
-                                //Console.WriteLine("   - REMOTE {0}", remoteHash);
+                                // this mostly happen if the destinationFile is un use and cannot be opened,
+                                // file is then ignored if hash cannot be calculated
                             }
                         }
                     }
