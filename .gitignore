@@ -17,4 +17,4 @@ Thumbs.db
 packages/
 !packages/repositories.config
 
-HomeGenie_Windows/\.vs/
+\.vs/
