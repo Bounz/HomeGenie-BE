@@ -68,7 +68,7 @@ function showPage(path) {
         path = CONST_STARTPAGE;
     if (path.lastIndexOf('?') > 0) {
         // TODO: should parse query string, not used in this version though
-        path = path.substring(0, path.lastIndexOf('?')-1);
+        path = path.substring(0, path.lastIndexOf('?'));
     }
     path = path.replace('#/', '').split('/');
     // get item data
