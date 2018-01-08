@@ -15,7 +15,7 @@ install:
   - choco install -y curl innosetup
 
   # Install doxy
-  - choco install doxygen.portable
+  #- choco install doxygen.portable
 
   # Download wpkg and install
   - appveyor downloadfile https://downloads.sourceforge.net/project/unigw/wpkg/1.0.0/wpkg-1.0.0-amd64.exe
@@ -44,9 +44,9 @@ build_script:
 #---------------------------------#
 
 # Generate documentation
-- cd C:\projects\homegenie\Doxy
-- doxygen.exe "C:\projects\homegenie\Doxy\Doxyfile"
-- cd C:\projects\homegenie
+#- cd C:\projects\homegenie\Doxy
+#- doxygen.exe "C:\projects\homegenie\Doxy\Doxyfile"
+#- cd C:\projects\homegenie
 
 #---------------------------------#
 #  pre deployment configuration   #
