@@ -24,7 +24,7 @@ install:
   
   # Install 7zipcommandline
   - nuget install 7ZipCLI -ExcludeVersion # http://help.appveyor.com/discussions/suggestions/702-pre-install-7zipcommandline
-  - set PATH=%appveyor_build_folder%\7ZipCLI\tools;"C:\Program Files (x86)\Inno Setup 5";%PATH%
+  - set PATH=%appveyor_build_folder%\packages\7ZipCLI\tools;"C:\Program Files (x86)\Inno Setup 5";%PATH%
 
 #---------------------------------#
 #      build configuration        #
