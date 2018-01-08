@@ -33,10 +33,10 @@ then
 	echo "- Copying updated DEBIAN folder..."
 	cp -r ./DEBIAN "$hg_target_folder/"
 	cp -r ./DEBIAN "$hg_target_folder/usr/local/bin/homegenie/"
-	sed -i s/-rxyz/-$hg_revision_number/g "$hg_target_folder/DEBIAN/control"
-	sed -i s/-rxyz/-$hg_revision_number/g "$hg_target_folder/usr/local/bin/homegenie/DEBIAN/control"
-	sed -i s/-sxyz/$hg_installed_size/g "$hg_target_folder/DEBIAN/control"
-	sed -i s/-sxyz/$hg_installed_size/g "$hg_target_folder/usr/local/bin/homegenie/DEBIAN/control"
+	sed -i s/_version_/-$hg_revision_number/g "$hg_target_folder/DEBIAN/control"
+	sed -i s/_version_/-$hg_revision_number/g "$hg_target_folder/usr/local/bin/homegenie/DEBIAN/control"
+	sed -i s/_size_/$hg_installed_size/g "$hg_target_folder/DEBIAN/control"
+	sed -i s/_size_/$hg_installed_size/g "$hg_target_folder/usr/local/bin/homegenie/DEBIAN/control"
 
 	echo "- Fixing permissions..."
 
