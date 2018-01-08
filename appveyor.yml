@@ -6,9 +6,9 @@ skip_tags: true
 pull_requests:
   do_not_increment_build_number: true
 skip_branch_with_pr: true
-branches:
-  only:
-  - master
+#branches:
+#  only:
+#  - master
 clone_folder: c:\projects\homegenie
 
 #---------------------------------#
@@ -60,7 +60,7 @@ build_script:
 #---------------------------------#
 
 before_deploy:
-  - ps: . $($env:APPVEYOR_BUILD_FOLDER)\HomeGenie_Linux\Packager\builddeb.ps1
+  - ps: . "$($env:APPVEYOR_BUILD_FOLDER)\HomeGenie_Linux\Packager\builddeb.ps1"
 
   # Call wpkg to create .deb package
   - C:\WPKG\bin\wpkg.exe --build c:\projects\homegenie\release --output-dir c:\projects\homegenie\release --verbose
