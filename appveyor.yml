@@ -3,6 +3,9 @@
 
 version: 1.1.{build}
 skip_tags: true
+pull_requests:
+  do_not_increment_build_number: true
+clone_folder: c:\projects\homegenie
 
 #---------------------------------#
 #     install configuration       #
@@ -15,14 +18,15 @@ install:
   - choco install -y curl innosetup
 
   # Install doxy
-  - choco install doxygen.portable
+  #- choco install doxygen.portable
 
   # Download wpkg and install
   - appveyor downloadfile https://downloads.sourceforge.net/project/unigw/wpkg/1.0.0/wpkg-1.0.0-amd64.exe
   - wpkg-1.0.0-amd64.exe /S
+  
   # Install 7zipcommandline
   - nuget install 7ZipCLI -ExcludeVersion # http://help.appveyor.com/discussions/suggestions/702-pre-install-7zipcommandline
-  - set PATH=%appveyor_build_folder%\7ZipCLI\tools;"C:\Program Files (x86)\Inno Setup 5";%PATH%
+  - set PATH=%appveyor_build_folder%\packages\7ZipCLI\tools;"C:\Program Files (x86)\Inno Setup 5";%PATH%
 
 #---------------------------------#
 #      build configuration        #
@@ -43,9 +47,9 @@ build_script:
 #---------------------------------#
 
 # Generate documentation
-- cd C:\projects\homegenie\Doxy
-- doxygen.exe "C:\projects\homegenie\Doxy\Doxyfile"
-- cd C:\projects\homegenie
+#- cd C:\projects\homegenie\Doxy
+#- doxygen.exe "C:\projects\homegenie\Doxy\Doxyfile"
+#- cd C:\projects\homegenie
 
 #---------------------------------#
 #  pre deployment configuration   #
@@ -57,6 +61,7 @@ before_deploy:
       # Testing
       #clear
       #$env:APPVEYOR_BUILD_NUMBER = "123"
+      #$env:APPVEYOR_BUILD_VERSION = "1.1.123"
       #$env:configuration = "debug"
 
       #---------------------------------#
@@ -83,9 +88,9 @@ before_deploy:
       Copy-Item -Path C:\projects\homegenie\HomeGenie_Linux\Packager\DEBIAN -Destination c:\projects\homegenie\release -recurse -force 
       Copy-Item -Path C:\projects\homegenie\HomeGenie_Linux\Packager\DEBIAN -Destination c:\projects\homegenie\release\usr\local\bin\homegenie -recurse -force
 
-      # Replace -rxyz with version number eg-r1234 in control file(s)
-      (Get-Content 'c:\projects\homegenie\release\usr\local\bin\homegenie\DEBIAN\control') -replace "-rxyz", "r$($env:APPVEYOR_BUILD_NUMBER)" | out-file 'c:\projects\homegenie\release\usr\local\bin\homegenie\DEBIAN\control' -encoding ASCII -force
-      (Get-Content 'c:\projects\homegenie\release\DEBIAN\control') -replace "-rxyz", "r$($env:APPVEYOR_BUILD_NUMBER)" | out-file 'c:\projects\homegenie\release\DEBIAN\control' -encoding ASCII -force
+      # Replace $version$ with version number eg 1.1.123 in control file(s)
+      (Get-Content 'c:\projects\homegenie\release\usr\local\bin\homegenie\DEBIAN\control') -replace "$version$", "$($env:APPVEYOR_BUILD_VERSION)" | out-file 'c:\projects\homegenie\release\usr\local\bin\homegenie\DEBIAN\control' -encoding ASCII -force
+      (Get-Content 'c:\projects\homegenie\release\DEBIAN\control') -replace "$version$", "$($env:APPVEYOR_BUILD_VERSION)" | out-file 'c:\projects\homegenie\release\DEBIAN\control' -encoding ASCII -force
 
       # Remove items
       remove-item c:\projects\homegenie\release\log -force -recurse -errorAction SilentlyContinue |out-null
@@ -107,35 +112,35 @@ before_deploy:
 #         create TGZ file         #
 #---------------------------------#
 
-  - 7za a -ttar "c:\projects\homegenie\release\homegenie_1.1r%APPVEYOR_BUILD_NUMBER%_all.tgz" "C:\projects\homegenie\HomeGenie\bin\%CONFIGURATION%\*""
+  - 7za a -ttar "c:\projects\homegenie\release\homegenie_%APPVEYOR_BUILD_VERSION%_all.tgz" "C:\projects\homegenie\HomeGenie\bin\%CONFIGURATION%\*""
 
 #---------------------------------#
 # create windows setup (exe) file #
 #---------------------------------#
 
-  - iscc c:\projects\HomeGenie\HomeGenie_Windows\Packager\setup.iss /Oc:\projects\homegenie\release /Fhomegenie_1.1r%APPVEYOR_BUILD_NUMBER%_all
+  - iscc c:\projects\HomeGenie\HomeGenie_Windows\Packager\setup.iss /Oc:\projects\homegenie\release /Fhomegenie_%APPVEYOR_BUILD_VERSION%_all
 
 #---------------------------------#
 #         Push Artifacts          #
 #---------------------------------#
 
-  - appveyor PushArtifact "release\homegenie_1.1r%APPVEYOR_BUILD_NUMBER%_all.deb"
-  - appveyor PushArtifact "release\homegenie_1.1r%APPVEYOR_BUILD_NUMBER%_all.tgz"
-  - appveyor PushArtifact "release\homegenie_1.1r%APPVEYOR_BUILD_NUMBER%_all.exe"
+  - appveyor PushArtifact "release\homegenie_%APPVEYOR_BUILD_VERSION%_all.deb"
+  - appveyor PushArtifact "release\homegenie_%APPVEYOR_BUILD_VERSION%_all.tgz"
+  - appveyor PushArtifact "release\homegenie_%APPVEYOR_BUILD_VERSION%_all.exe"
 
 #---------------------------------#
 #           Do Release            #
 #---------------------------------#
 
 deploy:
-  release: Homegenie-v$(appveyor_build_version)
-  description: 'Homegenie version $(appveyor_build_version)'
+  release: V$(appveyor_build_version)
+  description: 'Homegenie (Bounz Edition) version $(appveyor_build_version)'
   provider: GitHub
   auth_token:
-    secure: 6xpJrNRZ7YlU22YNrDRs9dAmvp2LIJ4O7t+a5443/NERIk9Aspip7glMn9O4sqU6
+    secure: MkEJm5U8V0NeUQ7cz7EcojV4XT1YUSo3gEFWrKDuoHQXx1+eTGe8l1ePdSnUivm2
   # artifact: release\**\*.deb 
   draft: false
-  prerelease: false
+  prerelease: true
   on:
-    branch: master                 # release from master branch only
+    branch: master                  # release from master branch only
     appveyor_repo_tag: false        # deploy on tag push only
