@@ -6,6 +6,9 @@ skip_tags: true
 pull_requests:
   do_not_increment_build_number: true
 skip_branch_with_pr: true
+branches:
+  only:
+  - master
 clone_folder: c:\projects\homegenie
 
 #---------------------------------#
