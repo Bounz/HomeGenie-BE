@@ -60,7 +60,7 @@ build_script:
 #---------------------------------#
 
 before_deploy:
-  - ps: . %APPVEYOR_BUILD_FOLDER%\HomeGenie_Linux\Packager\builddeb.ps1
+  - ps: . $($env:APPVEYOR_BUILD_FOLDER)\HomeGenie_Linux\Packager\builddeb.ps1
 
   # Call wpkg to create .deb package
   - C:\WPKG\bin\wpkg.exe --build c:\projects\homegenie\release --output-dir c:\projects\homegenie\release --verbose
