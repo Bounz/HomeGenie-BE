@@ -20,6 +20,7 @@ install:
   # Download wpkg and install
   - appveyor downloadfile https://downloads.sourceforge.net/project/unigw/wpkg/1.0.0/wpkg-1.0.0-amd64.exe
   - wpkg-1.0.0-amd64.exe /S
+  
   # Install 7zipcommandline
   - nuget install 7ZipCLI -ExcludeVersion # http://help.appveyor.com/discussions/suggestions/702-pre-install-7zipcommandline
   - set PATH=%appveyor_build_folder%\7ZipCLI\tools;"C:\Program Files (x86)\Inno Setup 5";%PATH%
@@ -132,10 +133,10 @@ deploy:
   description: 'Homegenie version $(appveyor_build_version)'
   provider: GitHub
   auth_token:
-    secure: 6xpJrNRZ7YlU22YNrDRs9dAmvp2LIJ4O7t+a5443/NERIk9Aspip7glMn9O4sqU6
+    secure: MkEJm5U8V0NeUQ7cz7EcojV4XT1YUSo3gEFWrKDuoHQXx1+eTGe8l1ePdSnUivm2
   # artifact: release\**\*.deb 
   draft: false
-  prerelease: false
+  prerelease: true
   on:
     branch: master                 # release from master branch only
     appveyor_repo_tag: false        # deploy on tag push only
