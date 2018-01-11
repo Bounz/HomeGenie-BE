@@ -20,8 +20,6 @@
  *     Project Homepage: https://github.com/genielabs/mig-service-dotnet
  */
 
-using System;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
