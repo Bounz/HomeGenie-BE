@@ -26,14 +26,7 @@ using System.IO;
 using System.Linq;
 
 using MIG.Config;
-using MIG.Gateways;
-using MIG.Utility;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-
 using NLog;
-using Newtonsoft.Json.Serialization;
 using System.Reflection;
 
 namespace MIG

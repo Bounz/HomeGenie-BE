@@ -35,7 +35,7 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
     <Reference Include="UPnP">
-      <HintPath>Externals\upnp\UPnP.dll</HintPath>
+      <HintPath>..\..\Externals\upnp\UPnP.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
