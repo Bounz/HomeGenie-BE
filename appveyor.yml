@@ -9,6 +9,7 @@ skip_branch_with_pr: true
 branches:
   only:
   - master
+  - /V.*/
 clone_folder: c:\projects\homegenie
 
 #---------------------------------#
