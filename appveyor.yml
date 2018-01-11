@@ -38,7 +38,7 @@ install:
 #---------------------------------#
 
 before_build:
-  - nuget restore
+  - nuget restore HomeGenie_Windows\HomeGenie_VS10.sln
 
 #build:
 #  project: c:\projects\homegenie\HomeGenie_Windows\HomeGenie_VS10.sln
