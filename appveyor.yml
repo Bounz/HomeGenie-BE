@@ -37,6 +37,9 @@ install:
 #      build configuration        #
 #---------------------------------#
 
+before_build:
+  - nuget restore
+
 #build:
 #  project: c:\projects\homegenie\HomeGenie_Windows\HomeGenie_VS10.sln
 #  verbosity: minimal
