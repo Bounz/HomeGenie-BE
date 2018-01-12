@@ -17,7 +17,7 @@
 
 /*
  *     Author: Generoso Martello <gene@homegenie.it>
- *     Project Homepage: http://homegenie.it
+ *     Project Homepage: http://github.com/Bounz/HomeGenie-BE
  */
 
 using HomeGenie.Automation;
@@ -112,10 +112,11 @@ namespace HomeGenie.Service
         public InstallProgressMessageEvent InstallProgressMessage;
 
         private const string releaseFile = "release_info.xml";
-        private const string githubRepository = "HomeGenie";
-        private string githubReleases = String.Format("https://api.github.com/repos/genielabs/{0}/releases", githubRepository);
+        private const string githubRepository = "HomeGenie-BE";
+        private string githubReleases = String.Format("https://api.github.com/repos/Bounz/{0}/releases", githubRepository);
         // TODO: deprecate this
-        private const string endpointUrl = "http://www.homegenie.it/release_updates_v1_1.php";
+        // This wont actually work as the server doesn't have this PHP file
+        private const string endpointUrl = "http://homegenie.club/release_updates_v1_1.php";
 
         private ReleaseInfo currentRelease;
         private List<ReleaseInfo> remoteUpdates;
@@ -146,9 +147,7 @@ namespace HomeGenie.Service
                 "D79F076110B39293E349AC89845B0380C19E2F8B",
                 // api.github.com
                 "CF059889CAFF8ED85E5CE0C2E4F7E6C3C750DD5C",
-                "358574EF6735A7CE406950F3C0F680CF803B2E19",
-                // genielabs.github.io
-                "CCAA484866460E91532C9C7C232AB1744D299D33"
+                "358574EF6735A7CE406950F3C0F680CF803B2E19"
             };
             // try to load acceptedCertificates from file "certaccept.xml"
             try

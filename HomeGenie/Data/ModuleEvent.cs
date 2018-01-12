@@ -17,7 +17,7 @@
 
 /*
  *     Author: Generoso Martello <gene@homegenie.it>
- *     Project Homepage: http://homegenie.it
+ *     Project Homepage: http://github.com/Bounz/HomeGenie-BE
  */
 
 using System;

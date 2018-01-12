@@ -18,7 +18,7 @@ namespace MIG.Interfaces.HomeAutomation
         private const string additionalDbFilename = "p1db_custom.xml";
         private const string archiveFilename = "archive.zip";
         private const string tempFolder = "temp";
-        private const string defaultPepper1Url = "https://genielabs.github.io/HomeGenie/_hg_files/zwave/pepper1_device_archive.zip";
+        private const string defaultPepper1Url = "https://bounz.github.io/HomeGenie-BE/_hg_files/zwave/pepper1_device_archive.zip";
 
         public bool DbExists
         {

@@ -17,7 +17,7 @@ clone_folder: c:\projects\homegenie
 #---------------------------------#
 
 install:
-  # - git clone https://github.com/genielabs/mig-service-dotnet.git
+  # - git clone https://github.com/Bounz/mig-service-dotnet.git
   
   # Install innosetup
   - choco install -y curl innosetup

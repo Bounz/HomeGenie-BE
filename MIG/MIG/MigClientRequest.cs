@@ -17,7 +17,7 @@
 
 /*
  *     Author: Generoso Martello <gene@homegenie.it>
- *     Project Homepage: https://github.com/genielabs/mig-service-dotnet
+ *     Project Homepage: https://github.com/Bounz/HomeGenie-BE
  */
 
 using Newtonsoft.Json;

@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Home Automation Genie =)")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("G-Labs")]
-[assembly: AssemblyProduct("HomeGenie http://homegenie.it")]
+[assembly: AssemblyProduct("HomeGenie http://homegenie.club")]
 [assembly: AssemblyCopyright("Copyright © 2012-2014 by G-Labs info@homegenie.it")]
 [assembly: AssemblyTrademark("GenieLabs")]
 [assembly: AssemblyCulture("")]
