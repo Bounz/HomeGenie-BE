@@ -161,9 +161,6 @@
     <Reference Include="NLog">
       <HintPath>..\Externals\g-labs\NLog.dll</HintPath>
     </Reference>
-    <Reference Include="MIG">
-      <HintPath>..\Externals\g-labs\MIG.dll</HintPath>
-    </Reference>
     <Reference Include="SerialPortLib">
       <HintPath>..\Externals\g-labs\SerialPortLib.dll</HintPath>
     </Reference>
@@ -315,6 +312,10 @@
     <ProjectReference Include="..\BaseFiles\Common\Common.csproj">
       <Project>{0A27EF44-EC80-4FDB-8764-B153C169905D}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MIG\MIG\MIG.csproj">
+      <Project>{005357c9-7f8e-458e-affa-bf84f7d6a6ae}</Project>
+      <Name>MIG</Name>
     </ProjectReference>
     <ProjectReference Include="..\SupportLibraries\NetClientLib\NetClientLib.csproj">
       <Project>{318D2523-3C8B-4273-B1EA-DE339868403C}</Project>

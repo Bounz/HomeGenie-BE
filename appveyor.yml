@@ -9,6 +9,7 @@ skip_branch_with_pr: true
 branches:
   only:
   - master
+  - /V.*/
 clone_folder: c:\projects\homegenie
 
 #---------------------------------#
@@ -35,6 +36,9 @@ install:
 #---------------------------------#
 #      build configuration        #
 #---------------------------------#
+
+before_build:
+  - nuget restore HomeGenie_Windows\HomeGenie_VS10.sln
 
 #build:
 #  project: c:\projects\homegenie\HomeGenie_Windows\HomeGenie_VS10.sln
