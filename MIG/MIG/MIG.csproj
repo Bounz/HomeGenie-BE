@@ -88,8 +88,5 @@
   -->
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="..\README.md">
-      <Link>README.md</Link>
-    </None>
   </ItemGroup>
 </Project>

@@ -17,7 +17,7 @@
 
 /*
  *     Author: Generoso Martello <gene@homegenie.it>
- *     Project Homepage: http://homegenie.it
+ *     Project Homepage: http://github.com/Bounz/HomeGenie-BE
  */
 
 
@@ -1522,10 +1522,10 @@ namespace HomeGenie.Service
             string presentationUrl = "http://" + address + ":" + bindport;
             //string friendlyName = "HomeGenie: " + Environment.MachineName;
             string manufacturer = "G-Labs";
-            string manufacturerUrl = "http://genielabs.github.io/HomeGenie/";
+            string manufacturerUrl = "http://bounz.github.io/HomeGenie-BE/";
             string modelName = "HomeGenie";
             string modelDescription = "HomeGenie Home Automation Server";
-            //string modelURL = "http://homegenie.it/";
+            //string modelURL = "http://homegenie.club/";
             string modelNumber = "HG-1";
             string standardDeviceType = "HomeAutomationServer";
             string uniqueDeviceName = systemConfiguration.HomeGenie.GUID;
