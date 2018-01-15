@@ -22,7 +22,7 @@ HG.Ui = HG.Ui || new function(){ var $$ = this;
             'HomeGenie.SecurityArmed',
         Security_Triggered:
             'HomeGenie.SecurityTriggered',
-        /* other common params from https://github.com/genielabs/mig-service-dotnet/blob/master/MIG.HomeAutomation/ModuleEvents.cs */
+        /* other common params from MIG.HomeAutomation/ModuleEvents.cs */
         VirtualMeter_Watts:
             'VirtualMeter.Watts',
         Status_Level:

@@ -2724,12 +2724,12 @@ When changing the number of zone sensors, program restart is required.</Descript
 || @author: Generoso Martello
 || @version: 1.0
 || @updated: 2016-04-30 16:54
-|| @licence: https://raw.githubusercontent.com/genielabs/HomeGenie/master/LICENSE_GPLV3.TXT
+|| @licence: https://raw.githubusercontent.com/Bounz/HomeGenie-BE/master/LICENSE
 ||
 || HomeGenie API reference
-||   http://genielabs.github.io/HomeGenie/programs.html
-||   http://genielabs.github.io/HomeGenie/api/ape/annotated.html
-||   http://genielabs.github.io/HomeGenie/api/mig/overview.html
+||   http://bounz.github.io/HomeGenie-BE/programs.html
+||   http://bounz.github.io/HomeGenie-BE/api/ape/annotated.html
+||   http://bounz.github.io/HomeGenie-BE/api/mig/overview.html
 */
 
 var _domain = "HomeAutomation.Demo";
@@ -2756,12 +2756,12 @@ $$.program.run();</ScriptCondition>
 || @author: Generoso Martello
 || @version: 1.0
 || @updated: 2016-04-30 16:54
-|| @licence: https://raw.githubusercontent.com/genielabs/HomeGenie/master/LICENSE_GPLV3.TXT
+|| @licence: https://raw.githubusercontent.com/Bounz/HomeGenie-BE/master/LICENSE
 ||
 || HomeGenie API reference
-||   http://genielabs.github.io/HomeGenie/programs.html
-||   http://genielabs.github.io/HomeGenie/api/ape/annotated.html
-||   http://genielabs.github.io/HomeGenie/api/mig/overview.html
+||   http://bounz.github.io/HomeGenie-BE/programs.html
+||   http://bounz.github.io/HomeGenie-BE/api/ape/annotated.html
+||   http://bounz.github.io/HomeGenie-BE/api/mig/overview.html
 */
 
 var _domain = "HomeAutomation.Demo";

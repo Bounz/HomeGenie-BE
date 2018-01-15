@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along with
 this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Please referer to the github repository for source code and development contribution:
-http://github.com/genielabs/HomeGenie
+http://github.com/Bounz/HomeGenie-BE
 
 
 DISCLAIMER

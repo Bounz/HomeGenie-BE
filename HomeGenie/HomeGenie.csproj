@@ -254,24 +254,8 @@
     <Compile Include="Automation\Scripting\ProgramHelperBase.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\CREDITS.TXT">
-      <Link>CREDITS.TXT</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="..\DEVELOPERS.TXT">
-      <Link>DEVELOPERS.TXT</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="..\HISTORY.TXT">
-      <Link>HISTORY.TXT</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="..\LICENCE.TXT">
       <Link>LICENCE.TXT</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="..\README.TXT">
-      <Link>README.TXT</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="app.config" />
