@@ -10,6 +10,11 @@ branches:
   only:
   - master
 clone_folder: c:\projects\homegenie
+assembly_info:
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
 
 #---------------------------------#
 #     install configuration       #
