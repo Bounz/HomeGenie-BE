@@ -4,10 +4,10 @@
 
 [Setup]
 AppName=HomeGenie
-AppVerName=HomeGenie 1.1 beta (r526)
+AppVerName=HomeGenie-BE V_version_
 AppPublisher=GenieLabs
 AppPublisherURL=http://www.homegenie.it
-AppVersion=1.1 beta (r526)
+AppVersion=V_version_
 DefaultDirName={pf}\HomeGenie
 DefaultGroupName=HomeGenie
 Compression=lzma
@@ -188,7 +188,6 @@ end;
 Source: ".\Drivers\USB_ActiveHome_Interface\*"; DestDir: "{app}\Drivers\LibUsb_MarmitekCM15Pro"; Flags: ignoreversion recursesubdirs
 Source: "..\..\HomeGenie\bin\Debug\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 Source: "..\..\HomeGenie\bin\Debug\HomeGenie.exe"; DestDir: "{app}"; Flags: ignoreversion replacesameversion
-Source: "..\..\HomeGenie\bin\Debug\README.TXT"; DestDir: "{app}"; Flags: ignoreversion replacesameversion
 
 [InstallDelete]
 Type: files; Name: "{app}\SQLite.Interop.dll";
@@ -198,9 +197,9 @@ Type: files; Name: "{app}\SQLite.Interop.dll";
 ;Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; 
 
 [Icons]
-Name: "{group}\HomeGenie 1.1 beta (r526)"; Filename: "{app}\HomeGenieManager.exe"
-Name: "{group}\Uninstall HomeGenie 1.1 beta (r526)"; Filename: "{uninstallexe}"
-Name: "{commondesktop}\HomeGenie"; Filename: "{app}\HomeGenieManager.exe"
+Name: "{group}\HomeGenie-BE"; Filename: "{app}\HomeGenieManager.exe"
+Name: "{group}\Uninstall HomeGenie-BE"; Filename: "{uninstallexe}"
+Name: "{commondesktop}\HomeGenie-BE"; Filename: "{app}\HomeGenieManager.exe"
 
 [Run]
 ;Filename: "rundll32"; Parameters: "libusb0.dll,usb_touch_inf_file_np_rundll {win}\inf\input.inf"

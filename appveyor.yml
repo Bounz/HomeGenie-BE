@@ -68,7 +68,8 @@ build_script:
 #  pre deployment configuration   #
 #---------------------------------#
 
-before_deploy:
+#before_deploy:
+after_build:
   - ps: . "$($env:APPVEYOR_BUILD_FOLDER)\HomeGenie_Linux\Packager\builddeb.ps1"
 
   # Call wpkg to create .deb package
@@ -84,6 +85,7 @@ before_deploy:
 # create windows setup (exe) file #
 #---------------------------------#
 
+  - ps: (Get-Content "c:\projects\HomeGenie\HomeGenie_Windows\Packager\setup.iss") -replace "_version_", "$($env:APPVEYOR_BUILD_VERSION)" | out-file "c:\projects\HomeGenie\HomeGenie_Windows\Packager\setup.iss" -encoding ASCII -force
   - iscc c:\projects\HomeGenie\HomeGenie_Windows\Packager\setup.iss /Oc:\projects\homegenie\release /Fhomegenie_%APPVEYOR_BUILD_VERSION%_all
 
 #---------------------------------#
