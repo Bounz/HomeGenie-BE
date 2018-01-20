@@ -28,6 +28,7 @@ namespace HomeGenie.Service.Updates
         private readonly Timer _checkForUpdatesTimer;
 
         private static readonly HttpClient HttpClient = new HttpClient();
+        public static Version CurrentVersion => Assembly.GetExecutingAssembly().GetName().Version;
 
         static UpdateChecker()
         {
@@ -138,15 +139,6 @@ namespace HomeGenie.Service.Updates
             return _currentRelease = UpdatesHelper.GetReleaseInfoFromFile(UpdatesHelper.ReleaseFile);
         }
 
-        public ReleaseInfo GetCurrentVersion()
-        {
-            var av = Assembly.GetExecutingAssembly().GetName().Version;
-            return new ReleaseInfo
-            {
-                Version = $"{av.Major}.{av.Minor}.{av.Revision}"
-            };
-        }
-
         public List<ReleaseInfo> NewReleases => _newReleases;
 
         public ReleaseInfo NewestRelease => _newReleases?.FirstOrDefault();
@@ -155,7 +147,7 @@ namespace HomeGenie.Service.Updates
         {
             var releases = new List<ReleaseInfo>();
 
-            var latestReleases = await GetLatestGitHubReleaseAsync(_currentRelease.ReleaseDate);
+            var latestReleases = await GetLatestGitHubReleaseAsync(CurrentVersion);
             foreach (var gitHubRelease in latestReleases)
             {
                 var relFile = gitHubRelease.Assets.FirstOrDefault(x => x.BrowserDownloadUrl.EndsWith(".tgz"));
@@ -190,6 +182,32 @@ namespace HomeGenie.Service.Updates
                 var orderedReleases = gitHubReleases
                     .OrderByDescending(x => x.CreatedAt)
                     .Where(x => x.CreatedAt >= filterDate);
+                var latestReleases = checkForPrereleases
+                    ? orderedReleases
+                    : orderedReleases.Where(x => x.Prerelease = false);
+
+                return latestReleases.ToList();
+            }
+            catch (Exception e)
+            {
+                // TODO: write log
+                Console.WriteLine(e.Message);
+                return new List<GitHubRelease>();
+            }
+        }
+
+        private async Task<List<GitHubRelease>> GetLatestGitHubReleaseAsync(Version currentVersion, bool checkForPrereleases = false)
+        {
+#if DEBUG
+            checkForPrereleases = true;
+#endif
+            var releasesString = await HttpClient.GetStringAsync(_githubReleases);
+            try
+            {
+                var gitHubReleases = JsonConvert.DeserializeObject<List<GitHubRelease>>(releasesString);
+                var orderedReleases = gitHubReleases
+                    .OrderByDescending(x => x.CreatedAt)
+                    .Where(x => x.Version >= currentVersion);
                 var latestReleases = checkForPrereleases
                     ? orderedReleases
                     : orderedReleases.Where(x => x.Prerelease = false);

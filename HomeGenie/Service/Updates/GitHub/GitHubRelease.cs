@@ -56,5 +56,8 @@ namespace HomeGenie.Service.Updates.GitHub
 
         [JsonProperty("body")]
         public string Description { get; set; }
+
+        // Custom fields
+        public Version Version => Version.Parse(Name.Trim('V'));
     }
 }

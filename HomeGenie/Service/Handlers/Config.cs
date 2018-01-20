@@ -204,7 +204,7 @@ namespace HomeGenie.Service.Handlers
 
             case "System.GetVersion":
                 //request.ResponseData = homegenie.UpdateChecker.GetCurrentRelease();
-                request.ResponseData = homegenie.UpdateChecker.GetCurrentVersion();
+                request.ResponseData = new {Version = UpdateChecker.CurrentVersion.Format()};
                 break;
 
             case "System.Configure":

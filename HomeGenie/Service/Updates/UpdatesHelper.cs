@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Xml.Serialization;
 
 namespace HomeGenie.Service.Updates
@@ -19,6 +20,11 @@ namespace HomeGenie.Service.Updates
             }
             catch { }
             return release;
+        }
+
+        public static string Format(this Version version)
+        {
+            return $"V{version.Major}.{version.Minor}.{version.Build}";
         }
     }
 }

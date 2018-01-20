@@ -20,12 +20,9 @@ namespace HomeGenie.Service.Updates
         public delegate void InstallProgressMessageEvent(object sender, string message);
         public InstallProgressMessageEvent InstallProgressMessage;
 
-        private string UpdateBaseFolder
-        {
-            get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "_update", "files", "HomeGenie"); }
-        }
-        
-        private const string UpdateFolder = "_update";
+        private static string UpdateFolder => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "_update");
+        private static string UpdateBaseFolder => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "_update", "files");
+
         private readonly HomeGenieService _homegenieService;
 
         public UpdateInstaller(HomeGenieService homegenieService)
@@ -73,12 +70,11 @@ namespace HomeGenie.Service.Updates
         {
             var status = InstallStatus.Success;
             var restartRequired = false;
-            var oldFilesPath = Path.Combine("_update", "oldfiles");
-            var newFilesPath = Path.Combine("_update", "files", "HomeGenie_update");
-            var fullReleaseFolder = Path.Combine("_update", "files", "homegenie");
-            if (Directory.Exists(fullReleaseFolder))
+            var oldFilesPath = Path.Combine(UpdateFolder, "oldfiles");
+            var newFilesPath = Path.Combine(UpdateFolder, "HomeGenie_update");
+            if (Directory.Exists(UpdateBaseFolder))
             {
-                Directory.Move(fullReleaseFolder, newFilesPath);
+                Directory.Move(UpdateBaseFolder, newFilesPath);
             }
             Utility.FolderCleanUp(oldFilesPath);
 
@@ -266,28 +262,24 @@ namespace HomeGenie.Service.Updates
             }
 
             // Unarchive (unzip)
-            if (ArchiveDownloadUpdate != null)
-                ArchiveDownloadUpdate(this, new ArchiveDownloadEventArgs(releaseInfo, ArchiveDownloadStatus.Decompressing));
+            ArchiveDownloadUpdate?.Invoke(this, new ArchiveDownloadEventArgs(releaseInfo, ArchiveDownloadStatus.Decompressing));
 
             var errorOccurred = false;
             var files = Utility.UncompressTgz(archiveName, destinationFolder);
             errorOccurred = files.Count == 0;
 
-            if (ArchiveDownloadUpdate != null)
-            {
-                if (errorOccurred)
-                    ArchiveDownloadUpdate(this, new ArchiveDownloadEventArgs(releaseInfo, ArchiveDownloadStatus.Error));
-                else
-                    ArchiveDownloadUpdate(this, new ArchiveDownloadEventArgs(releaseInfo, ArchiveDownloadStatus.Completed));
-            }
+            ArchiveDownloadUpdate?.Invoke(this,
+                errorOccurred
+                    ? new ArchiveDownloadEventArgs(releaseInfo, ArchiveDownloadStatus.Error)
+                    : new ArchiveDownloadEventArgs(releaseInfo, ArchiveDownloadStatus.Completed));
 
             // update release_info.xml file with last releaseInfo ReleaseDate field in order to reflect github release date
-            if (files.Contains(Path.Combine("homegenie", UpdatesHelper.ReleaseFile)))
+            if (files.Contains(UpdatesHelper.ReleaseFile))
             {
-                var ri = UpdatesHelper.GetReleaseInfoFromFile(Path.Combine(destinationFolder, "homegenie", UpdatesHelper.ReleaseFile));
+                var ri = UpdatesHelper.GetReleaseInfoFromFile(Path.Combine(destinationFolder, UpdatesHelper.ReleaseFile));
                 ri.ReleaseDate = releaseInfo.ReleaseDate.ToUniversalTime();
                 var serializer = new XmlSerializer(typeof(ReleaseInfo));
-                using (TextWriter writer = new StreamWriter(Path.Combine(destinationFolder, "homegenie", UpdatesHelper.ReleaseFile)))
+                using (TextWriter writer = new StreamWriter(Path.Combine(destinationFolder, UpdatesHelper.ReleaseFile)))
                 {
                     serializer.Serialize(writer, ri);
                 }
