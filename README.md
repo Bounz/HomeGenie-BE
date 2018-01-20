@@ -41,6 +41,7 @@ CURRENT FEATURES
   - Spanish
   - French
   - Dutch
+  - Russian
   - Other languages can by added by creating a simple JSON file.
 
 * Password protected access
