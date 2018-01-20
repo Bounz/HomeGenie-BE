@@ -9,7 +9,8 @@ HG.System = HG.System || new function(){ var $$ = this;
             url: '/' + HG.WebApp.Data.ServiceKey + '/' + HG.WebApp.Data.ServiceDomain + '/Config/System.GetVersion/',
             type: 'GET',
             success: function (data) {
-                if (callback != null) callback(data);
+                if (callback != null)
+                    callback(data);
             }
         });
     };

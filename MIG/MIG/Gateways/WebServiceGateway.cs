@@ -684,7 +684,7 @@ namespace MIG.Gateways
             if (responseObject != null && responseObject.GetType().Equals(typeof(byte[])) == false)
             {
                 string responseText = "";
-                if (responseObject.GetType() == typeof(String))
+                if (responseObject is string)
                 {
                     responseText = responseObject.ToString();
                 }
@@ -693,7 +693,8 @@ namespace MIG.Gateways
                     responseText = MigService.JsonSerialize(responseObject);
                 }
                 // simple automatic json response type detection
-                if (responseText.StartsWith("[") && responseText.EndsWith("]") || responseText.StartsWith("{") && responseText.EndsWith("}"))
+                if (responseText.StartsWith("[") && responseText.EndsWith("]") ||
+                    responseText.StartsWith("{") && responseText.EndsWith("}"))
                 {
                     // send as JSON
                     context.Response.ContentType = "application/json";

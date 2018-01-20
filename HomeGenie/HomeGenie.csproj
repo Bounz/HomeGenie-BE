@@ -106,13 +106,20 @@
       <HintPath>..\Externals\NCrontab\NCrontab.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="SharpCompress, Version=0.19.2.0, Culture=neutral, PublicKeyToken=afb0a02973931d96">
+      <HintPath>..\packages\SharpCompress.0.19.2\lib\net45\SharpCompress.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="UPnP, Version=1.0.5772.30730, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\Externals\upnp\UPnP.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="Raspberry.System">
       <HintPath>..\Externals\raspberry-sharp\Raspberry.System.dll</HintPath>
@@ -154,9 +161,6 @@
     <Reference Include="CronExpressionDescriptor">
       <HintPath>..\Externals\CronExpressionDescriptor\CronExpressionDescriptor.dll</HintPath>
       <Private>False</Private>
-    </Reference>
-    <Reference Include="UPnP">
-      <HintPath>..\Externals\upnp\UPnP.dll</HintPath>
     </Reference>
     <Reference Include="NLog">
       <HintPath>..\Externals\g-labs\NLog.dll</HintPath>
@@ -212,7 +216,19 @@
     <Compile Include="Service\Handlers\Statistics.cs" />
     <Compile Include="Service\JsonHelper.cs" />
     <Compile Include="Service\Logging\StatisticsLogger.cs" />
-    <Compile Include="Service\UpdateChecker.cs" />
+    <Compile Include="Service\Updates\ArchiveDownloadEventArgs.cs" />
+    <Compile Include="Service\Updates\ArchiveDownloadStatus.cs" />
+    <Compile Include="Service\Updates\InstallStatus.cs" />
+    <Compile Include="Service\Updates\GitHub\Asset.cs" />
+    <Compile Include="Service\Updates\GitHub\GitHubRelease.cs" />
+    <Compile Include="Service\Updates\GitHub\Uploader.cs" />
+    <Compile Include="Service\Updates\ReleaseInfo.cs" />
+    <Compile Include="Service\Updates\UpdateChecker.cs" />
+    <Compile Include="Service\Updates\UpdateInstaller.cs" />
+    <Compile Include="Service\Updates\UpdateManager.cs" />
+    <Compile Include="Service\Updates\UpdateProgressEventArgs.cs" />
+    <Compile Include="Service\Updates\UpdateProgressStatus.cs" />
+    <Compile Include="Service\Updates\UpdatesHelper.cs" />
     <Compile Include="Service\Utility.cs" />
     <Compile Include="Data\Group.cs" />
     <Compile Include="Data\ModuleReference.cs" />
@@ -312,7 +328,6 @@
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
-  <ItemGroup />
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>
@@ -327,5 +342,4 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
-  <ItemGroup />
 </Project>
