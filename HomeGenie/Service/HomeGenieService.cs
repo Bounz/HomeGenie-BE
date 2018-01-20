@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Xml.Serialization;
 using System.Threading;
@@ -14,6 +16,7 @@ using HomeGenie.Service.Updates;
 using MIG;
 using MIG.Gateways;
 using NLog;
+using OpenSource.UPnP;
 
 namespace HomeGenie.Service
 {
@@ -73,7 +76,7 @@ namespace HomeGenie.Service
             statisticsLogger.Start();
 
             // Setup local UPnP device
-            //SetupUpnp();
+            SetupUpnp();
 
             ConfigureUpdater();
 
@@ -1461,66 +1464,66 @@ namespace HomeGenie.Service
             modules_RefreshAll();
         }
 
-//        private void SetupUpnp()
-//        {
-//            IPHostEntry host;
-//            string localIP = "";
-//            host = Dns.GetHostEntry(Dns.GetHostName());
-//            foreach (var ip in host.AddressList)
-//            {
-//                if (ip.AddressFamily == AddressFamily.InterNetwork)
-//                {
-//                    localIP = ip.ToString();
-//                    break;
-//                }
-//            }
-//            string address = localIP;
-//            string bindhost = webGateway.GetOption("Host").Value;
-//            string bindport = webGateway.GetOption("Port").Value;
-//            if (bindhost.Length > 1)
-//            {
-//                address = bindhost;
-//            }
-//            //
-//            string presentationUrl = "http://" + address + ":" + bindport;
-//            //string friendlyName = "HomeGenie: " + Environment.MachineName;
-//            string manufacturer = "G-Labs";
-//            string manufacturerUrl = "http://bounz.github.io/HomeGenie-BE/";
-//            string modelName = "HomeGenie";
-//            string modelDescription = "HomeGenie Home Automation Server";
-//            //string modelURL = "http://homegenie.club/";
-//            string modelNumber = "HG-1";
-//            string standardDeviceType = "HomeAutomationServer";
-//            string uniqueDeviceName = systemConfiguration.HomeGenie.GUID;
-//            if (String.IsNullOrEmpty(uniqueDeviceName))
-//            {
-//                systemConfiguration.HomeGenie.GUID = uniqueDeviceName = Guid.NewGuid().ToString();
-//                systemConfiguration.Update();
-//                // initialize database for first use
-//                statisticsLogger.ResetDatabase();
-//            }
-//            //
-//            var localDevice = UPnPDevice.CreateRootDevice(900, 1, "web\\");
-//            //hgdevice.Icon = null;
-//            if (presentationUrl != "")
-//            {
-//                localDevice.HasPresentation = true;
-//                localDevice.PresentationURL = presentationUrl;
-//            }
-//            localDevice.FriendlyName = modelName + ": " + Environment.MachineName;
-//            localDevice.Manufacturer = manufacturer;
-//            localDevice.ManufacturerURL = manufacturerUrl;
-//            localDevice.ModelName = modelName;
-//            localDevice.ModelDescription = modelDescription;
-//            if (Uri.IsWellFormedUriString(manufacturerUrl, UriKind.Absolute))
-//            {
-//                localDevice.ModelURL = new Uri(manufacturerUrl);
-//            }
-//            localDevice.ModelNumber = modelNumber;
-//            localDevice.StandardDeviceType = standardDeviceType;
-//            localDevice.UniqueDeviceName = uniqueDeviceName;
-//            localDevice.StartDevice();
-//        }
+        private void SetupUpnp()
+        {
+            IPHostEntry host;
+            string localIP = "";
+            host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    localIP = ip.ToString();
+                    break;
+                }
+            }
+            string address = localIP;
+            string bindhost = webGateway.GetOption("Host").Value;
+            string bindport = webGateway.GetOption("Port").Value;
+            if (bindhost.Length > 1)
+            {
+                address = bindhost;
+            }
+            //
+            string presentationUrl = "http://" + address + ":" + bindport;
+            //string friendlyName = "HomeGenie: " + Environment.MachineName;
+            string manufacturer = "G-Labs";
+            string manufacturerUrl = "http://bounz.github.io/HomeGenie-BE/";
+            string modelName = "HomeGenie";
+            string modelDescription = "HomeGenie Home Automation Server";
+            //string modelURL = "http://homegenie.club/";
+            string modelNumber = "HG-1";
+            string standardDeviceType = "HomeAutomationServer";
+            string uniqueDeviceName = systemConfiguration.HomeGenie.GUID;
+            if (String.IsNullOrEmpty(uniqueDeviceName))
+            {
+                systemConfiguration.HomeGenie.GUID = uniqueDeviceName = Guid.NewGuid().ToString();
+                systemConfiguration.Update();
+                // initialize database for first use
+                statisticsLogger.ResetDatabase();
+            }
+            //
+            var localDevice = UPnPDevice.CreateRootDevice(900, 1, "web\\");
+            //hgdevice.Icon = null;
+            if (presentationUrl != "")
+            {
+                localDevice.HasPresentation = true;
+                localDevice.PresentationURL = presentationUrl;
+            }
+            localDevice.FriendlyName = modelName + ": " + Environment.MachineName;
+            localDevice.Manufacturer = manufacturer;
+            localDevice.ManufacturerURL = manufacturerUrl;
+            localDevice.ModelName = modelName;
+            localDevice.ModelDescription = modelDescription;
+            if (Uri.IsWellFormedUriString(manufacturerUrl, UriKind.Absolute))
+            {
+                localDevice.ModelURL = new Uri(manufacturerUrl);
+            }
+            localDevice.ModelNumber = modelNumber;
+            localDevice.StandardDeviceType = standardDeviceType;
+            localDevice.UniqueDeviceName = uniqueDeviceName;
+            localDevice.StartDevice();
+        }
 
         #endregion
     }

@@ -117,6 +117,9 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="UPnP, Version=1.0.5772.30730, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\Externals\upnp\UPnP.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="Raspberry.System">
       <HintPath>..\Externals\raspberry-sharp\Raspberry.System.dll</HintPath>
