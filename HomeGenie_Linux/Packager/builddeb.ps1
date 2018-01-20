@@ -42,4 +42,4 @@ Copy-Item -Path $checkoutFolder\HomeGenie_Linux\Packager\DEBIAN -Destination $ch
 Copy-Item -Path $checkoutFolder\HomeGenie_Linux\Packager\DEBIAN -Destination $checkoutFolder\release\usr\local\bin\homegenie -recurse -force
 
 # Call wpkg to create .deb package
-C:\WPKG\bin\wpkg.exe --build $checkoutFolder\release --output-dir $checkoutFolder\release --verbose
+. C:\WPKG\bin\wpkg.exe --build $checkoutFolder\release --output-dir $checkoutFolder\release --verbose
