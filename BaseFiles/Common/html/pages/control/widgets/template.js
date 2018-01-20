@@ -46,7 +46,7 @@ $$.widget = {
    $$.signalActity('<widget_field_name>') 
 
  For a reference of HomeGenie Javascript API see:
-   https://github.com/genielabs/HomeGenie/tree/master/BaseFiles/Common/html/js/api
+   https://github.com/Bounz/HomeGenie-BE/tree/master/BaseFiles/Common/html/js/api
 
 */
 

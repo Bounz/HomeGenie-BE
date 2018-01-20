@@ -9,6 +9,7 @@ skip_branch_with_pr: true
 branches:
   only:
   - master
+  - /V.*/
 clone_folder: c:\projects\homegenie
 assembly_info:
   patch: true
@@ -21,7 +22,7 @@ assembly_info:
 #---------------------------------#
 
 install:
-  # - git clone https://github.com/genielabs/mig-service-dotnet.git
+  # - git clone https://github.com/Bounz/mig-service-dotnet.git
   
   # Install innosetup
   - choco install -y curl innosetup
@@ -40,6 +41,9 @@ install:
 #---------------------------------#
 #      build configuration        #
 #---------------------------------#
+
+before_build:
+  - nuget restore HomeGenie_Windows\HomeGenie_VS10.sln
 
 #build:
 #  project: c:\projects\homegenie\HomeGenie_Windows\HomeGenie_VS10.sln

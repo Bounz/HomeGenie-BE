@@ -17,7 +17,7 @@
 
 /*
  *     Author: Generoso Martello <gene@homegenie.it>
- *     Project Homepage: http://homegenie.it
+ *     Project Homepage: http://github.com/Bounz/HomeGenie-BE
  */
 
 using HomeGenie.Automation;
@@ -38,6 +38,7 @@ using System.Threading;
 using System.Xml.Serialization;
 using Jint.Parser;
 using HomeGenie.Automation.Scripting;
+using HomeGenie.Service.Updates;
 using MIG.Config;
 using Innovative.SolarCalculator;
 
@@ -202,7 +203,8 @@ namespace HomeGenie.Service.Handlers
                 break;
 
             case "System.GetVersion":
-                request.ResponseData = homegenie.UpdateChecker.GetCurrentRelease();
+                //request.ResponseData = homegenie.UpdateChecker.GetCurrentRelease();
+                request.ResponseData = new {Version = UpdateChecker.CurrentVersion.Format()};
                 break;
 
             case "System.Configure":
@@ -237,8 +239,8 @@ namespace HomeGenie.Service.Handlers
                 }
                 else if (migCommand.GetOption(0) == "UpdateManager.UpdatesList")
                 {
-                    if (homegenie.UpdateChecker.RemoteUpdates != null)
-                        request.ResponseData = homegenie.UpdateChecker.RemoteUpdates;
+                    if (homegenie.UpdateChecker.NewReleases != null)
+                        request.ResponseData = homegenie.UpdateChecker.NewReleases;
                     else
                         request.ResponseData = new ResponseText("ERROR");
                 }
@@ -269,18 +271,18 @@ namespace HomeGenie.Service.Handlers
                         string relInfo = Path.Combine(tempFolderPath, "homegenie", "release_info.xml");
                         if (File.Exists(relInfo))
                         {
-                            var updateRelease = UpdateChecker.GetReleaseFile(relInfo);
+                            var updateRelease = UpdatesHelper.GetReleaseInfoFromFile(relInfo);
                             var currentRelease = homegenie.UpdateChecker.GetCurrentRelease();
                             if (updateRelease.ReleaseDate >= currentRelease.ReleaseDate)
                             {
                                 string installPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "_update", "files");
                                 Utility.FolderCleanUp(installPath);
                                 Directory.Move(Path.Combine(tempFolderPath, "homegenie"), Path.Combine(installPath, "HomeGenie"));
-                                var installStatus = homegenie.UpdateChecker.InstallFiles();
-                                if (installStatus != UpdateChecker.InstallStatus.Error)
+                                var installStatus = homegenie.UpdateInstaller.InstallFiles();
+                                if (installStatus != InstallStatus.Error)
                                 {
                                     success = true;
-                                    if (installStatus == UpdateChecker.InstallStatus.RestartRequired)
+                                    if (installStatus == InstallStatus.RestartRequired)
                                     {
                                         homegenie.RaiseEvent(
                                             Domains.HomeGenie_System,
@@ -342,17 +344,11 @@ namespace HomeGenie.Service.Handlers
                 else if (migCommand.GetOption(0) == "UpdateManager.DownloadUpdate")
                 {
                     var resultMessage = "ERROR";
-                    bool success = homegenie.UpdateChecker.DownloadUpdateFiles();
+                    var latestRelease = homegenie.UpdateChecker.NewestRelease;
+                    bool success = homegenie.UpdateInstaller.DownloadUpdateFiles(latestRelease);
                     if (success)
                     {
-                        if (homegenie.UpdateChecker.IsRestartRequired) // <-- TODO: deprecate this
-                        {
-                            resultMessage = "RESTART";
-                        }
-                        else
-                        {
-                            resultMessage = "OK";
-                        }
+                        resultMessage = "RESTART";
                     }
                     request.ResponseData = new ResponseText(resultMessage);
                 }
@@ -360,14 +356,14 @@ namespace HomeGenie.Service.Handlers
                 {
                     string resultMessage = "OK";
                     homegenie.SaveData();
-                    var installStatus = homegenie.UpdateChecker.InstallFiles();
-                    if (installStatus == UpdateChecker.InstallStatus.Error)
+                    var installStatus = homegenie.UpdateInstaller.InstallFiles();
+                    if (installStatus == InstallStatus.Error)
                     {
                         resultMessage = "ERROR";
                     }
                     else
                     {
-                        if (installStatus == UpdateChecker.InstallStatus.RestartRequired)
+                        if (installStatus == InstallStatus.RestartRequired)
                         {
                             resultMessage = "RESTART";
                             Utility.RunAsyncTask(() =>

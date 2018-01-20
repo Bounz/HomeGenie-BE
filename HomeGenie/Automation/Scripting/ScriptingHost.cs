@@ -17,7 +17,7 @@
 
 /*
  *     Author: Generoso Martello <gene@homegenie.it>
- *     Project Homepage: http://homegenie.it
+ *     Project Homepage: http://github.com/Bounz/HomeGenie-BE
  */
 
 using System;
@@ -28,7 +28,7 @@ using NLog;
  *
  * \section docs HomeGenie Documentation
  * 
- * <a href="http://genielabs.github.io/HomeGenie">http://genielabs.github.io/HomeGenie</a>
+ * <a href="http://bounz.github.io/HomeGenie-BE">http://bounz.github.io/HomeGenie-BE</a>
  * 
  */
 

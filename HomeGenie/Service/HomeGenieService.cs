@@ -1,46 +1,22 @@
-/*
-    This file is part of HomeGenie Project source code.
-
-    HomeGenie is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    HomeGenie is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with HomeGenie.  If not, see <http://www.gnu.org/licenses/>.  
-*/
-
-/*
- *     Author: Generoso Martello <gene@homegenie.it>
- *     Project Homepage: http://homegenie.it
- */
-
-
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Xml.Serialization;
-using System.Net.Sockets;
 using System.Threading;
 using System.Xml;
-using OpenSource.UPnP;
-
 using HomeGenie.Automation;
 using HomeGenie.Data;
 using HomeGenie.Service.Constants;
 using HomeGenie.Service.Logging;
 using HomeGenie.Automation.Scheduler;
-
+using HomeGenie.Service.Updates;
 using MIG;
 using MIG.Gateways;
 using NLog;
+using OpenSource.UPnP;
 
 namespace HomeGenie.Service
 {
@@ -55,13 +31,14 @@ namespace HomeGenie.Service
         private WebServiceGateway webGateway;
         private ProgramManager masterControlProgram;
         private VirtualMeter virtualMeter;
-        private UpdateChecker updateChecker;
+        //private UpdateChecker updateChecker;
+        private UpdateManager _updateManager;
         private BackupManager backupManager;
         private PackageManager packageManager;
         private StatisticsLogger statisticsLogger;
         // Internal data structures
-        private TsList<Module> systemModules = new HomeGenie.Service.TsList<Module>();
-        private TsList<Module> modulesGarbage = new HomeGenie.Service.TsList<Module>();
+        private TsList<Module> systemModules = new TsList<Module>();
+        private TsList<Module> modulesGarbage = new TsList<Module>();
         private TsList<VirtualModule> virtualModules = new TsList<VirtualModule>();
         private List<Group> automationGroups = new List<Group>();
         private List<Group> controlGroups = new List<Group>();
@@ -94,19 +71,31 @@ namespace HomeGenie.Service
 
             backupManager = new BackupManager(this);
             packageManager = new PackageManager(this);
-            updateChecker = new UpdateChecker(this);
-            updateChecker.ArchiveDownloadUpdate += (object sender, ArchiveDownloadEventArgs args) =>
-            {
-                RaiseEvent(
-                    Domains.HomeGenie_System,
-                    Domains.HomeGenie_UpdateChecker,
-                    SourceModule.Master,
-                    "HomeGenie Update Checker",
-                    Properties.InstallProgressMessage,
-                    "= " + args.Status + ": " + args.ReleaseInfo.DownloadUrl
-                );
-            };
-            updateChecker.UpdateProgress += (object sender, UpdateProgressEventArgs args) =>
+
+            statisticsLogger = new StatisticsLogger(this);
+            statisticsLogger.Start();
+
+            // Setup local UPnP device
+            SetupUpnp();
+
+            ConfigureUpdater();
+
+
+            Thread.Sleep(5000);
+
+
+
+            Start();
+        }
+
+        private void ConfigureUpdater()
+        {
+            _updateManager = new UpdateManager(this);
+
+            var updateChecker = _updateManager.UpdateChecker;
+            var updateInstaller = _updateManager.UpdateInstaller;
+
+            updateChecker.UpdateProgress += (sender, args) =>
             {
                 RaiseEvent(
                     Domains.HomeGenie_System,
@@ -117,7 +106,20 @@ namespace HomeGenie.Service
                     args.Status.ToString()
                 );
             };
-            updateChecker.InstallProgressMessage += (object sender, string message) =>
+
+            updateInstaller.ArchiveDownloadUpdate += (sender, args) =>
+            {
+                RaiseEvent(
+                    Domains.HomeGenie_System,
+                    Domains.HomeGenie_UpdateChecker,
+                    SourceModule.Master,
+                    "HomeGenie Update Checker",
+                    Properties.InstallProgressMessage,
+                    "= " + args.Status + ": " + args.ReleaseInfo.DownloadUrl
+                );
+            };
+
+            updateInstaller.InstallProgressMessage += (sender, message) =>
             {
                 RaiseEvent(
                     Domains.HomeGenie_System,
@@ -129,29 +131,18 @@ namespace HomeGenie.Service
                 );
             };
 
-            statisticsLogger = new StatisticsLogger(this);
-            statisticsLogger.Start();
-
-            // Setup local UPnP device
-            SetupUpnp();
-
-            // it will check every 24 hours
-            updateChecker.Start();
-
-            Thread.Sleep(5000);
-
             // this is a fix for upgrading from r522 to any new release as the SchedulerItem object has changed in r523
             // de-serializing new object will only work after HomeGenie.exe update and restart
             if (File.Exists("scheduler_update.xml"))
             {
-                updateChecker.UpdateScheduler("scheduler_update.xml");
+                updateInstaller.UpdateScheduler("scheduler_update.xml");
                 File.Delete("scheduler_update.xml");
             }
 
-            Start();
+            _updateManager.Start();
         }
 
-        public void Start()
+        private void Start()
         {
             RaiseEvent(Domains.HomeGenie_System, Domains.HomeGenie_System, SourceModule.Master, "HomeGenie System", Properties.HomeGenieStatus, "STARTED");
             // Signal "SystemStarted" event to automation programs
@@ -205,7 +196,7 @@ namespace HomeGenie.Service
             SaveData();
 
             // Stop HG helper services
-            updateChecker.Stop();
+            _updateManager.Stop();
             statisticsLogger.Stop();
 
             RaiseEvent(Domains.HomeGenie_System, Domains.HomeGenie_System, SourceModule.Master, "HomeGenie System", Properties.HomeGenieStatus, "VirtualMeter STOPPING");
@@ -241,70 +232,45 @@ namespace HomeGenie.Service
         #region Data Wrappers - Public Members
 
         // Control groups (i.e. rooms, Outside, Housewide)
-        public List<Group> Groups
-        {
-            get { return controlGroups; }
-        }
+        public List<Group> Groups => controlGroups;
+
         // Automation groups
-        public List<Group> AutomationGroups
-        {
-            get { return automationGroups; }
-        }
+        public List<Group> AutomationGroups => automationGroups;
+
         // MIG interfaces
-        public List<MigInterface> Interfaces
-        {
-            get { return migService.Interfaces; }
-        }
+        public List<MigInterface> Interfaces => migService.Interfaces;
+
         // Modules
-        public TsList<Module> Modules
-        {
-            get { return systemModules; }
-        }
+        public TsList<Module> Modules => systemModules;
+
         // Virtual modules
-        public TsList<VirtualModule> VirtualModules
-        {
-            get { return virtualModules; }
-        }
+        public TsList<VirtualModule> VirtualModules => virtualModules;
+
         // HomeGenie system parameters
-        public List<ModuleParameter> Parameters
-        {
-            get { return systemConfiguration.HomeGenie.Settings; }
-        }
+        public List<ModuleParameter> Parameters => systemConfiguration.HomeGenie.Settings;
+
         // Reference to SystemConfiguration
-        public SystemConfiguration SystemConfiguration
-        {
-            get { return systemConfiguration; }
-        }
+        public SystemConfiguration SystemConfiguration => systemConfiguration;
+
         // Reference to MigService
-        public MigService MigService
-        {
-            get { return migService; }
-        }
+        public MigService MigService => migService;
+
         // Reference to ProgramEngine
-        public ProgramManager ProgramManager
-        {
-            get { return masterControlProgram; }
-        }
+        public ProgramManager ProgramManager => masterControlProgram;
+
         // Reference to UpdateChecked
-        public UpdateChecker UpdateChecker
-        {
-            get { return updateChecker; }
-        }
+        public UpdateChecker UpdateChecker => _updateManager.UpdateChecker;
+        public UpdateInstaller UpdateInstaller => _updateManager.UpdateInstaller;
+
         // Reference to BackupManager
-        public BackupManager BackupManager
-        {
-            get { return backupManager; }
-        }
+        public BackupManager BackupManager => backupManager;
+
         // Reference to PackageManager
-        public PackageManager PackageManager
-        {
-            get { return packageManager; }
-        }
+        public PackageManager PackageManager => packageManager;
+
         // Reference to Statistics
-        public StatisticsLogger Statistics
-        {
-            get { return statisticsLogger; }
-        }
+        public StatisticsLogger Statistics => statisticsLogger;
+
         // Public utility methods
         public string GetHttpServicePort()
         {
@@ -444,13 +410,13 @@ namespace HomeGenie.Service
                 for (int m = 0; m < group.Modules.Count; m++)
                 {
                     var module = Modules.Find(mod => mod.Domain == group.Modules[m].Domain && mod.Address == group.Modules[m].Address);
-                    if (module != null && (module.DeviceType == MIG.ModuleTypes.Light || module.DeviceType == MIG.ModuleTypes.Dimmer))
+                    if (module != null && (module.DeviceType == ModuleTypes.Light || module.DeviceType == ModuleTypes.Dimmer))
                     {
                         try
                         {
                             var icmd = new MigInterfaceCommand(module.Domain + "/" + module.Address + "/" + commandValue);
                             InterfaceControl(icmd);
-                            Service.Utility.ModuleParameterGet(module, Properties.StatusLevel).Value = levelValue;
+                            Utility.ModuleParameterGet(module, Properties.StatusLevel).Value = levelValue;
                         }
                         catch (Exception e)
                         {
@@ -1100,12 +1066,12 @@ namespace HomeGenie.Service
                     // module inherits props from associated virtual module
                     module.Domain = virtualModule.Domain;
                     module.Address = virtualModule.Address;
-                    if (module.DeviceType == MIG.ModuleTypes.Generic && virtualModule.DeviceType != ModuleTypes.Generic)
+                    if (module.DeviceType == ModuleTypes.Generic && virtualModule.DeviceType != ModuleTypes.Generic)
                     {
                         module.DeviceType = virtualModule.DeviceType;
                     }
                     // associated module's name of an automation program cannot be changed
-                    if (module.Name == "" || (module.DeviceType == MIG.ModuleTypes.Program && virtualModule.Name != ""))
+                    if (module.Name == "" || (module.DeviceType == ModuleTypes.Program && virtualModule.Name != ""))
                     {
                         module.Name = virtualModule.Name;
                     }
@@ -1184,7 +1150,7 @@ namespace HomeGenie.Service
                         }
                         module.Name = program.Name;
                         module.Address = program.Address.ToString();
-                        module.DeviceType = MIG.ModuleTypes.Program;
+                        module.DeviceType = ModuleTypes.Program;
                         //module.Description = "Wizard Script";
                     }
                     // Add "Scheduler" virtual module
@@ -1355,7 +1321,7 @@ namespace HomeGenie.Service
             wshStatistics = new Handlers.Statistics(this);
 
             // Initialize MigService, gateways and interfaces
-            migService = new MIG.MigService();
+            migService = new MigService();
             migService.InterfaceModulesChanged += migService_InterfaceModulesChanged;
             migService.InterfacePropertyChanged += migService_InterfacePropertyChanged;
             migService.GatewayRequestPreProcess += migService_ServiceRequestPreProcess;
@@ -1437,10 +1403,10 @@ namespace HomeGenie.Service
         {
             try
             {
-                var serializer = new XmlSerializer(typeof(HomeGenie.Service.TsList<Module>));
+                var serializer = new XmlSerializer(typeof(TsList<Module>));
                 using (var reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "modules.xml")))
                 {
-                    var modules = (HomeGenie.Service.TsList<Module>)serializer.Deserialize(reader);
+                    var modules = (TsList<Module>)serializer.Deserialize(reader);
                     foreach (var module in modules)
                     {
                         foreach (var parameter in module.Properties)
@@ -1522,16 +1488,16 @@ namespace HomeGenie.Service
             string presentationUrl = "http://" + address + ":" + bindport;
             //string friendlyName = "HomeGenie: " + Environment.MachineName;
             string manufacturer = "G-Labs";
-            string manufacturerUrl = "http://genielabs.github.io/HomeGenie/";
+            string manufacturerUrl = "http://bounz.github.io/HomeGenie-BE/";
             string modelName = "HomeGenie";
             string modelDescription = "HomeGenie Home Automation Server";
-            //string modelURL = "http://homegenie.it/";
+            //string modelURL = "http://homegenie.club/";
             string modelNumber = "HG-1";
             string standardDeviceType = "HomeAutomationServer";
             string uniqueDeviceName = systemConfiguration.HomeGenie.GUID;
             if (String.IsNullOrEmpty(uniqueDeviceName))
             {
-                systemConfiguration.HomeGenie.GUID = uniqueDeviceName = System.Guid.NewGuid().ToString();
+                systemConfiguration.HomeGenie.GUID = uniqueDeviceName = Guid.NewGuid().ToString();
                 systemConfiguration.Update();
                 // initialize database for first use
                 statisticsLogger.ResetDatabase();

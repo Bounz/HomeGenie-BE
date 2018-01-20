@@ -1,15 +1,15 @@
 # Contributing
 
 When contributing to this repository, please first discuss the change you wish to make via the
-[issue tracker](https://github.com/genielabs/HomeGenie/issues) before making a change.
+[issue tracker](https://github.com/Bounz/HomeGenie-BE/issues) before making a change.
 
 ## How to contribute to HomeGenie
 
 #### **Did you find a bug?**
 
-* **Ensure the bug was not already reported** by searching on GitHub under [Issues](https://github.com/genielabs/HomeGenie/issues).
+* **Ensure the bug was not already reported** by searching on GitHub under [Issues](https://github.com/Bounz/HomeGenie-BE/issues).
 
-* If you're unable to find an open issue addressing the problem, [open a new one](https://github.com/genielabs/HomeGenie/issues/new).
+* If you're unable to find an open issue addressing the problem, [open a new one](https://github.com/Bounz/HomeGenie-BE/issues/new).
 Be sure to include a **title and clear description**, as much relevant information as possible, and a **code sample**
 or an **executable test case** demonstrating the expected behavior that is not occurring.
 
@@ -23,19 +23,19 @@ Include the relevant issue number if applicable.
 #### **Did you fix whitespace, format code, or make a purely cosmetic patch?**
 
 Changes that are cosmetic in nature and do not add anything substantial to the stability, functionality,
-or testability of HomeGenie will generally not be accepted unless discussed via the [issue tracker](https://github.com/genielabs/HomeGenie/issues).
+or testability of HomeGenie will generally not be accepted unless discussed via the [issue tracker](https://github.com/Bounz/HomeGenie-BE/issues).
 
 #### **Do you intend to add a new feature or change an existing one?**
 
-File a new *[enhancement issue](https://github.com/genielabs/HomeGenie/issues/new?labels=enhancement)*.
+File a new *[enhancement issue](https://github.com/Bounz/HomeGenie-BE/issues/new?labels=enhancement)*.
 
 #### **Do you have questions about the source code?**
 
-File a new *[question issue](https://github.com/genielabs/HomeGenie/issues/new?labels=question)*.
+File a new *[question issue](https://github.com/Bounz/HomeGenie-BE/issues/new?labels=question)*.
 
 #### **Do you want to contribute to the HomeGenie documentation?**
 
-The documentation site source code is available from the **[gh-pages](https://github.com/genielabs/HomeGenie/tree/gh-pages)** branch, you can
+The documentation site source code is available from the **[gh-pages](https://github.com/Bounz/HomeGenie-BE/tree/gh-pages)** branch, you can
 contribute following same rules used for the main repo.
 
 #### **Coding styles and conventions**
@@ -46,7 +46,7 @@ but this will be fixed from time to time.
 
 #### **Getting started with HomeGenie source code**
 
-Clone [**HomeGenie repository**](https://github.com/genielabs/HomeGenie).
+Clone [**HomeGenie repository**](https://github.com/Bounz/HomeGenie-BE).
 
 ##### Building, debugging and packaging HomeGenie
 

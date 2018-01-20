@@ -17,7 +17,7 @@
 
 /*
  *     Author: Generoso Martello <gene@homegenie.it>
- *     Project Homepage: http://homegenie.it
+ *     Project Homepage: http://github.com/Bounz/HomeGenie-BE
  */
 
 using System;
@@ -42,6 +42,7 @@ using HomeGenie.Service.Constants;
 using Newtonsoft.Json.Serialization;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
+using SharpCompress.Readers;
 
 namespace HomeGenie.Service
 {
@@ -378,25 +379,27 @@ namespace HomeGenie.Service
 
         internal static List<string> UncompressTgz(string archiveName, string destinationFolder)
         {
-            List<string> extractedFiles = new List<string>();
+            var extractedFiles = new List<string>();
             try
             {
-                Stream inStream = File.OpenRead(archiveName);
-                Stream gzipStream = new GZipInputStream(inStream);
+                using (Stream stream = File.OpenRead(archiveName))
+                using (var reader = ReaderFactory.Open(stream))
+                {
+                    while (reader.MoveToNextEntry())
+                    {
+                        if (reader.Entry.IsDirectory)
+                            continue;
 
-                TarArchive tarArchive = TarArchive.CreateInputTarArchive(gzipStream);
-                tarArchive.ProgressMessageEvent += (archive, entry, message) => {
-                    extractedFiles.Add(entry.Name);
-                };
-
-                tarArchive.ExtractContents(destinationFolder);
-                tarArchive.ListContents();
-                tarArchive.Close();
-
-                gzipStream.Close();
-                inStream.Close();
-            } 
-            catch (Exception e) 
+                        extractedFiles.Add(reader.Entry.Key);
+                        reader.WriteEntryToDirectory(destinationFolder, new ExtractionOptions
+                        {
+                            ExtractFullPath = true,
+                            Overwrite = true
+                        });
+                    }
+                }
+            }
+            catch (Exception e)
             {
                 Console.WriteLine("UnTar error: " + e.Message);
             }

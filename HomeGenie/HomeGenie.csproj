@@ -106,13 +106,20 @@
       <HintPath>..\Externals\NCrontab\NCrontab.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="SharpCompress, Version=0.19.2.0, Culture=neutral, PublicKeyToken=afb0a02973931d96">
+      <HintPath>..\packages\SharpCompress.0.19.2\lib\net45\SharpCompress.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="UPnP, Version=1.0.5772.30730, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\Externals\upnp\UPnP.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="Raspberry.System">
       <HintPath>..\Externals\raspberry-sharp\Raspberry.System.dll</HintPath>
@@ -155,14 +162,8 @@
       <HintPath>..\Externals\CronExpressionDescriptor\CronExpressionDescriptor.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UPnP">
-      <HintPath>..\Externals\upnp\UPnP.dll</HintPath>
-    </Reference>
     <Reference Include="NLog">
       <HintPath>..\Externals\g-labs\NLog.dll</HintPath>
-    </Reference>
-    <Reference Include="MIG">
-      <HintPath>..\Externals\g-labs\MIG.dll</HintPath>
     </Reference>
     <Reference Include="SerialPortLib">
       <HintPath>..\Externals\g-labs\SerialPortLib.dll</HintPath>
@@ -215,7 +216,19 @@
     <Compile Include="Service\Handlers\Statistics.cs" />
     <Compile Include="Service\JsonHelper.cs" />
     <Compile Include="Service\Logging\StatisticsLogger.cs" />
-    <Compile Include="Service\UpdateChecker.cs" />
+    <Compile Include="Service\Updates\ArchiveDownloadEventArgs.cs" />
+    <Compile Include="Service\Updates\ArchiveDownloadStatus.cs" />
+    <Compile Include="Service\Updates\InstallStatus.cs" />
+    <Compile Include="Service\Updates\GitHub\Asset.cs" />
+    <Compile Include="Service\Updates\GitHub\GitHubRelease.cs" />
+    <Compile Include="Service\Updates\GitHub\Uploader.cs" />
+    <Compile Include="Service\Updates\ReleaseInfo.cs" />
+    <Compile Include="Service\Updates\UpdateChecker.cs" />
+    <Compile Include="Service\Updates\UpdateInstaller.cs" />
+    <Compile Include="Service\Updates\UpdateManager.cs" />
+    <Compile Include="Service\Updates\UpdateProgressEventArgs.cs" />
+    <Compile Include="Service\Updates\UpdateProgressStatus.cs" />
+    <Compile Include="Service\Updates\UpdatesHelper.cs" />
     <Compile Include="Service\Utility.cs" />
     <Compile Include="Data\Group.cs" />
     <Compile Include="Data\ModuleReference.cs" />
@@ -257,24 +270,8 @@
     <Compile Include="Automation\Scripting\ProgramHelperBase.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\CREDITS.TXT">
-      <Link>CREDITS.TXT</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="..\DEVELOPERS.TXT">
-      <Link>DEVELOPERS.TXT</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="..\HISTORY.TXT">
-      <Link>HISTORY.TXT</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="..\LICENCE.TXT">
       <Link>LICENCE.TXT</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="..\README.TXT">
-      <Link>README.TXT</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="app.config" />
@@ -316,6 +313,10 @@
       <Project>{0A27EF44-EC80-4FDB-8764-B153C169905D}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MIG\MIG\MIG.csproj">
+      <Project>{005357c9-7f8e-458e-affa-bf84f7d6a6ae}</Project>
+      <Name>MIG</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SupportLibraries\NetClientLib\NetClientLib.csproj">
       <Project>{318D2523-3C8B-4273-B1EA-DE339868403C}</Project>
       <Name>NetClientLib</Name>
@@ -327,7 +328,6 @@
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
-  <ItemGroup />
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>
@@ -342,5 +342,4 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
-  <ItemGroup />
 </Project>

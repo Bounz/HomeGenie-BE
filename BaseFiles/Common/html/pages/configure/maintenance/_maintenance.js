@@ -641,8 +641,8 @@ HG.WebApp.Maintenance = HG.WebApp.Maintenance || new function () { var $$ = this
                 var s = '<pre>';
                 for (var r = 0; r < releasedata.length; r++) {
                     var relinfo = releasedata[r];
-                    s += '<strong>' + relinfo.Name + ' ' + relinfo.Version + ' ' + relinfo.ReleaseDate + '</strong>\n'
-                    s += '<em>' + relinfo.ReleaseNote + '</em>\n'
+                    s += '<strong>' + relinfo.Version + '</strong> ' + relinfo.ReleaseDate + '\n';
+                    s += '<em>' + relinfo.ReleaseNote + '</em>\n';
                 }
                 s += '</pre>';
                 $('#configure_system_updatemanager_details').html(s);
