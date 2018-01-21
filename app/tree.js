@@ -159,7 +159,7 @@ var contentTree = {
             data: {
                 title: 'Source',
                 icon: 'view_headline',
-                link: 'https://github.com/genielabs/HomeGenie'
+                link: 'https://github.com/Bounz/HomeGenie-BE'
             }
         },
         {

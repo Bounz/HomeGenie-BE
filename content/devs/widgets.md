@@ -68,7 +68,7 @@ When designing the widget's *View* a few guide-lines have to be considered:
 - never use the `id` attribute for elements that have to be referenced in
 the *Javascript* code; use the `data-ui-field` attribute instead
 - prefer the use of *CSS* classes provided by *HG UI*, which are [jQuery Mobile's CSS classes](https://api.jquerymobile.com/classes/)
-and the ones defined by standard [HG's CSS file](https://github.com/genielabs/HomeGenie/blob/master/BaseFiles/Common/html/css/my.css#L265)
+and the ones defined by standard [HG's CSS file](https://github.com/Bounz/HomeGenie-BE/blob/master/BaseFiles/Common/html/css/my.css#L265)
 - since *HG UI* is based on [jQuery Mobile](http://jquerymobile.com/),
 prefer using this framework instead of plain HTML; there are a couple of
 other frameworks/plugins that can also be used next to [jQuery Mobile](http://jquerymobile.com/)
@@ -298,7 +298,7 @@ The only mandatory fields in the Javascript code of a *v1* widget are
 *IconImage* and *RenderView*:
 
 - **IconImage** is the image used to identify the widget in the *UI*. See
-[List of HG UI icons](https://github.com/genielabs/HomeGenie/tree/master/BaseFiles/Common/html/pages/control/widgets/homegenie/generic/images).
+[List of HG UI icons](https://github.com/Bounz/HomeGenie-BE/tree/master/BaseFiles/Common/html/pages/control/widgets/homegenie/generic/images).
 - **RenderView** is a function that *HG UI* will call everytime the
 bound module is updated, passing to it the parameter `cuid`, which is the
 **id** attribute of the widget's container and the `module` parameter,
@@ -362,7 +362,7 @@ progs.Run(programId, options, fuction(response){
 
 ## HomeGenie Javascript API
 
-See [HG Javascript API on github](https://github.com/genielabs/HomeGenie/tree/master/BaseFiles/Common/html/js/api) for a complete
+See [HG Javascript API on github](https://github.com/Bounz/HomeGenie-BE/tree/master/BaseFiles/Common/html/js/api) for a complete
 list of available namespaces and commands.
 
 ## Frameworks and Plugins

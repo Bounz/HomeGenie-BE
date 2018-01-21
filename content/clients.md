@@ -65,7 +65,7 @@ Specifically designed to be a Control Panel for the end-user, **HomeGenie Plus**
 
 Feel free to submit any issue or feature request using the following link:
 
-- [HomeGenie Plus issue reporting and features request](https://github.com/genielabs/homegenie-plus-android/issues)
+- [HomeGenie Plus issue reporting and features request](https://github.com/Bounz/HomeGenie-BE-plus-android/issues)
 - [HomeGenie Plus discussion thread on HG forum](http://www.homegenie.it/forum/index.php?topic=1142)
 
 
@@ -78,11 +78,11 @@ to be used for administration and testing purposes as it will give full access t
 ### App and source code links
 
 - [HomeGenie on Play Store](https://play.google.com/store/apps/details?id=com.glabs.homegenie)
-- [HomeGenie for Android on github](https://github.com/genielabs/HomeGenie-Android)
+- [HomeGenie for Android on github](https://github.com/Bounz/HomeGenie-BE-Android)
 
 
 ## Old Windows Phone 8.x client (source code only)
 
-- [HomeGenie for Windows Phone on github](https://github.com/genielabs/HomeGenie-WindowsPhone)
+- [HomeGenie for Windows Phone on github](https://github.com/Bounz/HomeGenie-BE-WindowsPhone)
 
 <br /><br /><br /><br />

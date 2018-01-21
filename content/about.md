@@ -46,7 +46,7 @@ The [Program Editor](#/develop/programs) and its API support **GPIO**/**I2C**/**
 hardware programming.
 
 Applications and useful widgets can be found in the *SBC* section of the
-<a href="https://github.com/genielabs/homegenie-packages/tree/master/packages/Single%20Board%20Computers/Raspberry%20Pi">Package Repository</a>.
+<a href="https://github.com/Bounz/HomeGenie-BE-packages/tree/master/packages/Single%20Board%20Computers/Raspberry%20Pi">Package Repository</a>.
 
 
 ### Open Source
@@ -54,9 +54,9 @@ Applications and useful widgets can be found in the *SBC* section of the
 HomeGenie server source code is publicly available on GitHub.
 
 <div class="media-container">
-    <a href="https://github.com/genielabs/HomeGenie"><img width="196" src="images/github.png" /></a>
+    <a href="https://github.com/Bounz/HomeGenie-BE"><img width="196" src="images/github.png" /></a>
     <br />
-    <a href="https://github.com/genielabs/HomeGenie">Fork me on GitHub!</a>
+    <a href="https://github.com/Bounz/HomeGenie-BE">Fork me on GitHub!</a>
 </div>
 
 
