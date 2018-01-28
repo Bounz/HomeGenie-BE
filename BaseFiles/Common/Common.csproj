@@ -2833,26 +2833,6 @@
     <None Include="html\images\wallpapers\wallpaper_004.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\Externals\CronExpressionDescriptor\CronExpressionDescriptor.dll">
-      <Link>lib\shared\CronExpressionDescriptor.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\knx.net\KNXLib.dll">
-      <Link>lib\shared\KNXLib.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\knx.net\KNXLib.dll.mdb">
-      <Link>lib\shared\KNXLib.dll.mdb</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\NCrontab\NCrontab.dll">
-      <Link>lib\shared\NCrontab.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\NCrontab\NCrontab.pdb">
-      <Link>lib\shared\NCrontab.pdb</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="..\..\Externals\upnp\UPnP.dll">
       <Link>lib\shared\UPnP.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2892,78 +2872,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="NLog.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\g-labs\MIG.Controllers.dll">
-      <Link>lib\mig\MIG.Controllers.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\g-labs\MIG.HomeAutomation.dll">
-      <Link>lib\mig\MIG.HomeAutomation.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\g-labs\MIG.Media.dll">
-      <Link>lib\mig\MIG.Media.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\g-labs\MIG.Protocols.dll">
-      <Link>lib\mig\MIG.Protocols.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\g-labs\SoapBox.FluentDwelling.dll">
-      <Link>lib\shared\SoapBox.FluentDwelling.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\g-labs\LibUsbDotNet.dll">
-      <Link>lib\mig\LibUsbDotNet.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\g-labs\XTenLib.dll">
-      <Link>lib\mig\XTenLib.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\g-labs\ZWaveLib.dll">
-      <Link>lib\mig\ZWaveLib.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\CronExpressionDescriptor\de\CronExpressionDescriptor.resources.dll">
-      <Link>lib\shared\de\CronExpressionDescriptor.resources.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\CronExpressionDescriptor\es\CronExpressionDescriptor.resources.dll">
-      <Link>lib\shared\es\CronExpressionDescriptor.resources.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\CronExpressionDescriptor\fr\CronExpressionDescriptor.resources.dll">
-      <Link>lib\shared\fr\CronExpressionDescriptor.resources.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\CronExpressionDescriptor\it\CronExpressionDescriptor.resources.dll">
-      <Link>lib\shared\it\CronExpressionDescriptor.resources.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\CronExpressionDescriptor\nl\CronExpressionDescriptor.resources.dll">
-      <Link>lib\shared\nl\CronExpressionDescriptor.resources.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\CronExpressionDescriptor\no\CronExpressionDescriptor.resources.dll">
-      <Link>lib\shared\no\CronExpressionDescriptor.resources.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\CronExpressionDescriptor\ru\CronExpressionDescriptor.resources.dll">
-      <Link>lib\shared\ru\CronExpressionDescriptor.resources.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\CronExpressionDescriptor\tr\CronExpressionDescriptor.resources.dll">
-      <Link>lib\shared\tr\CronExpressionDescriptor.resources.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\CronExpressionDescriptor\uk\CronExpressionDescriptor.resources.dll">
-      <Link>lib\shared\uk\CronExpressionDescriptor.resources.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\CronExpressionDescriptor\zh-CHS\CronExpressionDescriptor.resources.dll">
-      <Link>lib\shared\zh-CHS\CronExpressionDescriptor.resources.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="programs\505.dll">
@@ -3134,10 +3042,6 @@
     <None Include="html\css\jqm-font-awesome-isvg-ipng.min.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\Externals\raspberry-sharp\Raspberry.IO.Components.dll.config">
-      <Link>Raspberry.IO.Components.dll.config</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="programs\29.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -3259,14 +3163,6 @@
     <None Include="lib\mig\p1db_custom.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\Externals\M2Mqtt.Net\M2Mqtt.Net.dll">
-      <Link>lib\shared\M2Mqtt.Net.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\M2Mqtt.Net\M2Mqtt.Net.dll.mdb">
-      <Link>lib\shared\M2Mqtt.Net.dll.mdb</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="html\js\api\homegenie.automation.scheduling.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -3324,10 +3220,6 @@
     <None Include="html\js\app\homegenie.webapp.utility.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\Externals\CronExpressionDescriptor\pt\CronExpressionDescriptor.resources.dll">
-      <Link>lib\shared\pt\CronExpressionDescriptor.resources.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="html\images\wallpapers\wallpaper_008.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -3380,14 +3272,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="html\js\locationpicker.jquery.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\SolarCalculator\Innovative.SolarCalculator.dll">
-      <Link>lib\shared\Innovative.SolarCalculator.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Externals\SolarCalculator\Innovative.Geometry.dll">
-      <Link>lib\shared\Innovative.Geometry.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="html\pages\configure\scheduler\templates\program.say.js">
