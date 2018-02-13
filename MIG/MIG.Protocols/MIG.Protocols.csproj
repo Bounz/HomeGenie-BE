@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>MIG.Protocols</RootNamespace>
     <AssemblyName>MIG.Protocols</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <ReleaseVersion>1.0</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
