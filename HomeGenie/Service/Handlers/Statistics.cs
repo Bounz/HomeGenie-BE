@@ -29,6 +29,7 @@ using MIG;
 
 using HomeGenie.Service.Constants;
 using HomeGenie.Service.Logging;
+using Newtonsoft.Json;
 
 namespace HomeGenie.Service.Handlers
 {
@@ -59,8 +60,13 @@ namespace HomeGenie.Service.Handlers
                 break;
 
             case "Global.TimeRange":
-                var totalRange = homegenie.Statistics.GetDateRange();
-                request.ResponseData = "{ \"StartTime\" : \"" + Utility.DateToJavascript(totalRange.TimeStart).ToString("0.000", System.Globalization.CultureInfo.InvariantCulture) + "\", \"EndTime\" : \"" + Utility.DateToJavascript(totalRange.TimeEnd).ToString("0.000", System.Globalization.CultureInfo.InvariantCulture) + "\" }";
+                // TODO create dedicated class or use Tuple<DateTime, DateTime>
+                var statEntry = homegenie.Statistics.GetDateRange();
+                request.ResponseData = JsonConvert.SerializeObject(new
+                {
+                    StartTime = Utility.DateToJavascript(statEntry.TimeStart),
+                    EndTime = Utility.DateToJavascript(statEntry.TimeEnd),
+                });
                 break;
 
             case "Database.Reset":
@@ -68,7 +74,10 @@ namespace HomeGenie.Service.Handlers
                 break;
             case "Configuration.Get":
                 // Just one at the moment.
-                request.ResponseData = "{ \"StatisticsUIRefreshSeconds\" : \"" + homegenie.SystemConfiguration.HomeGenie.Statistics.StatisticsUIRefreshSeconds + "\" }";
+                request.ResponseData = JsonConvert.SerializeObject(new
+                {
+                    StatisticsUIRefreshSeconds = homegenie.SystemConfiguration.HomeGenie.Statistics.StatisticsUIRefreshSeconds
+                });
                 break;
             case "Parameter.List":
                 domainSeparator = migCommand.GetOption(0).LastIndexOf(":");
@@ -77,13 +86,8 @@ namespace HomeGenie.Service.Handlers
                     domain = migCommand.GetOption(0).Substring(0, domainSeparator);
                     address = migCommand.GetOption(0).Substring(domainSeparator + 1);
                 }
-                response = "[";
-                foreach (string statParameter in homegenie.Statistics.GetParametersList(domain, address))
-                {
-                    response += "	\"" + statParameter + "\",\n";
-                }
-                response = response.TrimEnd(',', '\n');
-                response += "\n]";
+                var statParameters = homegenie.Statistics.GetParametersList(domain, address);
+                response = JsonConvert.SerializeObject(statParameters);
                 request.ResponseData = response;
                 break;
 

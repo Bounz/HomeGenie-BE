@@ -2709,9 +2709,6 @@
     <None Include="homegenie_stats.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="sqlite3.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="html\pages\configure\interfaces\configlet\zwave.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

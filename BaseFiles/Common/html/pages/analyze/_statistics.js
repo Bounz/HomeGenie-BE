@@ -11,6 +11,8 @@ HG.WebApp.Statistics = HG.WebApp.Statistics || new function () { var $$ = this;
     $$._SelItemObject = false;
     $$._ItemObject = '';
 
+    $$.statBaseUrl = '/' + HG.WebApp.Data.ServiceKey + '/' + HG.WebApp.Data.ServiceDomain + '/Statistics';
+
     $$.InitializePage = function () {
         $('#page_analyze_source').on('change', function () {
             var selected = $(this).find('option:selected');
@@ -89,11 +91,13 @@ HG.WebApp.Statistics = HG.WebApp.Statistics || new function () { var $$ = this;
                 fixed: true
             }
         });
+
         $("#statshour").bind("plothover", function (event, pos, item) {
             // Grab the API reference
             var graph = $(this),
                 api = graph.qtip(),
                 previousPoint;
+
             // If we weren't passed the item object, hide the tooltip and remove cached point data
             if (!item) {
                 api.cache.point = false;
@@ -118,6 +122,7 @@ HG.WebApp.Statistics = HG.WebApp.Statistics || new function () { var $$ = this;
                 }
             }
         });
+
         $("#statscounter").qtip({
             id: 'flot',
             prerender: true,
@@ -135,6 +140,7 @@ HG.WebApp.Statistics = HG.WebApp.Statistics || new function () { var $$ = this;
                 fixed: true
             }
         });
+
         $("#statscounter").bind("plothover", function (event, pos, item) {
             // Grab the API reference
             var graph = $(this),
@@ -157,10 +163,11 @@ HG.WebApp.Statistics = HG.WebApp.Statistics || new function () { var $$ = this;
                 api.show(item);
             }
         });
+
         $("#page_delete_stat").on('click', function () {
             if ($$._SelItemObject == true) {
                 $.ajax({
-                    url: '/' + HG.WebApp.Data.ServiceKey + '/' + HG.WebApp.Data.ServiceDomain + '/Statistics/Parameter.StatDelete/' + $$._ItemObject,
+                    url: $$.statBaseUrl + '/Parameter.StatDelete/' + $$._ItemObject,
                     type: 'GET',
                     success: function (data) {
                         var stats = eval(data);
@@ -177,6 +184,7 @@ HG.WebApp.Statistics = HG.WebApp.Statistics || new function () { var $$ = this;
             $$._SelItemObject = false;
             $("#page_delete_stat").hide();
         });
+
         $("#statshour").on('click', function () {
             if ($$._SelItemObject == false) {
                 if ($$._ItemObject != '') {
@@ -238,16 +246,16 @@ HG.WebApp.Statistics = HG.WebApp.Statistics || new function () { var $$ = this;
     };
 
     $$.RefreshModules = function () {
-
-        var coption = $('#page_analyze_source').find('option:selected');
+        var pageAnalyzeSourceElm = $('#page_analyze_source');
+        var coption = pageAnalyzeSourceElm.find('option:selected');
         var sdomain = coption.attr('data-context-domain');
         var saddress = coption.attr('data-context-address');
-        //
-        $('#page_analyze_source').empty();
-        $('#page_analyze_source').append('<option data-context-domain="" data-context-address="" value="">Global averages</option>');
-        var allSelected = (sdomain == "All");
-        $('#page_analyze_source').append('<option data-context-domain="All" data-context-address="" value=""' + (allSelected ? ' selected' : '') + '>Compare all</option>');
-        //
+
+        pageAnalyzeSourceElm.empty();
+        pageAnalyzeSourceElm.append('<option data-context-domain="" data-context-address="" value="">Global averages</option>');
+        var allSelected = sdomain === "All";
+        pageAnalyzeSourceElm.append('<option data-context-domain="All" data-context-address="" value=""' + (allSelected ? ' selected' : '') + '>Compare all</option>');
+
         var datasources = '';
         for (var i = 0; i < HG.WebApp.Data.Groups.length; i++) {
             var g = HG.WebApp.Data.Groups[i];
@@ -255,29 +263,32 @@ HG.WebApp.Statistics = HG.WebApp.Statistics || new function () { var $$ = this;
             var datamodules = '';
             for (var c = 0; c < groupmodules.length; c++) {
                 var mod = groupmodules[c];
-                if (typeof mod.Properties != 'undefined')
+                if (typeof mod.Properties !== 'undefined')
                     for (var p = 0; p < mod.Properties.length; p++) {
-                        if (mod.Properties[p].Name == $('#page_analyze_param').val()) {
+                        if (mod.Properties[p].Name === $('#page_analyze_param').val()) {
                             var name = mod.Domain + ':' + mod.Address;
-                            if (mod.Name != '') name = mod.Name;
-                            //
-                            var selected = (mod.Domain == sdomain && mod.Address == saddress);
-                            //
+                            if (mod.Name !== '')
+                                name = mod.Name;
+
+                            var selected = mod.Domain === sdomain &&
+                                           mod.Address === saddress;
+
                             datamodules += '<option data-context-domain="' + mod.Domain + '" data-context-address="' + mod.Address + '"' + (selected ? ' selected' : '') + '>' + name + '</option>';
                             break;
                         }
                     }
             }
-            if (datamodules != '') {
+            if (datamodules !== '') {
                 datasources += '<optgroup label="' + g.Name + '">';
                 datasources += datamodules;
                 datasources += '</optgroup>';
             }
         }
-        $('#page_analyze_source').append(datasources);
-        //
-        $('#page_analyze_source').selectmenu('refresh');
+        pageAnalyzeSourceElm.append(datasources);
+        pageAnalyzeSourceElm.selectmenu('refresh');
     };
+
+
 
     $$.Refresh = function () {
         $.mobile.loading('show');
@@ -288,9 +299,9 @@ HG.WebApp.Statistics = HG.WebApp.Statistics || new function () { var $$ = this;
         if ($$._CurrentTab == 1) {
             if ($$._SelItemObject == false)
                 $("#page_delete_stat").hide();
-            HG.Statistics.ServiceCall('Global.TimeRange', '', '', function (trange) {
-                var start = new Date(parseFloat(trange.StartTime));
-                var end = new Date(parseFloat(trange.EndTime));
+            HG.Statistics.ServiceCall('Global.TimeRange', '', '', function (data) {
+                var start = new Date(data.StartTime);
+                var end = new Date(data.EndTime);
                 var today = new Date();
                 var minDays = Math.ceil((today - start) / (1000 * 60 * 60 * 24));
                 $('#page_analyze_datefrom').datebox('option', {
@@ -318,236 +329,15 @@ HG.WebApp.Statistics = HG.WebApp.Statistics || new function () { var $$ = this;
                 if ($$._CurrentModule != "All:") {
                     
                     if (showtype == true) {
-                        
-                        $.ajax({
-                            url: '/' + HG.WebApp.Data.ServiceKey + '/' + HG.WebApp.Data.ServiceDomain + '/Statistics/Parameter.StatsHour/' + $$._CurrentParameter + '/' + $$._CurrentModule + '/' + dfrom.getTime() + '/' + dto.getTime(),
-                            type: 'GET',
-                            success: function (data) {
-                                var stats = eval(data);
-                                try {
-                                    if ($$._CurrentParameter == 'Sensor.Temperature') {
-                                        // convert to farehnehit if needed
-                                        for (var sx = 0; sx < stats.length; sx++)
-                                            for (var tx = 0; tx < stats[sx].length; tx++)
-                                                stats[sx][tx][1] = HG.WebApp.Utility.GetLocaleTemperature(stats[sx][tx][1]);
-                                    }
-                                    var dateFormat = HG.WebApp.Store.get('UI.DateFormat');
-                                    $.plot($("#statshour"), [
-                                            {
-                                                label: 'Max',
-                                                data: stats[1],
-                                                bars: {
-                                                    show: showbars,
-                                                    barWidth: (30 * 60 * 1000),
-                                                    align: 'center',
-                                                    steps: true
-                                                }
-                                            },
-                                            {
-                                                label: 'Avg',
-                                                data: stats[2],
-                                                bars: {
-                                                    show: showbars,
-                                                    barWidth: (30 * 60 * 1000),
-                                                    align: 'center',
-                                                    steps: true
-                                                }
-                                            },
-                                            {
-                                                label: 'Min',
-                                                data: stats[0],
-                                                bars: {
-                                                    show: showbars,
-                                                    barWidth: (30 * 60 * 1000),
-                                                    align: 'center',
-                                                    steps: true
-                                                }
-                                            },
-                                            {
-                                                label: 'Today Avg',
-                                                data: stats[3],
-                                                bars: {
-                                                    show: showbars,
-                                                    barWidth: (10 * 60 * 1000),
-                                                    align: 'center',
-                                                    steps: false
-                                                }
-                                            },
-                                            {
-                                                label: 'Today Detail',
-                                                data: stats[4],
-                                                lines: {show: true, lineWidth: 2.0},
-                                                bars: {show: false},
-                                                splines: {show: false},
-                                                points: {show: false}
-                                            }
-                                        ],
-                                        {
-                                            yaxis: {show: true},
-                                            xaxis: {
-                                                mode: "time",
-                                                timeformat: (dateFormat == "MDY12" ? "%h:00%p" : "%h:00"),
-                                                minTickSize: [1, "hour"],
-                                                tickSize: [1, "hour"]
-                                            },
-                                            legend: {position: "nw", noColumns: 5, backgroundOpacity: 0.3},
-                                            lines: {show: showlines, lineWidth: 1.0},
-                                            series: {
-                                                splines: {show: showsplines}
-                                            },
-                                            grid: {
-                                                backgroundColor: {colors: ["#fff", "#ddd"]},
-                                                hoverable: true
-                                            },
-                                            colors: ["rgba(200, 255, 0, 0.5)", "rgba(120, 160, 0, 0.5)", "rgba(40, 70, 0, 0.5)", "rgba(110, 80, 255, 0.5)", "rgba(200, 30, 0, 1.0)"], //"rgba(0, 30, 180, 1.0)"
-                                            points: {show: true},
-                                            zoom: {
-                                                interactive: true
-                                            },
-                                            pan: {
-                                                interactive: true
-                                            }
-                                        });
-                                } catch (e) {
-                                    console.log(e);
-                                }
-                                $.mobile.loading('hide');
-                            },
-                            error: function (xhr, status, error) {
-                                console.log('STATISTICS ERROR: ' + xhr.status + ':' + xhr.statusText);
-                                $.mobile.loading('hide');
-                            }
-                        });
-                        
+                        getStatHour(dfrom, dto);
                     } else {
-                        
-                        $.ajax({
-                            url: '/' + HG.WebApp.Data.ServiceKey + '/' + HG.WebApp.Data.ServiceDomain + '/Statistics/Parameter.StatsDay/' + $$._CurrentParameter + '/' + $$._CurrentModule + '/' + dfrom.getTime() + '/' + dto.getTime(),
-                            type: 'GET',
-                            success: function (data) {
-                                var stats = eval(data);
-                                try {
-                                    if ($$._CurrentParameter == 'Sensor.Temperature') {
-                                        // convert to farehnehit if needed
-                                        for (var sx = 0; sx < stats.length; sx++)
-                                            for (var tx = 0; tx < stats[sx].length; tx++)
-                                                stats[sx][tx][1] = HG.WebApp.Utility.GetLocaleTemperature(stats[sx][tx][1]);
-                                    }
-                                    $.plot($("#statshour"), [
-                                            {
-                                                label: $('#page_analyze_title').text(),
-                                                data: stats[0],
-                                                lines: {show: true, lineWidth: 1.0},
-                                                bars: {show: false},
-                                                splines: {show: false},
-                                                points: {show: false}
-                                            }
-                                        ],
-                                        {
-                                            yaxis: {show: true},
-                                            xaxis: {
-                                                mode: "time",
-                                                timeformat: "%d/%m",
-                                                minTickSize: [1, "day"],
-                                                tickSize: [1, "day"]
-                                            },
-                                            legend: {position: "nw", noColumns: 5, backgroundOpacity: 0.3},
-                                            lines: {show: showlines, lineWidth: 1.0},
-                                            series: {
-                                                splines: {show: showsplines}
-                                            },
-                                            grid: {
-                                                backgroundColor: {colors: ["#fff", "#ddd"]},
-                                                hoverable: true
-                                            },
-                                            colors: ["rgba(200, 30, 0, 1.0)"],
-                                            points: {show: true},
-                                            zoom: {
-                                                interactive: true
-                                            },
-                                            pan: {
-                                                interactive: true
-                                            }
-                                        });
-                                } catch (e) {
-                                    console.log(e);
-                                }
-                                $.mobile.loading('hide');
-                            },
-                            error: function (xhr, status, error) {
-                                console.log('STATISTICS ERROR: ' + xhr.status + ':' + xhr.statusText);
-                                $.mobile.loading('hide');
-                            }
-                        });
+                        getStatsDay(dfrom, dto);
                     }
                     
                 } else {
                     
                     var dateFormat = HG.WebApp.Store.get('UI.DateFormat');
-                    $.ajax({
-                        url: '/' + HG.WebApp.Data.ServiceKey + '/' + HG.WebApp.Data.ServiceDomain + '/Statistics/Parameter.StatsMultiple/' + $$._CurrentParameter + '/' + $$._CurrentModule + '/' + dfrom.getTime() + '/' + dto.getTime(),
-                        type: 'GET',
-                        success: function (data) {
-                            var name = '';
-                            var tformat = "";
-                            var tickSize = "";
-                            var graph_data = [];
-                            var stats = eval(data);
-                            if ($$._CurrentParameter == 'Sensor.Temperature') {
-                                // convert to farehnehit if needed
-                                for (var sx = 1; sx < stats.length; sx += 2)
-                                    for (var tx = 0; tx < stats[sx].length; tx++)
-                                        stats[sx][tx][1] = HG.WebApp.Utility.GetLocaleTemperature(stats[sx][tx][1]);
-                            }
-                            if (showtype == true) {
-                                tformat = (dateFormat == "MDY12" ? "%h:00%p" : "%h:00");
-                                tickSize = "hour";
-                            } else {
-                                tformat = "%d/%m";
-                                tickSize = "day";
-                            }
-                            $.each(stats, function (index, val) {
-                                if (index % 2)
-                                    graph_data.push({
-                                        label: name,
-                                        data: val,
-                                        lines: {show: true, lineWidth: 2.0},
-                                        bars: {show: false},
-                                        splines: {show: false},
-                                        points: {show: false}
-                                    });
-                                else
-                                    name = val;
-                            });
-                            $.plot($("#statshour"), graph_data,
-                                {
-                                    yaxis: {show: true},
-                                    xaxis: {
-                                        mode: "time",
-                                        timeformat: tformat,
-                                        minTickSize: [1, tickSize],
-                                        tickSize: [1, tickSize]
-                                    },
-                                    legend: {backgroundOpacity: 0.3},
-                                    grid: {
-                                        backgroundColor: {colors: ["#fff", "#ddd"]},
-                                        hoverable: true
-                                    },
-                                    points: {show: true},
-                                    zoom: {
-                                        interactive: true
-                                    },
-                                    pan: {
-                                        interactive: true
-                                    }
-                                });
-                            $.mobile.loading('hide');
-                        },
-                        error: function (xhr, status, error) {
-                            console.log('STATISTICS ERROR: ' + xhr.status + ':' + xhr.statusText);
-                            $.mobile.loading('hide');
-                        }
-                    });
+                    getStatsMultiple(dateFormat, dfrom, dto);
                 }
             });
             
@@ -562,8 +352,9 @@ HG.WebApp.Statistics = HG.WebApp.Statistics || new function () { var $$ = this;
             var dto = new Date($('#page_analyze_dateto').datebox('getTheDate').getTime());
             dfrom.setHours(0, 0, 0, 0);
             dto.setHours(23, 59, 59, 0);
+            
             $.ajax({
-                url: '/' + HG.WebApp.Data.ServiceKey + '/' + HG.WebApp.Data.ServiceDomain + '/Statistics/Parameter.Counter/' + $$._CurrentParameter + '/' + $$._CurrentModule + '/' + dfrom.getTime() + '/' + dto.getTime(),
+                url: $$.statBaseUrl + '/Parameter.Counter/' + $$._CurrentParameter + '/' + $$._CurrentModule + '/' + dfrom.getTime() + '/' + dto.getTime(),
                 type: 'GET',
                 success: function (data) {
                     var stats = eval(data);
@@ -611,6 +402,236 @@ HG.WebApp.Statistics = HG.WebApp.Statistics || new function () { var $$ = this;
                         console.log(e);
                     }
                     //
+                    $.mobile.loading('hide');
+                },
+                error: function (xhr, status, error) {
+                    console.log('STATISTICS ERROR: ' + xhr.status + ':' + xhr.statusText);
+                    $.mobile.loading('hide');
+                }
+            });
+        }
+
+        function getStatHour(dfrom, dto) {
+            $.ajax({
+                url: $$.statBaseUrl + '/Parameter.StatsHour/' + $$._CurrentParameter + '/' + $$._CurrentModule + '/' + dfrom.getTime() + '/' + dto.getTime(),
+                type: 'GET',
+                success: function (data) {
+                    var stats = eval(data);
+                    try {
+                        if ($$._CurrentParameter === 'Sensor.Temperature') {
+                            // convert to farehnehit if needed
+                            for (var sx = 0; sx < stats.length; sx++)
+                                for (var tx = 0; tx < stats[sx].length; tx++)
+                                    stats[sx][tx][1] = HG.WebApp.Utility.GetLocaleTemperature(stats[sx][tx][1]);
+                        }
+                        var dateFormat = HG.WebApp.Store.get('UI.DateFormat');
+                        $.plot($("#statshour"), [
+                                {
+                                    label: 'Max',
+                                    data: stats[1],
+                                    bars: {
+                                        show: showbars,
+                                        barWidth: (30 * 60 * 1000),
+                                        align: 'center',
+                                        steps: true
+                                    }
+                                },
+                                {
+                                    label: 'Avg',
+                                    data: stats[2],
+                                    bars: {
+                                        show: showbars,
+                                        barWidth: (30 * 60 * 1000),
+                                        align: 'center',
+                                        steps: true
+                                    }
+                                },
+                                {
+                                    label: 'Min',
+                                    data: stats[0],
+                                    bars: {
+                                        show: showbars,
+                                        barWidth: (30 * 60 * 1000),
+                                        align: 'center',
+                                        steps: true
+                                    }
+                                },
+                                {
+                                    label: 'Today Avg',
+                                    data: stats[3],
+                                    bars: {
+                                        show: showbars,
+                                        barWidth: (10 * 60 * 1000),
+                                        align: 'center',
+                                        steps: false
+                                    }
+                                },
+                                {
+                                    label: 'Today Detail',
+                                    data: stats[4],
+                                    lines: {show: true, lineWidth: 2.0},
+                                    bars: {show: false},
+                                    splines: {show: false},
+                                    points: {show: false}
+                                }
+                            ],
+                            {
+                                yaxis: {show: true},
+                                xaxis: {
+                                    mode: "time",
+                                    timeformat: (dateFormat == "MDY12" ? "%h:00%p" : "%h:00"),
+                                    minTickSize: [1, "hour"],
+                                    tickSize: [1, "hour"]
+                                },
+                                legend: {position: "nw", noColumns: 5, backgroundOpacity: 0.3},
+                                lines: {show: showlines, lineWidth: 1.0},
+                                series: {
+                                    splines: {show: showsplines}
+                                },
+                                grid: {
+                                    backgroundColor: {colors: ["#fff", "#ddd"]},
+                                    hoverable: true
+                                },
+                                colors: ["rgba(200, 255, 0, 0.5)", "rgba(120, 160, 0, 0.5)", "rgba(40, 70, 0, 0.5)", "rgba(110, 80, 255, 0.5)", "rgba(200, 30, 0, 1.0)"], //"rgba(0, 30, 180, 1.0)"
+                                points: {show: true},
+                                zoom: {
+                                    interactive: true
+                                },
+                                pan: {
+                                    interactive: true
+                                }
+                            });
+                    } catch (e) {
+                        console.log(e);
+                    }
+                    $.mobile.loading('hide');
+                },
+                error: function (xhr, status, error) {
+                    console.log('STATISTICS ERROR: ' + xhr.status + ':' + xhr.statusText);
+                    $.mobile.loading('hide');
+                }
+            });
+        }
+
+        function getStatsDay(dfrom, dto) {
+            $.ajax({
+                url: $$.statBaseUrl + '/Parameter.StatsDay/' + $$._CurrentParameter + '/' + $$._CurrentModule + '/' + dfrom.getTime() + '/' + dto.getTime(),
+                type: 'GET',
+                success: function (data) {
+                    var stats = eval(data);
+                    try {
+                        if ($$._CurrentParameter == 'Sensor.Temperature') {
+                            // convert to farehnehit if needed
+                            for (var sx = 0; sx < stats.length; sx++)
+                                for (var tx = 0; tx < stats[sx].length; tx++)
+                                    stats[sx][tx][1] = HG.WebApp.Utility.GetLocaleTemperature(stats[sx][tx][1]);
+                        }
+                        $.plot($("#statshour"), [
+                                {
+                                    label: $('#page_analyze_title').text(),
+                                    data: stats[0],
+                                    lines: {show: true, lineWidth: 1.0},
+                                    bars: {show: false},
+                                    splines: {show: false},
+                                    points: {show: false}
+                                }
+                            ],
+                            {
+                                yaxis: {show: true},
+                                xaxis: {
+                                    mode: "time",
+                                    timeformat: "%d/%m",
+                                    minTickSize: [1, "day"],
+                                    tickSize: [1, "day"]
+                                },
+                                legend: {position: "nw", noColumns: 5, backgroundOpacity: 0.3},
+                                lines: {show: showlines, lineWidth: 1.0},
+                                series: {
+                                    splines: {show: showsplines}
+                                },
+                                grid: {
+                                    backgroundColor: {colors: ["#fff", "#ddd"]},
+                                    hoverable: true
+                                },
+                                colors: ["rgba(200, 30, 0, 1.0)"],
+                                points: {show: true},
+                                zoom: {
+                                    interactive: true
+                                },
+                                pan: {
+                                    interactive: true
+                                }
+                            });
+                    } catch (e) {
+                        console.log(e);
+                    }
+                    $.mobile.loading('hide');
+                },
+                error: function (xhr, status, error) {
+                    console.log('STATISTICS ERROR: ' + xhr.status + ':' + xhr.statusText);
+                    $.mobile.loading('hide');
+                }
+            });
+        }
+
+        function getStatsMultiple(dateFormat, dfrom, dto) {
+            $.ajax({
+                url: $$.statBaseUrl + '/Parameter.StatsMultiple/' + $$._CurrentParameter + '/' + $$._CurrentModule + '/' + dfrom.getTime() + '/' + dto.getTime(),
+                type: 'GET',
+                success: function (data) {
+                    var name = '';
+                    var tformat = "";
+                    var tickSize = "";
+                    var graph_data = [];
+                    var stats = eval(data);
+                    if ($$._CurrentParameter == 'Sensor.Temperature') {
+                        // convert to farehnehit if needed
+                        for (var sx = 1; sx < stats.length; sx += 2)
+                            for (var tx = 0; tx < stats[sx].length; tx++)
+                                stats[sx][tx][1] = HG.WebApp.Utility.GetLocaleTemperature(stats[sx][tx][1]);
+                    }
+                    if (showtype == true) {
+                        tformat = (dateFormat == "MDY12" ? "%h:00%p" : "%h:00");
+                        tickSize = "hour";
+                    } else {
+                        tformat = "%d/%m";
+                        tickSize = "day";
+                    }
+                    $.each(stats, function (index, val) {
+                        if (index % 2)
+                            graph_data.push({
+                                label: name,
+                                data: val,
+                                lines: {show: true, lineWidth: 2.0},
+                                bars: {show: false},
+                                splines: {show: false},
+                                points: {show: false}
+                            });
+                        else
+                            name = val;
+                    });
+                    $.plot($("#statshour"), graph_data,
+                        {
+                            yaxis: {show: true},
+                            xaxis: {
+                                mode: "time",
+                                timeformat: tformat,
+                                minTickSize: [1, tickSize],
+                                tickSize: [1, tickSize]
+                            },
+                            legend: {backgroundOpacity: 0.3},
+                            grid: {
+                                backgroundColor: {colors: ["#fff", "#ddd"]},
+                                hoverable: true
+                            },
+                            points: {show: true},
+                            zoom: {
+                                interactive: true
+                            },
+                            pan: {
+                                interactive: true
+                            }
+                        });
                     $.mobile.loading('hide');
                 },
                 error: function (xhr, status, error) {

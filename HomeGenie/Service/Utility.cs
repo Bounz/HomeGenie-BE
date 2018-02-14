@@ -535,7 +535,7 @@ namespace HomeGenie.Service
 
         public static double DateToJavascript(DateTime date)
         {
-            return ((date.Ticks - 621355968000000000L) / 10000D);
+            return (date.Ticks - 621355968000000000L) / 10000D;
         }
 
         public static double DateToJavascriptLocal(DateTime date)
