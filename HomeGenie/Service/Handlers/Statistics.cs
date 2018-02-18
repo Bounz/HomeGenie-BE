@@ -98,40 +98,12 @@ namespace HomeGenie.Service.Handlers
                     domain = migCommand.GetOption(1).Substring(0, domainSeparator);
                     address = migCommand.GetOption(1).Substring(domainSeparator + 1);
                 }
-                //
-                response = "[";
-                response += "[ ";
-                //
-                var hoursAverage = new List<StatisticsEntry>();
+
                 dateStart = Utility.JavascriptToDate(long.Parse(migCommand.GetOption(2)));
                 dateEnd = Utility.JavascriptToDate(long.Parse(migCommand.GetOption(3)));
-                hoursAverage = homegenie.Statistics.GetHourlyCounter(domain, address, migCommand.GetOption(0), 3600, dateStart, dateEnd);
-                //
-                for (int h = 0; h < 24; h++)
-                {
-                    StatisticsEntry firstEntry = null;
-                    if (hoursAverage != null && hoursAverage.Count > 0)
-                    {
-                        firstEntry = hoursAverage.Find(se => se.TimeStart.ToLocalTime().Hour == h);
-                    }
-                    //
-                    if (firstEntry != null)
-                    {
-                        double sum = 0;
-                        sum = (double)(hoursAverage.FindAll(se => se.TimeStart.ToLocalTime().Hour == h).Sum(se => se.Value));
-                        // date is normalized to the current date, time info is preserved from original data entry
-                        var date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " " + h.ToString("00") + ":00:00");
-                        response += "[" + Utility.DateToJavascript(date).ToString("0.000", System.Globalization.CultureInfo.InvariantCulture) + "," + sum.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture) + "],";
-                    }
-                    else
-                    {
-                        var date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " " + h.ToString("00") + ":00:00");
-                        response += "[" + Utility.DateToJavascript(date).ToString("0.000", System.Globalization.CultureInfo.InvariantCulture) + ",0.000],";
-                    }
-                }
-                response = response.TrimEnd(',');
-                response += " ]";
-                response += "]";
+                var hoursAverage = homegenie.Statistics.GetHourlyCounter(domain, address, migCommand.GetOption(0), 3600, dateStart, dateEnd);
+
+                response = JsonConvert.SerializeObject(hoursAverage);
                 request.ResponseData = response;
                 break;
 

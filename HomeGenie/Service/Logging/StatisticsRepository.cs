@@ -174,6 +174,34 @@ namespace HomeGenie.Service.Logging
 //            return values;
         }
 
+        public List<IGrouping<StatGroup, StatisticsDbEntry>> GetGrouppedStats(
+            string domain,
+            string address,
+            string parameterName,
+            DateTime startDate, DateTime endDate
+        )
+        {
+            using (var db = new LiteDatabase(StatisticsDbFile))
+            {
+                var statistics = GetCollection(db);
+                var statItems = string.IsNullOrEmpty(domain) || string.IsNullOrEmpty(address)
+                    ? statistics.Find(x => x.Parameter == parameterName &&
+                                           x.TimeStart >= startDate &&
+                                           x.TimeEnd <= endDate)
+                    : statistics.Find(x => x.Parameter == parameterName &&
+                                           x.TimeStart >= startDate &&
+                                           x.TimeEnd <= endDate &&
+                                           x.Address == address &&
+                                           x.Domain == domain);
+
+                var grouppedStats = statItems.GroupBy(x => new StatGroup
+                {
+                    Domain = x.Domain, Address = x.Address, Hour = x.TimeStart.Hour
+                });
+                return grouppedStats.ToList();
+            }
+        }
+
         public void ResetStatisticsDatabase()
         {
             using (var db = new LiteDatabase(StatisticsDbFile))
@@ -209,5 +237,12 @@ namespace HomeGenie.Service.Logging
         {
             return db.GetCollection<StatisticsDbEntry>("statistics");
         }
+    }
+
+    public class StatGroup
+    {
+        public string Domain { get; set; }
+        public string Address { get; set; }
+        public int Hour { get; set; }
     }
 }

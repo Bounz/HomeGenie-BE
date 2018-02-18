@@ -159,7 +159,7 @@ namespace HomeGenie.Service.Logging
         /// <param name="timescaleseconds">Timescaleseconds.</param>
         /// <param name="startDate">Start date.</param>
         /// <param name="endDate">End date.</param>
-        public List<StatisticsEntry> GetHourlyCounter(
+        public object[][] GetHourlyCounter(//List<StatisticsEntry>
             string domain,
             string address,
             string parameterName,
@@ -167,8 +167,34 @@ namespace HomeGenie.Service.Logging
             DateTime startDate, DateTime endDate
         )
         {
-            return _statisticsRepository.GetHourlyCounter(domain, address, parameterName, timescaleseconds, startDate,
-                endDate);
+            var hoursAverage = _statisticsRepository.GetHourlyCounter(domain, address, parameterName, timescaleseconds,
+                startDate, endDate);
+
+            var dayHourlyStats = new List<object>();
+
+            for (int h = 0; h < 24; h++)
+            {
+                StatisticsEntry firstEntry = null;
+                if (hoursAverage != null && hoursAverage.Count > 0)
+                {
+                    firstEntry = hoursAverage.Find(se => se.TimeStart.ToLocalTime().Hour == h);
+                }
+                var date = DateTime.Today.AddHours(h);
+
+                if (firstEntry != null)
+                {
+                    var sum = hoursAverage.FindAll(se => se.TimeStart.ToLocalTime().Hour == h).Sum(se => se.Value);
+                    var item = new[] {Utility.DateToJavascript(date), sum};
+                    dayHourlyStats.Add(item);
+                }
+                else
+                {
+                    var item = new[] {Utility.DateToJavascript(date), 0};
+                    dayHourlyStats.Add(item);
+                }
+            }
+
+            return new[] {dayHourlyStats.ToArray()};
         }
 
         /// <summary>
@@ -187,6 +213,9 @@ namespace HomeGenie.Service.Logging
         )
         {
             var values = new List<StatisticsEntry>();
+//            var start = DateTime.Today;
+//            var stats = _statisticsRepository.GetGrouppedStats(domain, address, parameterName, start)
+
 //            var dbCommand = _dbConnection.CreateCommand();
 //            var filter = "";
 //            var start = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 00:00:00.000000");
@@ -326,6 +355,10 @@ namespace HomeGenie.Service.Logging
         )
         {
             var values = new List<StatisticsEntry>();
+
+            var stats = _statisticsRepository.GetGrouppedStats(domain, address, parameterName, startDate, endDate);
+            
+
 //            var dbCommand = _dbConnection.CreateCommand();
 //            var filter = "";
 //
