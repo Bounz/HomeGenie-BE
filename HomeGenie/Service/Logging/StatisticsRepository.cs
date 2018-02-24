@@ -5,7 +5,7 @@ using LiteDB;
 
 namespace HomeGenie.Service.Logging
 {
-    public class StatisticsRepository
+    public class StatisticsRepository : IStatisticsRepository
     {
         public const string StatisticsDbFile = "homegenie_stats.litedb";
 
@@ -47,17 +47,18 @@ namespace HomeGenie.Service.Logging
         /// Gets the parameters list.
         /// </summary>
         /// <returns>The parameters list.</returns>
-        /// <param name="domain">Domain.</param>
-        /// <param name="address">Address.</param>
+        /// <param name="domain">Domain</param>
+        /// <param name="address">Address</param>
         public List<string> GetParametersList(string domain, string address)
         {
+            var deviceSpecified = !string.IsNullOrEmpty(domain) && !string.IsNullOrEmpty(address);
             using (var db = new LiteDatabase(StatisticsDbFile))
             {
                 var statistics = GetCollection(db);
-                var parameterList = (string.IsNullOrEmpty(domain)
-                    ? statistics.FindAll()
-                    : statistics.Find(x => x.Domain == domain && x.Address == address)
-                ).Select(x => x.Parameter).Distinct().ToList();
+                var parameterList = (deviceSpecified
+                        ? statistics.Find(x => x.Domain == domain && x.Address == address)
+                        : statistics.FindAll()
+                    ).Select(x => x.Parameter).Distinct().ToList();
                 return parameterList;
             }
         }
@@ -202,12 +203,45 @@ namespace HomeGenie.Service.Logging
             }
         }
 
-        public void ResetStatisticsDatabase()
+        public List<StatisticsDbEntry> GetStatsByParameter(
+            string parameterName,
+            DateTime startDate, DateTime endDate
+        )
         {
             using (var db = new LiteDatabase(StatisticsDbFile))
             {
                 var statistics = GetCollection(db);
-                statistics.Delete(x => true);
+                var statItems = statistics.Find(x => x.Parameter == parameterName &&
+                                                     x.TimeStart >= startDate &&
+                                                     x.TimeEnd <= endDate);
+                return statItems.OrderBy(x => x.TimeStart).ToList();
+            }
+        }
+
+        public List<StatisticsDbEntry> GetStatsByParameterAndDevice(
+            string domain,
+            string address,
+            string parameterName,
+            DateTime startDate, DateTime endDate
+        )
+        {
+            using (var db = new LiteDatabase(StatisticsDbFile))
+            {
+                var statistics = GetCollection(db);
+                var statItems = statistics.Find(x => x.Parameter == parameterName &&
+                                                     x.TimeStart >= startDate &&
+                                                     x.TimeEnd <= endDate &&
+                                                     x.Address == address &&
+                                                     x.Domain == domain);
+                return statItems.OrderBy(x => x.TimeStart).ToList();
+            }
+        }
+
+        public void ResetStatisticsDatabase()
+        {
+            using (var db = new LiteDatabase(StatisticsDbFile))
+            {
+                db.DropCollection("statistics");
                 db.Shrink();
             }
         }
@@ -237,12 +271,5 @@ namespace HomeGenie.Service.Logging
         {
             return db.GetCollection<StatisticsDbEntry>("statistics");
         }
-    }
-
-    public class StatGroup
-    {
-        public string Domain { get; set; }
-        public string Address { get; set; }
-        public int Hour { get; set; }
     }
 }

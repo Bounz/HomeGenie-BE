@@ -129,6 +129,7 @@ namespace HomeGenie.Data
         {
 
             [XmlAttribute]
+            [Obsolete("This property is not used anymore")]
             public int MaxDatabaseSizeMBytes { get; set; }
 
             [XmlAttribute]

@@ -204,11 +204,16 @@
     <Compile Include="Service\Handlers\Config.cs" />
     <Compile Include="Service\Handlers\Interconnection.cs" />
     <Compile Include="Service\Handlers\Statistics.cs" />
+    <Compile Include="Service\IDateTime.cs" />
     <Compile Include="Service\JsonHelper.cs" />
+    <Compile Include="Service\Logging\IStatisticsRepository.cs" />
+    <Compile Include="Service\Logging\StatGraphEntry.cs" />
+    <Compile Include="Service\Logging\StatGroup.cs" />
     <Compile Include="Service\Logging\StatisticsDbEntry.cs" />
     <Compile Include="Service\Logging\StatisticsEntry.cs" />
-    <Compile Include="Service\Logging\StatisticsLogger.cs" />
+    <Compile Include="Service\Logging\StatisticsCoreService.cs" />
     <Compile Include="Service\Logging\StatisticsRepository.cs" />
+    <Compile Include="Service\RealDateTime.cs" />
     <Compile Include="Service\Updates\ArchiveDownloadEventArgs.cs" />
     <Compile Include="Service\Updates\ArchiveDownloadStatus.cs" />
     <Compile Include="Service\Updates\InstallStatus.cs" />

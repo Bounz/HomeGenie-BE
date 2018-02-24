@@ -35,7 +35,7 @@ namespace HomeGenie.Service
         private UpdateManager _updateManager;
         private BackupManager backupManager;
         private PackageManager packageManager;
-        private StatisticsLogger statisticsLogger;
+        private StatisticsCoreService statisticsLogger;
         // Internal data structures
         private TsList<Module> systemModules = new TsList<Module>();
         private TsList<Module> modulesGarbage = new TsList<Module>();
@@ -72,7 +72,7 @@ namespace HomeGenie.Service
             backupManager = new BackupManager(this);
             packageManager = new PackageManager(this);
 
-            statisticsLogger = new StatisticsLogger(this);
+            statisticsLogger = new StatisticsCoreService(this, new StatisticsRepository(), new RealDateTime());
             statisticsLogger.Start();
 
             // Setup local UPnP device
@@ -269,7 +269,7 @@ namespace HomeGenie.Service
         public PackageManager PackageManager => packageManager;
 
         // Reference to Statistics
-        public StatisticsLogger Statistics => statisticsLogger;
+        public StatisticsCoreService Statistics => statisticsLogger;
 
         // Public utility methods
         public string GetHttpServicePort()
@@ -1500,7 +1500,7 @@ namespace HomeGenie.Service
                 systemConfiguration.HomeGenie.GUID = uniqueDeviceName = Guid.NewGuid().ToString();
                 systemConfiguration.Update();
                 // initialize database for first use
-                statisticsLogger.ResetDatabase();
+                //statisticsLogger.ResetDatabase(); //TODO do we really need to reset stats DB?
             }
             //
             var localDevice = UPnPDevice.CreateRootDevice(900, 1, "web\\");

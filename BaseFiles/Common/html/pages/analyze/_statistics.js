@@ -295,7 +295,7 @@ HG.WebApp.Statistics = HG.WebApp.Statistics || new function () { var $$ = this;
         var showsplines = ($$._CurrentGraphType == 'splines' ? true : false);
         var showlines = ($$._CurrentGraphType == 'lines' ? true : false);
         var showbars = ($$._CurrentGraphType == 'bars' ? true : false);
-        var showtype = ($$._CurrentType == 'hours' ? true : false);
+        var showHourlyStats = ($$._CurrentType == 'hours' ? true : false);
         if ($$._CurrentTab == 1) {
             if ($$._SelItemObject == false)
                 $("#page_delete_stat").hide();
@@ -327,22 +327,22 @@ HG.WebApp.Statistics = HG.WebApp.Statistics || new function () { var $$ = this;
                 dfrom.setHours(0, 0, 0, 0);
                 dto.setHours(23, 59, 59, 0);
                 if ($$._CurrentModule != "All:") {
-                    
-                    if (showtype == true) {
+
+                    if (showHourlyStats) {
                         getStatHour(dfrom, dto);
                     } else {
                         getStatsDay(dfrom, dto);
                     }
-                    
+
                 } else {
-                    
+
                     var dateFormat = HG.WebApp.Store.get('UI.DateFormat');
                     getStatsMultiple(dateFormat, dfrom, dto);
                 }
             });
-            
+
         } else {
-            
+
             HG.Statistics.ServiceCall('Global.CounterTotal', $$._CurrentParameter, '', function (total) {
                 $('#page_analyze_totalunits').val((total * 1).toFixed(2));
                 var cost = $('#page_analyze_costperunit').val() * $('#page_analyze_totalunits').val();
@@ -352,7 +352,7 @@ HG.WebApp.Statistics = HG.WebApp.Statistics || new function () { var $$ = this;
             var dto = new Date($('#page_analyze_dateto').datebox('getTheDate').getTime());
             dfrom.setHours(0, 0, 0, 0);
             dto.setHours(23, 59, 59, 0);
-            
+
             $.ajax({
                 url: $$.statBaseUrl + '/Parameter.Counter/' + $$._CurrentParameter + '/' + $$._CurrentModule + '/' + dfrom.getTime() + '/' + dto.getTime(),
                 type: 'GET',
@@ -457,18 +457,8 @@ HG.WebApp.Statistics = HG.WebApp.Statistics || new function () { var $$ = this;
                                     }
                                 },
                                 {
-                                    label: 'Today Avg',
-                                    data: stats[3],
-                                    bars: {
-                                        show: showbars,
-                                        barWidth: (10 * 60 * 1000),
-                                        align: 'center',
-                                        steps: false
-                                    }
-                                },
-                                {
                                     label: 'Today Detail',
-                                    data: stats[4],
+                                    data: stats[3],
                                     lines: {show: true, lineWidth: 2.0},
                                     bars: {show: false},
                                     splines: {show: false},
@@ -492,7 +482,7 @@ HG.WebApp.Statistics = HG.WebApp.Statistics || new function () { var $$ = this;
                                     backgroundColor: {colors: ["#fff", "#ddd"]},
                                     hoverable: true
                                 },
-                                colors: ["rgba(200, 255, 0, 0.5)", "rgba(120, 160, 0, 0.5)", "rgba(40, 70, 0, 0.5)", "rgba(110, 80, 255, 0.5)", "rgba(200, 30, 0, 1.0)"], //"rgba(0, 30, 180, 1.0)"
+                                colors: ["rgba(200, 255, 0, 0.5)", "rgba(120, 160, 0, 0.5)", "rgba(40, 70, 0, 0.5)", "rgba(200, 30, 0, 1.0)"],
                                 points: {show: true},
                                 zoom: {
                                     interactive: true
@@ -522,14 +512,13 @@ HG.WebApp.Statistics = HG.WebApp.Statistics || new function () { var $$ = this;
                     try {
                         if ($$._CurrentParameter == 'Sensor.Temperature') {
                             // convert to farehnehit if needed
-                            for (var sx = 0; sx < stats.length; sx++)
-                                for (var tx = 0; tx < stats[sx].length; tx++)
-                                    stats[sx][tx][1] = HG.WebApp.Utility.GetLocaleTemperature(stats[sx][tx][1]);
+                            for (var i = 0; i < stats.length; i++)
+                                stats[i][1] = HG.WebApp.Utility.GetLocaleTemperature(stats[i][1]);
                         }
                         $.plot($("#statshour"), [
                                 {
                                     label: $('#page_analyze_title').text(),
-                                    data: stats[0],
+                                    data: stats,
                                     lines: {show: true, lineWidth: 1.0},
                                     bars: {show: false},
                                     splines: {show: false},
@@ -542,7 +531,7 @@ HG.WebApp.Statistics = HG.WebApp.Statistics || new function () { var $$ = this;
                                     mode: "time",
                                     timeformat: "%d/%m",
                                     minTickSize: [1, "day"],
-                                    tickSize: [1, "day"]
+                                    tickSize: [1, "hour"]
                                 },
                                 legend: {position: "nw", noColumns: 5, backgroundOpacity: 0.3},
                                 lines: {show: showlines, lineWidth: 1.0},
@@ -579,36 +568,32 @@ HG.WebApp.Statistics = HG.WebApp.Statistics || new function () { var $$ = this;
                 url: $$.statBaseUrl + '/Parameter.StatsMultiple/' + $$._CurrentParameter + '/' + $$._CurrentModule + '/' + dfrom.getTime() + '/' + dto.getTime(),
                 type: 'GET',
                 success: function (data) {
-                    var name = '';
                     var tformat = "";
                     var tickSize = "";
                     var graph_data = [];
-                    var stats = eval(data);
-                    if ($$._CurrentParameter == 'Sensor.Temperature') {
+                    var statsForModules = data;
+                    if ($$._CurrentParameter === 'Sensor.Temperature') {
                         // convert to farehnehit if needed
-                        for (var sx = 1; sx < stats.length; sx += 2)
-                            for (var tx = 0; tx < stats[sx].length; tx++)
-                                stats[sx][tx][1] = HG.WebApp.Utility.GetLocaleTemperature(stats[sx][tx][1]);
+                        for (var moduleIndex = 1; moduleIndex < statsForModules.length; moduleIndex ++)
+                            for (var statIndex = 0; statIndex < statsForModules[moduleIndex].Stats.length; statIndex++)
+                                statsForModules[moduleIndex].Stats[statIndex][1] = HG.WebApp.Utility.GetLocaleTemperature(statsForModules[moduleIndex].Stats[statIndex][1]);
                     }
-                    if (showtype == true) {
-                        tformat = (dateFormat == "MDY12" ? "%h:00%p" : "%h:00");
+                    if (showHourlyStats === true) {
+                        tformat = (dateFormat === "MDY12" ? "%h:00%p" : "%h:00");
                         tickSize = "hour";
                     } else {
                         tformat = "%d/%m";
                         tickSize = "day";
                     }
-                    $.each(stats, function (index, val) {
-                        if (index % 2)
-                            graph_data.push({
-                                label: name,
-                                data: val,
-                                lines: {show: true, lineWidth: 2.0},
-                                bars: {show: false},
-                                splines: {show: false},
-                                points: {show: false}
-                            });
-                        else
-                            name = val;
+                    $.each(statsForModules, function (index, statsForModule) {
+                        graph_data.push({
+                            label: statsForModule.Name,
+                            data: statsForModule.Stats,
+                            lines: {show: true, lineWidth: 2.0},
+                            bars: {show: false},
+                            splines: {show: false},
+                            points: {show: false}
+                        });
                     });
                     $.plot($("#statshour"), graph_data,
                         {
