@@ -64,5 +64,6 @@ namespace HomeGenie.Service.Logging
         void ResetStatisticsDatabase();
         void CleanOldValues(DateTime thresholdDate);
         void AddStat(StatisticsDbEntry entry);
+        void DeleteStatByDateAndValue(DateTime starTime, double value);
     }
 }

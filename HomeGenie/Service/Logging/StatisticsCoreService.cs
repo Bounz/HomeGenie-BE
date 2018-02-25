@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Timers;
+using HomeGenie.Data;
 using HomeGenie.Service.Constants;
 
 namespace HomeGenie.Service.Logging
@@ -73,10 +75,15 @@ namespace HomeGenie.Service.Logging
             {
                 _statisticsRepository.ResetStatisticsDatabase();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e);
-                throw;
+                HomeGenieService.LogError(
+                    Domains.HomeAutomation_HomeGenie,
+                    "Service.StatisticsLogger",
+                    "Error resetting database",
+                    "Exception.StackTrace",
+                    $"{ex.Message}: {ex.StackTrace}"
+                );
             }
         }
 
@@ -168,7 +175,7 @@ namespace HomeGenie.Service.Logging
         /// <param name="parameterName">Parameter name</param>
         /// <param name="startDate"></param>
         /// <param name="endDate"></param>
-        public List<StatGraphEntry> GetTodayDetails(
+        public List<StatGraphEntry> GetDetailedStats(
             string domain,
             string address,
             string parameterName,
@@ -186,23 +193,20 @@ namespace HomeGenie.Service.Logging
 
             var deviceSpecified = !string.IsNullOrEmpty(domain) && !string.IsNullOrEmpty(address);
             var isMeterParameter = parameterName.StartsWith(Properties.MeterAny);
-
-//            var startDate = _dateTime.Today;
-//            var endDate = startDate.AddDays(1);
-            var todaysStats = deviceSpecified
+            var stats = deviceSpecified
                 ? _statisticsRepository.GetStatsByParameterAndDevice(domain, address, parameterName, startDate, endDate)
                 : _statisticsRepository.GetStatsByParameter(parameterName, startDate, endDate);
 
             if (deviceSpecified)
             {
-                foreach (var stat in todaysStats)
+                foreach (var stat in stats)
                 {
                     values.Add(new StatGraphEntry {Timestamp = Utility.DateToJavascript(stat.TimeStart), Value = stat.AvgValue});
                 }
                 return values;
             }
 
-            var statsByStartTimes = todaysStats.GroupBy(x => x.TimeStart);
+            var statsByStartTimes = stats.GroupBy(x => x.TimeStart);
             foreach (var statsByStartTime in statsByStartTimes)
             {
                 var jsDate = Utility.DateToJavascript(statsByStartTime.Key);
@@ -251,7 +255,12 @@ namespace HomeGenie.Service.Logging
                 {
                     var statsByModules = overallStats.Where(x => x.TimeStart.Hour == h).GroupBy(x => new {x.Domain, x.Address, x.TimeStart.Date}).ToList();
                     foreach (var statsByModule in statsByModules)
-                        statsForHour.Add(new StatisticsDbEntry{AvgValue = statsByModule.Sum(x => x.AvgValue)});
+                        statsForHour.Add(new StatisticsDbEntry
+                        {
+                            Domain = statsByModule.Key.Domain,
+                            Address = statsByModule.Key.Address,
+                            AvgValue = statsByModule.Sum(x => x.AvgValue)
+                        });
                 }
                 else
                 {
@@ -362,21 +371,25 @@ namespace HomeGenie.Service.Logging
         /// <returns>The stat.</returns>
         /// <param name="startDate">Start date.</param>
         /// <param name="value">Value.</param>
-        public string DeleteStat(
-          DateTime startDate,
-            string value
-        )
+        public bool DeleteStat(DateTime startDate, string value)
         {
-//            var valueText = "";
-//            var fValue = double.Parse(value,CultureInfo.InvariantCulture);
-//            var valueSplit = fValue.ToString("0.00", CultureInfo.InvariantCulture);
-//            if (valueSplit == value)
-//                valueText = " AND (AverageValue = '" + value + "')";
-//            var dbCommand = _dbConnection.CreateCommand();
-//            dbCommand.CommandText = "DELETE FROM ValuesHist WHERE (TimeStart BETWEEN '"+startDate.ToString("yyyy-MM-dd HH:mm:ss")+"' AND '"+startDate.ToString("yyyy-MM-dd HH:mm:ss")+".999999')"+valueText;
-//            dbCommand.ExecuteNonQuery();
-//            return dbCommand.CommandText;
-            return "";
+            try
+            {
+                var doubleValue = Convert.ToDouble(value.Replace(',', '.'), CultureInfo.InvariantCulture);
+                _statisticsRepository.DeleteStatByDateAndValue(startDate, doubleValue);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                HomeGenieService.LogError(
+                    Domains.HomeAutomation_HomeGenie,
+                    "Service.StatisticsLogger",
+                    "Error deleting stat from the database",
+                    "Exception.StackTrace",
+                    $"{ex.Message}: {ex.StackTrace}"
+                );
+                return false;
+            }
         }
 
         private void logInterval_Elapsed(object sender, ElapsedEventArgs eventArgs)
@@ -394,34 +407,39 @@ namespace HomeGenie.Service.Logging
                     if (!values.Any())
                         continue;
 
-                    var average = values.Sum(d => d.Value) / values.Count;
-                    try
-                    {
-                        _statisticsRepository.AddStat(new StatisticsDbEntry
-                        {
-                            TimeStart = parameter.Statistics.LastProcessedTimestap,
-                            TimeEnd = end,
-                            Domain = module.Domain,
-                            Address = module.Address,
-                            Parameter = parameter.Name,
-                            AvgValue = average,
-                            ModuleName = module.Name
-                        });
-                    }
-                    catch (Exception ex)
-                    {
-                        HomeGenieService.LogError(
-                            Domains.HomeAutomation_HomeGenie,
-                            "Service.StatisticsLogger",
-                            "Database Error",
-                            "Exception.StackTrace",
-                            $"{ex.Message}: {ex.StackTrace}"
-                        );
-                    }
+                    AddStatToDb(values, module, parameter, end);
 
                     parameter.Statistics.LastProcessedTimestap = end;
                     parameter.Statistics.Values.Clear();
                 }
+            }
+        }
+
+        private void AddStatToDb(IReadOnlyCollection<ValueStatistics.StatValue> values, Module module, ModuleParameter parameter, DateTime end)
+        {
+            var average = values.Sum(d => d.Value) / values.Count;
+            try
+            {
+                _statisticsRepository.AddStat(new StatisticsDbEntry
+                {
+                    TimeStart = parameter.Statistics.LastProcessedTimestap,
+                    TimeEnd = end,
+                    Domain = module.Domain,
+                    Address = module.Address,
+                    Parameter = parameter.Name,
+                    AvgValue = average,
+                    ModuleName = module.Name
+                });
+            }
+            catch (Exception ex)
+            {
+                HomeGenieService.LogError(
+                    Domains.HomeAutomation_HomeGenie,
+                    "Service.StatisticsLogger",
+                    "Error adding stats to the database",
+                    "Exception.StackTrace",
+                    $"{ex.Message}: {ex.StackTrace}"
+                );
             }
         }
 
@@ -456,10 +474,15 @@ namespace HomeGenie.Service.Logging
                     thresholdDate.ToString("O")
                 );
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e);
-                throw;
+                HomeGenieService.LogError(
+                    Domains.HomeAutomation_HomeGenie,
+                    "Service.StatisticsLogger",
+                    "Error cleaning old stats from the database",
+                    "Exception.StackTrace",
+                    $"{ex.Message}: {ex.StackTrace}"
+                );
             }
         }
 

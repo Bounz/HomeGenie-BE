@@ -29,7 +29,7 @@ namespace HomeGenieTests
         }
 
         [Test]
-        public void GetTodayDetails_MeterModule_CorrectValues()
+        public void GetDetailedStats_MeterModuleForToday_CorrectValues()
         {
             // Arrange
             var statisticsRepository = new Mock<IStatisticsRepository>();
@@ -45,7 +45,7 @@ namespace HomeGenieTests
 
             // Act
             var service = new StatisticsCoreService(null, statisticsRepository.Object, _dateTime.Object);
-            var result = service.GetTodayDetails(Domain, Address, MeterParameter, Today, Today.AddDays(1));
+            var result = service.GetDetailedStats(Domain, Address, MeterParameter, Today, Today.AddDays(1));
 
             // Assert
             Assert.That(result.Count, Is.EqualTo(4));
@@ -64,7 +64,7 @@ namespace HomeGenieTests
         }
 
         [Test]
-        public void GetTodayDetails_SeveralMeterModules_CorrectValues()
+        public void GetDetailedStats_SeveralMeterModulesForToday_CorrectValues()
         {
             // Arrange
             var statisticsRepository = new Mock<IStatisticsRepository>();
@@ -84,7 +84,7 @@ namespace HomeGenieTests
 
             // Act
             var service = new StatisticsCoreService(null, statisticsRepository.Object, _dateTime.Object);
-            var result = service.GetTodayDetails(null, null, MeterParameter, Today, Today.AddDays(1));
+            var result = service.GetDetailedStats(null, null, MeterParameter, Today, Today.AddDays(1));
 
             // Assert
             Assert.That(result.Count, Is.EqualTo(3));
@@ -100,7 +100,7 @@ namespace HomeGenieTests
         }
 
         [Test]
-        public void GetHourlyStats_SeveralMeterModules_CorrectValues()
+        public void GetHourlyStats_SeveralMeterModulesOneDay_CorrectValues()
         {
             // Arrange
             var statisticsRepository = new Mock<IStatisticsRepository>();
@@ -152,7 +152,53 @@ namespace HomeGenieTests
         }
 
         [Test]
-        public void GetHourlyStats_SeveralSensorModules_CorrectValues()
+        public void GetHourlyStats_SeveralMeterModulesTwoDays_CorrectValues()
+        {
+            // Arrange
+            var statisticsRepository = new Mock<IStatisticsRepository>();
+            statisticsRepository
+                .Setup(x => x.GetStatsByParameter(It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Returns(new List<StatisticsDbEntry>
+                {
+                    NewMeterStatisticsDbEntry(Today.AddHours(1).AddMinutes(0), Today.AddHours(1).AddMinutes(5), 50),
+                    NewMeterStatisticsDbEntry(Today.AddHours(1).AddMinutes(5), Today.AddHours(1).AddMinutes(10), 30),
+                    NewMeterStatisticsDbEntryM2(Today.AddHours(1).AddMinutes(0), Today.AddHours(1).AddMinutes(5), 10),
+                    NewMeterStatisticsDbEntryM2(Today.AddHours(1).AddMinutes(5), Today.AddHours(1).AddMinutes(10), 10),
+
+                    NewMeterStatisticsDbEntry(Today.AddDays(1).AddHours(1).AddMinutes(0), Today.AddDays(1).AddHours(1).AddMinutes(5), 50),
+                    NewMeterStatisticsDbEntry(Today.AddDays(1).AddHours(1).AddMinutes(5), Today.AddDays(1).AddHours(1).AddMinutes(10), 40),
+                    NewMeterStatisticsDbEntryM2(Today.AddDays(1).AddHours(1).AddMinutes(0), Today.AddDays(1).AddHours(1).AddMinutes(5), 10),
+                    NewMeterStatisticsDbEntryM2(Today.AddDays(1).AddHours(1).AddMinutes(5), Today.AddDays(1).AddHours(1).AddMinutes(10), 30)
+                });
+
+            // Act
+            var service = new StatisticsCoreService(null, statisticsRepository.Object, _dateTime.Object);
+            var result = service.GetHourlyStats(null, null, MeterParameter, Today.AddDays(-1), Today.AddDays(1));
+
+            // Assert
+            Assert.That(result.Length, Is.EqualTo(3));
+
+            var minValues = result[0];
+            Assert.That(minValues[0].Timestamp, Is.EqualTo(TodayMs));
+            Assert.That(minValues[0].Value, Is.EqualTo(0));
+            Assert.That(minValues[1].Timestamp, Is.EqualTo(TodayMs + 1 * 3600 * 1000));
+            Assert.That(minValues[1].Value, Is.EqualTo(20));
+
+            var maxValues = result[1];
+            Assert.That(maxValues[0].Timestamp, Is.EqualTo(TodayMs));
+            Assert.That(maxValues[0].Value, Is.EqualTo(0));
+            Assert.That(maxValues[1].Timestamp, Is.EqualTo(TodayMs + 1 * 3600 * 1000));
+            Assert.That(maxValues[1].Value, Is.EqualTo(90));
+
+            var avgValues = result[2];
+            Assert.That(avgValues[0].Timestamp, Is.EqualTo(TodayMs));
+            Assert.That(avgValues[0].Value, Is.EqualTo(0));
+            Assert.That(avgValues[1].Timestamp, Is.EqualTo(TodayMs + 1 * 3600 * 1000));
+            Assert.That(avgValues[1].Value, Is.EqualTo(57.5));
+        }
+
+        [Test]
+        public void GetHourlyStats_SeveralSensorModulesOneDay_CorrectValues()
         {
             // Arrange
             var statisticsRepository = new Mock<IStatisticsRepository>();
@@ -204,7 +250,7 @@ namespace HomeGenieTests
         }
 
         [Test]
-        public void GetHourlyStats_SpecificMeterModule_CorrectValues()
+        public void GetHourlyStats_SpecificMeterModuleTwoDays_CorrectValues()
         {
             // Arrange
             var statisticsRepository = new Mock<IStatisticsRepository>();
@@ -252,7 +298,7 @@ namespace HomeGenieTests
         }
 
         [Test]
-        public void GetHourlyStats_SpecificSensorModule_CorrectValues()
+        public void GetHourlyStats_SpecificSensorModuleTwoDays_CorrectValues()
         {
             // Arrange
             var statisticsRepository = new Mock<IStatisticsRepository>();

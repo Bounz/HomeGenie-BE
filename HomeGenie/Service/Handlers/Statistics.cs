@@ -103,13 +103,10 @@ namespace HomeGenie.Service.Handlers
                 break;
 
             case "Parameter.StatDelete":
-                response = "[";
                 var dateText = migCommand.GetOption(0).Replace('.', ',');
                 dateStart = Utility.JavascriptToDateUtc(double.Parse(dateText));
                 var responseDelete = homegenie.Statistics.DeleteStat(dateStart, migCommand.GetOption(1));
-                response += "[Response," + responseDelete + "]";
-                response += "]";
-                request.ResponseData = response;
+                request.ResponseData = responseDelete;
                 break;
             }
         }
@@ -132,7 +129,7 @@ namespace HomeGenie.Service.Handlers
             var hourlyStats = homegenie.Statistics.GetHourlyStats(domain, address, parameterName, dateStart, dateEnd);
             var todayStartDate = DateTime.Today;
             var todayEndDate = todayStartDate.AddDays(1);
-            var todayDetails = homegenie.Statistics.GetTodayDetails(domain, address, parameterName, todayStartDate, todayEndDate);
+            var todayDetails = homegenie.Statistics.GetDetailedStats(domain, address, parameterName, todayStartDate, todayEndDate);
             return new object[]
             {
                 hourlyStats[0].ToJsStatsArray(),
@@ -157,7 +154,7 @@ namespace HomeGenie.Service.Handlers
             var dateStart = Utility.JavascriptToDate(long.Parse(migCommand.GetOption(2)));
             var dateEnd = Utility.JavascriptToDate(long.Parse(migCommand.GetOption(3)));
             var parameterName = migCommand.GetOption(0);
-            var dailyStats = homegenie.Statistics.GetTodayDetails(domain, address, parameterName, dateStart, dateEnd);
+            var dailyStats = homegenie.Statistics.GetDetailedStats(domain, address, parameterName, dateStart, dateEnd);
 
             return dailyStats.ToJsStatsArray();
         }

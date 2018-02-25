@@ -109,8 +109,8 @@ HG.WebApp.Statistics = HG.WebApp.Statistics || new function () { var $$ = this;
                 api.cache.point = item.dataIndex;
                 api.set('content.text',
                     item.series.label + " at " + new Date(item.datapoint[0] + offset).toLocaleTimeString() + " = " + item.datapoint[1].toFixed(2));
-                if ($$._CurrentType == 'days') {
-                    if ($$._SelItemObject == false) {
+                if ($$._CurrentType === 'days') {
+                    if ($$._SelItemObject === false) {
                         $("#page_delete_stat").html("Delete Value : " + item.datapoint[1]);
                         $$._ItemObject = item.datapoint[0] + '/' + item.datapoint[1];
                         api.elements.tooltip.stop(1, 1);
@@ -165,13 +165,11 @@ HG.WebApp.Statistics = HG.WebApp.Statistics || new function () { var $$ = this;
         });
 
         $("#page_delete_stat").on('click', function () {
-            if ($$._SelItemObject == true) {
+            if ($$._SelItemObject === true) {
                 $.ajax({
                     url: $$.statBaseUrl + '/Parameter.StatDelete/' + $$._ItemObject,
                     type: 'GET',
                     success: function (data) {
-                        var stats = eval(data);
-//                    $("#page_analyze_title").html(data) ;
                         $.mobile.loading('hide');
                     },
                     error: function (xhr, status, error) {

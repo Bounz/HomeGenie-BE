@@ -134,45 +134,6 @@ namespace HomeGenie.Service.Logging
             }
 
             return values;
-
-//            var dbCommand = _dbConnection.CreateCommand();
-//            var filter = "";
-//            if (!string.IsNullOrEmpty(domain) && !string.IsNullOrEmpty(address))
-//            {
-//                filter= " Domain=@domain AND Address=@address and ";
-//                dbCommand.Parameters.Add(new SqliteParameter("@domain", domain));
-//                dbCommand.Parameters.Add(new SqliteParameter("@address", address));
-//            }
-//            var query = "select TimeStart,TimeEnd,Domain,Address,Sum(AverageValue*( ((julianday(TimeEnd) - 2440587.5) * 86400.0) -((julianday(TimeStart) - 2440587.5) * 86400.0) )/" + timescaleseconds.ToString(CultureInfo.InvariantCulture) + ") as CounterValue from ValuesHist where " + filter + " Parameter = @parameterName AND " + GetParameterizedDateRangeFilter(ref dbCommand, startDate, endDate) + " group by Domain, Address, strftime('%H', TimeStart) order by TimeStart desc;";
-//            dbCommand.Parameters.Add(new SqliteParameter("@parameterName", parameterName));
-//            dbCommand.CommandText = query;
-//            var reader = dbCommand.ExecuteReader();
-//            //
-//            while (reader.Read())
-//            {
-//                var entry = new StatisticsEntry();
-//                entry.TimeStart = DateTime.Parse(reader.GetString(0));
-//                entry.TimeEnd = DateTime.Parse(reader.GetString(1));
-//                entry.Domain = reader.GetString(2);
-//                entry.Address = reader.GetString(3);
-//                entry.Value = 0;
-//                try
-//                {
-//                    entry.Value = (double)reader.GetFloat(4);
-//                }
-//                catch
-//                {
-//                    var value = reader.GetValue(4);
-//                    if (value != DBNull.Value && value != null) double.TryParse(
-//                            reader.GetString(4),
-//                            out entry.Value
-//                        );
-//                }
-//                //
-//                values.Add(entry);
-//            }
-//            reader.Close();
-//            return values;
         }
 
         public List<IGrouping<StatGroup, StatisticsDbEntry>> GetGrouppedStats(
@@ -265,7 +226,14 @@ namespace HomeGenie.Service.Logging
             }
         }
 
-
+        public void DeleteStatByDateAndValue(DateTime starTime, double value)
+        {
+            using (var db = new LiteDatabase(StatisticsDbFile))
+            {
+                var statistics = GetCollection(db);
+                statistics.Delete(x => x.TimeStart == starTime && x.AvgValue == value);
+            }
+        }
 
         private LiteCollection<StatisticsDbEntry> GetCollection(LiteDatabase db)
         {
