@@ -1,0 +1,15 @@
+[Unit]
+Description=HomeGenie
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/mono /usr/local/bin/homegenie/HomeGenie.exe
+WorkingDirectory=/usr/local/bin/homegenie
+StandardOutput=inherit
+StandardError=inherit
+KillMode=mixed
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target
