@@ -9,6 +9,8 @@ StandardOutput=inherit
 StandardError=inherit
 KillMode=mixed
 Restart=always
+RestartForceExitStatus=1
+RestartPreventExitStatus=0
 User=root
 
 [Install]
