@@ -358,11 +358,26 @@ namespace HomeGenie.Service.Logging
             string parameterName,
             DateTime startDate, DateTime endDate)
         {
-            var allModulesStats = _statisticsRepository.GetStatsByParameter(parameterName, startDate, endDate);
-            var result = allModulesStats.GroupBy(x => x.ModuleName).ToDictionary(
-                x => x.Key,
-                x => x.Select(stat => new StatGraphEntry {Timestamp = Utility.DateToJavascript(stat.TimeStart), Value = stat.AvgValue}).ToList());
-            return result;
+            try
+            {
+                var allModulesStats = _statisticsRepository.GetStatsByParameter(parameterName, startDate, endDate);
+                var result = allModulesStats.GroupBy(x => string.IsNullOrEmpty(x.ModuleName) ? $"{x.Domain}.{x.Address}" : x.ModuleName).ToDictionary(
+                    x => x.Key,
+                    x => x.Select(stat => new StatGraphEntry {Timestamp = Utility.DateToJavascript(stat.TimeStart), Value = stat.AvgValue}).ToList());
+                return result;
+            }
+            catch (Exception ex)
+            {
+                HomeGenieService.LogError(
+                    Domains.HomeAutomation_HomeGenie,
+                    "Service.StatisticsLogger",
+                    "Error getting multiple modules detailed stats from the database",
+                    "Exception.StackTrace",
+                    $"{ex.Message}: {ex.StackTrace}"
+                );
+                return null;
+            }
+
         }
 
         /// <summary>
