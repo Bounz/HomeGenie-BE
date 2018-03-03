@@ -10,7 +10,7 @@ namespace HomeGenie.Database
 {
     public class GenericRepository<T> where T : class
     {
-        private const int LongRequestThresholdMs = 200;
+        private const int LongRequestThresholdMs = 1000;
 
         private readonly string _dbFileName;
         private readonly string _collectionName;

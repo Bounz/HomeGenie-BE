@@ -20,94 +20,99 @@ namespace HomeGenie.Service.Handlers
         {
             var migCommand = request.Command;
 
-            var response = "";
+            string response;
             var domain = "";
             var address = "";
-            var domainSeparator = 0;
-            DateTime dateStart, dateEnd;
+            DateTime dateStart;
+
+            var deviceAddress = migCommand.GetOption(0).Split(':');
+            if(deviceAddress.Length > 0)
+            {
+                domain = deviceAddress[0];
+                address = deviceAddress[1];
+            }
 
             switch (migCommand.Command)
             {
-            case "Global.CounterTotal":
-                var counter = _homegenie.Statistics.GetTotalCounter(migCommand.GetOption(0), 3600);
-                request.ResponseData = new ResponseText(counter.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture));
-                break;
+                case "Global.CounterTotal":
+                    var counter = _homegenie.Statistics.GetTotalCounter(migCommand.GetOption(0), 3600);
+                    request.ResponseData = new ResponseText(counter.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture));
+                    break;
 
-            case "Global.TimeRange":
-                // TODO create dedicated class or use Tuple<DateTime, DateTime>
-                var dateRange = _homegenie.Statistics.GetDateRange();
-                request.ResponseData = JsonConvert.SerializeObject(new
-                {
-                    StartTime = Utility.DateToJavascript(dateRange.start),
-                    EndTime = Utility.DateToJavascript(dateRange.end),
-                });
-                break;
+                case "Global.TimeRange":
+                    // TODO create dedicated class or use Tuple<DateTime, DateTime>
+                    var dateRange = _homegenie.Statistics.GetDateRange();
+                    request.ResponseData = JsonConvert.SerializeObject(new
+                    {
+                        StartTime = Utility.DateToJavascript(dateRange.start),
+                        EndTime = Utility.DateToJavascript(dateRange.end),
+                    });
+                    break;
 
-            case "Database.Reset":
-                _homegenie.Statistics.ResetDatabase();
-                break;
-            case "Configuration.Get":
-                // Just one at the moment.
-                request.ResponseData = JsonConvert.SerializeObject(new
-                {
-                    StatisticsUIRefreshSeconds = _homegenie.SystemConfiguration.HomeGenie.Statistics.StatisticsUIRefreshSeconds
-                });
-                break;
-            case "Parameter.List":
-                domainSeparator = migCommand.GetOption(0).LastIndexOf(":");
-                if (domainSeparator > 0)
-                {
-                    domain = migCommand.GetOption(0).Substring(0, domainSeparator);
-                    address = migCommand.GetOption(0).Substring(domainSeparator + 1);
-                }
-                var statParameters = _homegenie.Statistics.GetParametersList(domain, address);
-                response = JsonConvert.SerializeObject(statParameters);
-                request.ResponseData = response;
-                break;
+                case "Database.Reset":
+                    _homegenie.Statistics.ResetDatabase();
+                    break;
+                case "Configuration.Get":
+                    // Just one at the moment.
+                    request.ResponseData = JsonConvert.SerializeObject(new
+                    {
+                        StatisticsUIRefreshSeconds = _homegenie.SystemConfiguration.HomeGenie.Statistics.StatisticsUIRefreshSeconds
+                    });
+                    break;
+                case "Parameter.List":
+                    if(deviceAddress.Length > 0)
+                    {
+                        domain = deviceAddress[0];
+                        address = deviceAddress[1];
+                    }
 
-            case "Parameter.Counter":
-                domainSeparator = migCommand.GetOption(1).LastIndexOf(":");
-                if (domainSeparator > 0)
-                {
-                    domain = migCommand.GetOption(1).Substring(0, domainSeparator);
-                    address = migCommand.GetOption(1).Substring(domainSeparator + 1);
-                }
+                    var statParameters = _homegenie.Statistics.GetParametersList(domain, address);
+                    response = JsonConvert.SerializeObject(statParameters);
+                    request.ResponseData = response;
+                    break;
 
-                dateStart = Utility.JavascriptToDate(long.Parse(migCommand.GetOption(2)));
-                dateEnd = Utility.JavascriptToDate(long.Parse(migCommand.GetOption(3)));
-                var hoursAverage = _homegenie.Statistics.GetHourlyCounter(domain, address, migCommand.GetOption(0), 3600, dateStart, dateEnd);
+                case "Parameter.Counter":
+                    if(deviceAddress.Length > 0)
+                    {
+                        domain = deviceAddress[0];
+                        address = deviceAddress[1];
+                    }
 
-                response = JsonConvert.SerializeObject(hoursAverage);
-                request.ResponseData = response;
-                break;
+                    dateStart = Utility.JavascriptToDate(long.Parse(migCommand.GetOption(2)));
+                    var dateEnd = Utility.JavascriptToDate(long.Parse(migCommand.GetOption(3)));
+                    var hoursAverage = _homegenie.Statistics.GetHourlyCounter(domain, address, migCommand.GetOption(0), 3600, dateStart, dateEnd);
 
-            // [hourly MIN, hourly MAX, hourly AVG, today's SUM values for Meters or AVG values for everything else]
-            case "Parameter.StatsHour":
-                var hourlyStats = GetHourlyStats(migCommand);
-                response = JsonConvert.SerializeObject(hourlyStats);
-                request.ResponseData = response;
-                break;
+                    response = JsonConvert.SerializeObject(hoursAverage);
+                    request.ResponseData = response;
+                    break;
 
-            // [detailed stats through days] // TODO rename this method to smth like GetDetailedStats
-            case "Parameter.StatsDay":
-                var dailyStats = GetDailyStats(migCommand);
-                response = JsonConvert.SerializeObject(dailyStats);
-                request.ResponseData = response;
-                break;
+                // [hourly MIN, hourly MAX, hourly AVG, today's SUM values for Meters or AVG values for everything else]
+                case "Parameter.StatsHour":
+                    var hourlyStats = GetHourlyStats(migCommand);
+                    response = JsonConvert.SerializeObject(hourlyStats);
+                    request.ResponseData = response;
+                    break;
 
-            // [ [[stats], [moduleName]], [[stats], [moduleName]] ...]
-            case "Parameter.StatsMultiple":
-                var multipleModulesStats = GetMultipleModulesStats(migCommand);
-                response = JsonConvert.SerializeObject(multipleModulesStats);
-                request.ResponseData = response;
-                break;
+                // [detailed stats through days] // TODO rename this method to smth like GetDetailedStats
+                case "Parameter.StatsDay":
+                    var dailyStats = GetDailyStats(migCommand);
+                    response = JsonConvert.SerializeObject(dailyStats);
+                    request.ResponseData = response;
+                    break;
 
-            case "Parameter.StatDelete":
-                var dateText = migCommand.GetOption(0).Replace('.', ',');
-                dateStart = Utility.JavascriptToDateUtc(double.Parse(dateText));
-                var responseDelete = _homegenie.Statistics.DeleteStat(dateStart, migCommand.GetOption(1));
-                request.ResponseData = responseDelete;
-                break;
+                // [ [[stats], [moduleName]], [[stats], [moduleName]] ...]
+                case "Parameter.StatsMultiple":
+                    var multipleModulesStats = GetMultipleModulesStats(migCommand);
+                    response = JsonConvert.SerializeObject(multipleModulesStats);
+                    request.ResponseData = response;
+                    break;
+
+                case "Parameter.StatDelete":
+                    var dateText = migCommand.GetOption(0).Replace('.', ',');
+                    dateStart = Utility.JavascriptToDateUtc(double.Parse(dateText));
+                    var responseDelete = _homegenie.Statistics.DeleteStat(dateStart, migCommand.GetOption(1));
+                    request.ResponseData = responseDelete;
+                    break;
             }
         }
 
@@ -116,11 +121,11 @@ namespace HomeGenie.Service.Handlers
         {
             var domain = "";
             var address = "";
-            var domainSeparator = migCommand.GetOption(1).LastIndexOf(":");
-            if (domainSeparator > 0)
+            var deviceAddress = migCommand.GetOption(0).Split(':');
+            if(deviceAddress.Length > 0)
             {
-                domain = migCommand.GetOption(1).Substring(0, domainSeparator);
-                address = migCommand.GetOption(1).Substring(domainSeparator + 1);
+                domain = deviceAddress[0];
+                address = deviceAddress[1];
             }
 
             var dateStart = Utility.JavascriptToDate(long.Parse(migCommand.GetOption(2)));
@@ -144,11 +149,11 @@ namespace HomeGenie.Service.Handlers
         {
             var domain = "";
             var address = "";
-            var domainSeparator = migCommand.GetOption(1).LastIndexOf(":");
-            if (domainSeparator > 0)
+            var deviceAddress = migCommand.GetOption(0).Split(':');
+            if(deviceAddress.Length > 0)
             {
-                domain = migCommand.GetOption(1).Substring(0, domainSeparator);
-                address = migCommand.GetOption(1).Substring(domainSeparator + 1);
+                domain = deviceAddress[0];
+                address = deviceAddress[1];
             }
 
             var dateStart = Utility.JavascriptToDate(long.Parse(migCommand.GetOption(2)));
