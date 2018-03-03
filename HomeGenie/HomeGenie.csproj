@@ -160,6 +160,9 @@
       <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
     </Reference>
     <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data" />
@@ -192,6 +195,11 @@
     <Compile Include="Automation\Scripting\EventsHelper.cs" />
     <Compile Include="Automation\Scripting\TcpClientHelper.cs" />
     <Compile Include="Automation\Scripting\SerialPortHelper.cs" />
+    <Compile Include="Database\GenericRepository.cs" />
+    <Compile Include="Database\IStatisticsRepository.cs" />
+    <Compile Include="Database\LiteDbCollectionAttribute.cs" />
+    <Compile Include="Database\StatisticsDbEntry.cs" />
+    <Compile Include="Database\StatisticsRepository.cs" />
     <Compile Include="Data\ModuleEvent.cs" />
     <Compile Include="Data\ValueStatistics.cs" />
     <Compile Include="Data\VirtualModule.cs" />
@@ -206,13 +214,10 @@
     <Compile Include="Service\Handlers\Statistics.cs" />
     <Compile Include="Service\IDateTime.cs" />
     <Compile Include="Service\JsonHelper.cs" />
-    <Compile Include="Service\Logging\IStatisticsRepository.cs" />
     <Compile Include="Service\Logging\StatGraphEntry.cs" />
     <Compile Include="Service\Logging\StatGroup.cs" />
-    <Compile Include="Service\Logging\StatisticsDbEntry.cs" />
     <Compile Include="Service\Logging\StatisticsEntry.cs" />
     <Compile Include="Service\Logging\StatisticsCoreService.cs" />
-    <Compile Include="Service\Logging\StatisticsRepository.cs" />
     <Compile Include="Service\RealDateTime.cs" />
     <Compile Include="Service\Updates\ArchiveDownloadEventArgs.cs" />
     <Compile Include="Service\Updates\ArchiveDownloadStatus.cs" />

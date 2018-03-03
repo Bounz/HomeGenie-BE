@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Timers;
 using HomeGenie.Data;
+using HomeGenie.Database;
 using HomeGenie.Service.Constants;
 
 namespace HomeGenie.Service.Logging
@@ -102,7 +103,7 @@ namespace HomeGenie.Service.Logging
         /// Gets the date range.
         /// </summary>
         /// <returns>The date range.</returns>
-        public StatisticsEntry GetDateRange()
+        public (DateTime start, DateTime end) GetDateRange()
         {
             return _statisticsRepository.GetDateRange();
         }
@@ -143,7 +144,7 @@ namespace HomeGenie.Service.Logging
 
             for (int h = 0; h < 24; h++)
             {
-                StatisticsEntry firstEntry = null;
+                StatisticsDbEntry firstEntry = null;
                 if (hoursAverage != null && hoursAverage.Count > 0)
                 {
                     firstEntry = hoursAverage.Find(se => se.TimeStart.ToLocalTime().Hour == h);
@@ -152,7 +153,7 @@ namespace HomeGenie.Service.Logging
 
                 if (firstEntry != null)
                 {
-                    var sum = hoursAverage.FindAll(se => se.TimeStart.ToLocalTime().Hour == h).Sum(se => se.Value);
+                    var sum = hoursAverage.FindAll(se => se.TimeStart.ToLocalTime().Hour == h).Sum(se => se.AvgValue);
                     var item = new[] {Utility.DateToJavascript(date), sum};
                     dayHourlyStats.Add(item);
                 }

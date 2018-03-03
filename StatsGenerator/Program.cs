@@ -1,4 +1,5 @@
 ﻿using System;
+using HomeGenie.Database;
 using HomeGenie.Service.Logging;
 
 namespace StatsGenerator

@@ -31,6 +31,7 @@ using HomeGenie.Service.Constants;
 using MIG.Config;
 using MIG;
 using System.Text;
+using HomeGenie.Database;
 
 namespace HomeGenie.Service
 {

@@ -12,6 +12,7 @@ using HomeGenie.Data;
 using HomeGenie.Service.Constants;
 using HomeGenie.Service.Logging;
 using HomeGenie.Automation.Scheduler;
+using HomeGenie.Database;
 using HomeGenie.Service.Updates;
 using MIG;
 using MIG.Gateways;

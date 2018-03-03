@@ -1,7 +1,8 @@
 using System;
 
-namespace HomeGenie.Service.Logging
+namespace HomeGenie.Database
 {
+    [LiteDbCollection("statistics")]
     public class StatisticsDbEntry
     {
         public Guid Id { get; set; }

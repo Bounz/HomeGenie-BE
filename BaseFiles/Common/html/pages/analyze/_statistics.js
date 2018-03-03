@@ -230,13 +230,16 @@ HG.WebApp.Statistics = HG.WebApp.Statistics || new function () { var $$ = this;
     };
 
     $$.RefreshParameters = function (filter) {
+        filter = filter || '';
         var cval = $('#page_analyze_param').val();
-        if (cval == '') cval = 'Meter.Watts'; // default param
+        if (cval == '')
+            cval = 'Meter.Watts'; // default param
         $('#page_analyze_param').empty();
         HG.Statistics.ServiceCall('Parameter.List', filter, '', function (stats) {
             for (var p = 0; p < stats.length; p++) {
                 var displayname = stats[p];
-                if (displayname.indexOf('.') > 0) displayname = displayname.substring(displayname.indexOf('.') + 1);
+                if (displayname.indexOf('.') > 0)
+                    displayname = displayname.substring(displayname.indexOf('.') + 1);
                 $('#page_analyze_param').append('<option value="' + stats[p] + '"' + (stats[p] == cval ? ' selected' : '') + '>' + displayname + '</option>');
             }
             $('#page_analyze_param').selectmenu('refresh');

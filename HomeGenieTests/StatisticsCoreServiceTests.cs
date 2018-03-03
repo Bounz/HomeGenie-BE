@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HomeGenie.Database;
 using HomeGenie.Service;
 using HomeGenie.Service.Logging;
 using Moq;

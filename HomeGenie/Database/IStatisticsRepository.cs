@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using HomeGenie.Service.Logging;
 
-namespace HomeGenie.Service.Logging
+namespace HomeGenie.Database
 {
     public interface IStatisticsRepository
     {
-        StatisticsEntry GetDateRange();
+        (DateTime start, DateTime end) GetDateRange();
 
         /// <summary>
         /// Gets the parameters list.
@@ -34,7 +35,7 @@ namespace HomeGenie.Service.Logging
         /// <param name="timescaleseconds">Timescaleseconds.</param>
         /// <param name="startDate">Start date.</param>
         /// <param name="endDate">End date.</param>
-        List<StatisticsEntry> GetHourlyCounter(
+        List<StatisticsDbEntry> GetHourlyCounter(
             string domain,
             string address,
             string parameterName,
