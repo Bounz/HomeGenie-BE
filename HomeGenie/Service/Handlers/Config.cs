@@ -384,18 +384,10 @@ namespace HomeGenie.Service.Handlers
                 {
                     request.ResponseData = new ResponseText(homegenie.SystemConfiguration.HomeGenie.Statistics.MaxDatabaseSizeMBytes.ToString());
                 }
+                // Obsolete
+                // TODO remove this command from frontend
                 else if (migCommand.GetOption(0) == "Statistics.SetStatisticsDatabaseMaximumSize")
                 {
-                    try
-                    {
-                        int sizeLimit = int.Parse(migCommand.GetOption(1));
-                        homegenie.SystemConfiguration.HomeGenie.Statistics.MaxDatabaseSizeMBytes = sizeLimit;
-                        homegenie.SystemConfiguration.Update();
-                        homegenie.Statistics.SizeLimit = sizeLimit * 1024 * 1024;
-                    }
-                    catch
-                    {
-                    }
                 }
                 else if (migCommand.GetOption(0) == "SystemLogging.DownloadCsv")
                 {

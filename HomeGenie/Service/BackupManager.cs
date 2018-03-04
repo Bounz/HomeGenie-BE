@@ -31,6 +31,7 @@ using HomeGenie.Service.Constants;
 using MIG.Config;
 using MIG;
 using System.Text;
+using HomeGenie.Database;
 
 namespace HomeGenie.Service
 {
@@ -83,11 +84,11 @@ namespace HomeGenie.Service
             Utility.AddFileToZip(archiveName, "groups.xml");
             Utility.AddFileToZip(archiveName, "release_info.xml");
             // Statistics db
-            if (File.Exists(StatisticsLogger.STATISTICS_DB_FILE))
+            if (File.Exists(StatisticsRepository.StatisticsDbFile))
             {
-                homegenie.Statistics.CloseStatisticsDatabase();
-                Utility.AddFileToZip(archiveName, StatisticsLogger.STATISTICS_DB_FILE);
-                homegenie.Statistics.OpenStatisticsDatabase();
+                //homegenie.Statistics.CloseStatisticsDatabase();
+                Utility.AddFileToZip(archiveName, StatisticsRepository.StatisticsDbFile);
+                //homegenie.Statistics.OpenStatisticsDatabase();
             }
             // Installed packages
             if (File.Exists(PackageManager.PACKAGE_LIST_FILE))
@@ -160,10 +161,11 @@ namespace HomeGenie.Service
                 Properties.InstallProgressMessage,
                 "= Restored: Scheduler Events"
             );
+
             // Statistics db
-            if (File.Exists(Path.Combine(archiveFolder, StatisticsLogger.STATISTICS_DB_FILE)))
+            if (File.Exists(Path.Combine(archiveFolder, StatisticsRepository.StatisticsDbFile)))
             {
-                File.Copy(Path.Combine(archiveFolder, StatisticsLogger.STATISTICS_DB_FILE), Path.Combine(AppDomain.CurrentDomain.BaseDirectory, StatisticsLogger.STATISTICS_DB_FILE), true);
+                File.Copy(Path.Combine(archiveFolder, StatisticsRepository.StatisticsDbFile), Path.Combine(AppDomain.CurrentDomain.BaseDirectory, StatisticsRepository.StatisticsDbFile), true);
                 homegenie.RaiseEvent(
                     Domains.HomeGenie_System,
                     Domains.HomeGenie_BackupRestore,

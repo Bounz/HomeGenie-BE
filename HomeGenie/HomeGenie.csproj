@@ -113,6 +113,9 @@
     <Reference Include="KNXLib, Version=1.1.9.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\KNX.net.1.1.9\lib\net40\KNXLib.dll</HintPath>
     </Reference>
+    <Reference Include="LiteDB, Version=4.1.1.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27">
+      <HintPath>..\packages\LiteDB.4.1.1\lib\net40\LiteDB.dll</HintPath>
+    </Reference>
     <Reference Include="M2Mqtt.Net, Version=4.3.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\M2Mqtt.4.3.0.0\lib\net45\M2Mqtt.Net.dll</HintPath>
     </Reference>
@@ -135,8 +138,8 @@
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NLog, Version=4.1.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
-      <HintPath>..\packages\NLog.4.1.0\lib\net45\NLog.dll</HintPath>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
+      <HintPath>..\packages\NLog.4.4.13\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="Raspberry.IO.GeneralPurpose, Version=2.0.1.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Raspberry.IO.GeneralPurpose.2.0.1\lib\net40\Raspberry.IO.GeneralPurpose.dll</HintPath>
@@ -152,20 +155,14 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Data.SQLite, Version=1.0.106.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139">
-      <HintPath>..\packages\System.Data.SQLite.Core.1.0.106.0\lib\net45\System.Data.SQLite.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.SQLite.EF6, Version=1.0.106.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139">
-      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.106.0\lib\net45\System.Data.SQLite.EF6.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.SQLite.Linq, Version=1.0.106.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139">
-      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.106.0\lib\net45\System.Data.SQLite.Linq.dll</HintPath>
-    </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
     </Reference>
     <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data" />
@@ -198,6 +195,11 @@
     <Compile Include="Automation\Scripting\EventsHelper.cs" />
     <Compile Include="Automation\Scripting\TcpClientHelper.cs" />
     <Compile Include="Automation\Scripting\SerialPortHelper.cs" />
+    <Compile Include="Database\GenericRepository.cs" />
+    <Compile Include="Database\IStatisticsRepository.cs" />
+    <Compile Include="Database\LiteDbCollectionAttribute.cs" />
+    <Compile Include="Database\StatisticsDbEntry.cs" />
+    <Compile Include="Database\StatisticsRepository.cs" />
     <Compile Include="Data\ModuleEvent.cs" />
     <Compile Include="Data\ValueStatistics.cs" />
     <Compile Include="Data\VirtualModule.cs" />
@@ -210,8 +212,13 @@
     <Compile Include="Service\Handlers\Config.cs" />
     <Compile Include="Service\Handlers\Interconnection.cs" />
     <Compile Include="Service\Handlers\Statistics.cs" />
+    <Compile Include="Service\IDateTime.cs" />
     <Compile Include="Service\JsonHelper.cs" />
-    <Compile Include="Service\Logging\StatisticsLogger.cs" />
+    <Compile Include="Service\Logging\StatGraphEntry.cs" />
+    <Compile Include="Service\Logging\StatGroup.cs" />
+    <Compile Include="Service\Logging\StatisticsEntry.cs" />
+    <Compile Include="Service\Logging\StatisticsCoreService.cs" />
+    <Compile Include="Service\RealDateTime.cs" />
     <Compile Include="Service\Updates\ArchiveDownloadEventArgs.cs" />
     <Compile Include="Service\Updates\ArchiveDownloadStatus.cs" />
     <Compile Include="Service\Updates\InstallStatus.cs" />
@@ -346,5 +353,4 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
-  <Import Project="..\packages\System.Data.SQLite.Core.1.0.106.0\build\net45\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.106.0\build\net45\System.Data.SQLite.Core.targets')" />
 </Project>
