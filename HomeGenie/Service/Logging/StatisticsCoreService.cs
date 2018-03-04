@@ -34,6 +34,7 @@ namespace HomeGenie.Service.Logging
         }
 
         private readonly Timer _logInterval;
+        private readonly Timer _cleanDbTimer;
         private readonly HomeGenieService _homegenie;
         private readonly IStatisticsRepository _statisticsRepository;
         private readonly IDateTime _dateTime;
@@ -49,6 +50,9 @@ namespace HomeGenie.Service.Logging
 
             _logInterval = new Timer(TimeSpan.FromSeconds(statisticsTimeResolutionSeconds).TotalMilliseconds);
             _logInterval.Elapsed += logInterval_Elapsed;
+
+            _cleanDbTimer = new Timer(TimeSpan.FromMinutes(5).TotalMilliseconds);
+            _cleanDbTimer.Elapsed += CleanDbTimerOnElapsed;
         }
 
         /// <summary>
@@ -57,6 +61,7 @@ namespace HomeGenie.Service.Logging
         public void Start()
         {
             _logInterval.Start();
+            _cleanDbTimer.Start();
         }
 
         /// <summary>
@@ -410,10 +415,7 @@ namespace HomeGenie.Service.Logging
 
         private void logInterval_Elapsed(object sender, ElapsedEventArgs eventArgs)
         {
-            CleanOldValuesFromStatisticsDatabase();
-
             var end = _dateTime.UtcNow;
-
             foreach (var module in _homegenie.Modules)
             {
                 foreach (var parameter in module.Properties)
@@ -457,6 +459,11 @@ namespace HomeGenie.Service.Logging
                     $"{ex.Message}: {ex.StackTrace}"
                 );
             }
+        }
+
+        private void CleanDbTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            CleanOldValuesFromStatisticsDatabase();
         }
 
         /// <summary>

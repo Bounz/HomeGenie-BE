@@ -26,7 +26,7 @@ namespace HomeGenie.Service.Handlers
             DateTime dateStart;
 
             var deviceAddress = migCommand.GetOption(0).Split(':');
-            if(deviceAddress.Length > 0)
+            if(deviceAddress.Length == 2)
             {
                 domain = deviceAddress[0];
                 address = deviceAddress[1];
@@ -60,7 +60,7 @@ namespace HomeGenie.Service.Handlers
                     });
                     break;
                 case "Parameter.List":
-                    if(deviceAddress.Length > 0)
+                    if(deviceAddress.Length == 2)
                     {
                         domain = deviceAddress[0];
                         address = deviceAddress[1];
@@ -72,7 +72,7 @@ namespace HomeGenie.Service.Handlers
                     break;
 
                 case "Parameter.Counter":
-                    if(deviceAddress.Length > 0)
+                    if(deviceAddress.Length == 2)
                     {
                         domain = deviceAddress[0];
                         address = deviceAddress[1];
@@ -122,7 +122,7 @@ namespace HomeGenie.Service.Handlers
             var domain = "";
             var address = "";
             var deviceAddress = migCommand.GetOption(0).Split(':');
-            if(deviceAddress.Length > 0)
+            if(deviceAddress.Length == 2)
             {
                 domain = deviceAddress[0];
                 address = deviceAddress[1];
@@ -150,7 +150,7 @@ namespace HomeGenie.Service.Handlers
             var domain = "";
             var address = "";
             var deviceAddress = migCommand.GetOption(0).Split(':');
-            if(deviceAddress.Length > 0)
+            if(deviceAddress.Length == 2)
             {
                 domain = deviceAddress[0];
                 address = deviceAddress[1];
