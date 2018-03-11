@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Timers;
@@ -34,7 +35,8 @@ namespace HomeGenie.Service.Logging
         }
 
         private readonly Timer _logInterval;
-        private readonly Timer _cleanDbTimer;
+        //private readonly Timer _cleanDbTimer;
+        private readonly Stopwatch _cleanStopwatch;
         private readonly HomeGenieService _homegenie;
         private readonly IStatisticsRepository _statisticsRepository;
         private readonly IDateTime _dateTime;
@@ -51,8 +53,11 @@ namespace HomeGenie.Service.Logging
             _logInterval = new Timer(TimeSpan.FromSeconds(statisticsTimeResolutionSeconds).TotalMilliseconds);
             _logInterval.Elapsed += logInterval_Elapsed;
 
-            _cleanDbTimer = new Timer(TimeSpan.FromMinutes(5).TotalMilliseconds);
-            _cleanDbTimer.Elapsed += CleanDbTimerOnElapsed;
+            // Due to bug in LiteDb cleaning database on timer event is disabled
+            // https://github.com/mbdavid/LiteDB/issues/892
+            //_cleanDbTimer = new Timer(TimeSpan.FromMinutes(5).TotalMilliseconds);
+            //_cleanDbTimer.Elapsed += CleanDbTimerOnElapsed;
+            _cleanStopwatch = new Stopwatch();
         }
 
         /// <summary>
@@ -61,7 +66,8 @@ namespace HomeGenie.Service.Logging
         public void Start()
         {
             _logInterval.Start();
-            _cleanDbTimer.Start();
+            //_cleanDbTimer.Start(); //TODO
+            _cleanStopwatch.Start();
         }
 
         /// <summary>
@@ -430,6 +436,12 @@ namespace HomeGenie.Service.Logging
                     parameter.Statistics.LastProcessedTimestap = end;
                     parameter.Statistics.Values.Clear();
                 }
+            }
+
+            if (_cleanStopwatch.Elapsed.TotalMinutes > 5)
+            {
+                CleanOldValuesFromStatisticsDatabase();
+                _cleanStopwatch.Restart();
             }
         }
 

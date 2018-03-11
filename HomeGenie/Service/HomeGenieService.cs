@@ -65,6 +65,7 @@ namespace HomeGenie.Service
         public HomeGenieService()
         {
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+            EnsureDirectoryStructure();
             EnableOutputRedirect();
 
             InitializeSystem();
@@ -87,6 +88,14 @@ namespace HomeGenie.Service
 
 
             Start();
+        }
+
+        private void EnsureDirectoryStructure()
+        {
+            if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), "plugins")))
+            {
+                Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "plugins"));
+            }
         }
 
         private void ConfigureUpdater()
