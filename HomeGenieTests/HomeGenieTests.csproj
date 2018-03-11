@@ -45,6 +45,9 @@
     <Reference Include="NCrontab, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\ncrontab.1.0.0\lib\NCrontab.dll</HintPath>
     </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
+      <HintPath>..\packages\NLog.4.4.13\lib\net45\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework, Version=3.9.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb">
       <HintPath>..\packages\NUnit.3.9.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
@@ -65,13 +68,13 @@
     <Compile Include="StatisticsCoreServiceTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HomeGenie\HomeGenie.csproj">
-      <Project>{BFD3C868-1F62-43FF-8771-CF21825F0C0A}</Project>
-      <Name>HomeGenie</Name>
-    </ProjectReference>
+    <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
+    <ProjectReference Include="..\HomeGenie\HomeGenie.csproj">
+      <Project>{bfd3c868-1f62-43ff-8771-cf21825f0c0a}</Project>
+      <Name>HomeGenie</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
