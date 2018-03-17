@@ -296,14 +296,14 @@ namespace HomeGenie.Service
             {
                 try
                 {
-                    string domain = cmd.Domain;
+                    var domain = cmd.Domain;
                     if (domain.StartsWith("HGIC:"))
                         domain = domain.Substring(domain.IndexOf(".") + 1);
-                    string serviceUrl = "http://" + target.RoutingNode + "/api/" + domain + "/" + cmd.Address + "/" + cmd.Command + "/" + cmd.OptionsString;
-                    Automation.Scripting.NetHelper netHelper = new Automation.Scripting.NetHelper(this).WebService(serviceUrl);
-                    string username = webGateway.GetOption("Username").Value;
-                    string password = webGateway.GetOption("Password").Value;
-                    if (!String.IsNullOrWhiteSpace(username) && !String.IsNullOrWhiteSpace(password))
+                    var serviceUrl = "http://" + target.RoutingNode + "/api/" + domain + "/" + cmd.Address + "/" + cmd.Command + "/" + cmd.OptionsString;
+                    var netHelper = new Automation.Scripting.NetHelper(Parameters, GetHttpServicePort()).WebService(serviceUrl);
+                    var username = webGateway.GetOption("Username").Value;
+                    var password = webGateway.GetOption("Password").Value;
+                    if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password))
                     {
                         netHelper.WithCredentials(username, password);
                     }
@@ -592,13 +592,13 @@ namespace HomeGenie.Service
             {
                 try
                 {
-                    string domain = migCommand.Domain;
+                    var domain = migCommand.Domain;
                     if (domain.StartsWith("HGIC:")) domain = domain.Substring(domain.IndexOf(".") + 1);
-                    string serviceurl = "http://" + target.RoutingNode + "/api/" + domain + "/" + migCommand.Address + "/" + migCommand.Command + "/" + migCommand.OptionsString;
-                    Automation.Scripting.NetHelper neth = new Automation.Scripting.NetHelper(this).WebService(serviceurl);
-                    string username = webGateway.GetOption("Username").Value;
-                    string password = webGateway.GetOption("Password").Value;
-                    if (!String.IsNullOrWhiteSpace(username) && !String.IsNullOrWhiteSpace(password))
+                    var serviceurl = "http://" + target.RoutingNode + "/api/" + domain + "/" + migCommand.Address + "/" + migCommand.Command + "/" + migCommand.OptionsString;
+                    var neth = new Automation.Scripting.NetHelper(Parameters, GetHttpServicePort()).WebService(serviceurl);
+                    var username = webGateway.GetOption("Username").Value;
+                    var password = webGateway.GetOption("Password").Value;
+                    if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password))
                     {
                         neth.WithCredentials(
                             username,

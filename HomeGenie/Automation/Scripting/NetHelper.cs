@@ -73,12 +73,13 @@ namespace HomeGenie.Automation.Scripting
         private readonly object _smtpSyncLock = new object();
         //private object httpSyncLock = new object();
 
-        private readonly HomeGenieService _homegenie;
+        private readonly List<ModuleParameter> _hgServiceParameters;
+        private readonly string _httpServicePort;
 
-
-        public NetHelper(HomeGenieService hg)
+        public NetHelper(List<ModuleParameter> hgServiceParameters, string httpServicePort)
         {
-            _homegenie = hg;
+            _hgServiceParameters = hgServiceParameters;
+            _httpServicePort = httpServicePort;
         }
 
         #region SMTP client
@@ -134,7 +135,7 @@ namespace HomeGenie.Automation.Scripting
         {
             var mailFrom = "";
             // this is a System Parameter
-            var spEmailSender = _homegenie.Parameters.Find(mp => mp.Name == "Messaging.Email.Sender");
+            var spEmailSender = _hgServiceParameters.Find(mp => mp.Name == "Messaging.Email.Sender");
             if (spEmailSender != null && spEmailSender.Value != "")
             {
                 mailFrom = spEmailSender.Value;
@@ -181,7 +182,7 @@ namespace HomeGenie.Automation.Scripting
                     if (_mailService == "")
                     {
                         // this is a System Parameter
-                        var spSmtpServer = _homegenie.Parameters.Find(mp => mp.Name == "Messaging.Email.SmtpServer");
+                        var spSmtpServer = _hgServiceParameters.Find(mp => mp.Name == "Messaging.Email.SmtpServer");
                         if (spSmtpServer != null)
                         {
                             _mailService = spSmtpServer.Value;
@@ -190,7 +191,7 @@ namespace HomeGenie.Automation.Scripting
                     if (_mailPort == -1)
                     {
                         // this is a System Parameter
-                        var spSmtpPort = _homegenie.Parameters.Find(mp => mp.Name == "Messaging.Email.SmtpPort");
+                        var spSmtpPort = _hgServiceParameters.Find(mp => mp.Name == "Messaging.Email.SmtpPort");
                         if (spSmtpPort != null && spSmtpPort.DecimalValue > 0)
                         {
                             _mailPort = (int) spSmtpPort.DecimalValue;
@@ -199,7 +200,7 @@ namespace HomeGenie.Automation.Scripting
                     if (!_mailSsl.HasValue)
                     {
                         // this is a System Parameter
-                        var spSmtpUseSsl = _homegenie.Parameters.Find(mp => mp.Name == "Messaging.Email.SmtpUseSsl");
+                        var spSmtpUseSsl = _hgServiceParameters.Find(mp => mp.Name == "Messaging.Email.SmtpUseSsl");
                         if (spSmtpUseSsl != null && (spSmtpUseSsl.Value.ToLower() == "true" ||
                                                      spSmtpUseSsl.Value.ToLower() == "on" ||
                                                      spSmtpUseSsl.DecimalValue == 1))
@@ -212,7 +213,7 @@ namespace HomeGenie.Automation.Scripting
                     {
                         var username = "";
                         // this is a System Parameter
-                        var spSmtpUserName = _homegenie.Parameters.Find(mp => mp.Name == "Messaging.Email.SmtpUserName");
+                        var spSmtpUserName = _hgServiceParameters.Find(mp => mp.Name == "Messaging.Email.SmtpUserName");
                         if (spSmtpUserName != null)
                         {
                             username = spSmtpUserName.Value;
@@ -221,7 +222,7 @@ namespace HomeGenie.Automation.Scripting
                         {
                             var password = "";
                             // this is a System Parameter
-                            var spSmtpPassword = _homegenie.Parameters.Find(mp => mp.Name == "Messaging.Email.SmtpPassword");
+                            var spSmtpPassword = _hgServiceParameters.Find(mp => mp.Name == "Messaging.Email.SmtpPassword");
                             if (spSmtpPassword != null)
                             {
                                 password = spSmtpPassword.Value;
@@ -244,7 +245,8 @@ namespace HomeGenie.Automation.Scripting
                             smtpClient.EnableSsl = _mailSsl == true;
 
                             Log.Trace("SendMessage: going to send email {0} using mailService '{1}', port '{2}', credentials {3}, using SSL = {4}",
-                                message.ToPrettyJson(), _mailService, _mailPort, credentials.ToPrettyJson(), smtpClient.EnableSsl);
+                                message.ToPrettyJson(new MailMessageConstractResolver()), _mailService, _mailPort,
+                                credentials.ToPrettyJson(), smtpClient.EnableSsl);
                             smtpClient.Send(message);
                             Log.Trace("Email sent");
                             _attachments.Clear();
@@ -518,7 +520,7 @@ namespace HomeGenie.Automation.Scripting
         // TODO: add autodoc comment (HG Event forwarding)
         public NetHelper SignalModuleEvent(string hgAddress, ModuleHelper module, ModuleParameter parameter)
         {
-            var eventRouteUrl = "http://" + hgAddress + "/api/" + Domains.HomeAutomation_HomeGenie + "/Interconnection/Events.Push/" + _homegenie.GetHttpServicePort();
+            var eventRouteUrl = "http://" + hgAddress + "/api/" + Domains.HomeAutomation_HomeGenie + "/Interconnection/Events.Push/" + _httpServicePort;
             // propagate event to remote hg endpoint
             Utility.RunAsyncTask(() =>
             {
