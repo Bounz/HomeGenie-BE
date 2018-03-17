@@ -45,7 +45,7 @@ namespace HomeGenie.Automation.Scripting
         public void SetHost(HomeGenieService hg, int programId)
         {
             hgService = hg;
-            Net = new NetHelper(hgService);
+            Net = new NetHelper(hgService.Parameters, hgService.GetHttpServicePort());
             Program = new ProgramHelper(hgService, programId);
             When = new EventsHelper(hgService, programId);
             SerialPort = new SerialPortHelper();
