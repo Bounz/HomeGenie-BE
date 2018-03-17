@@ -67,7 +67,7 @@ namespace HomeGenie.Automation.Scheduler
             homegenie = hg;
             schedulerItem = item;
             Reset();
-            netHelper = new NetHelper(homegenie);
+            netHelper = new NetHelper(homegenie.Parameters, homegenie.GetHttpServicePort());
             serialPortHelper = new SerialPortHelper();
             tcpClientHelper = new TcpClientHelper();
             udpClientHelper = new UdpClientHelper();
