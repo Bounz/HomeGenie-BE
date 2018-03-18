@@ -62,26 +62,26 @@ namespace HomeGenie.Automation.Engines
             "Raspberry",
             "Raspberry.Timers",
             "Raspberry.IO",
-            "Raspberry.IO.Components.Controllers.Pca9685",
-            "Raspberry.IO.Components.Controllers.Tlc59711",
-            "Raspberry.IO.Components.Converters.Mcp3002",
-            "Raspberry.IO.Components.Converters.Mcp3008",
-            "Raspberry.IO.Components.Converters.Mcp4822",
-            "Raspberry.IO.Components.Displays.Hd44780",
-            "Raspberry.IO.Components.Displays.Ssd1306",
-            "Raspberry.IO.Components.Displays.Ssd1306.Fonts",
-            "Raspberry.IO.Components.Displays.Sda5708",
-            "Raspberry.IO.Components.Expanders.Mcp23017",
-            "Raspberry.IO.Components.Expanders.Pcf8574",
-            "Raspberry.IO.Components.Expanders.Mcp23008",
-            "Raspberry.IO.Components.Leds.GroveBar",
-            "Raspberry.IO.Components.Leds.GroveRgb",
-            "Raspberry.IO.Components.Sensors",
-            "Raspberry.IO.Components.Sensors.Distance.HcSr04",
-            "Raspberry.IO.Components.Sensors.Pressure.Bmp085",
-            "Raspberry.IO.Components.Sensors.Temperature.Dht",
-            "Raspberry.IO.Components.Sensors.Temperature.Tmp36",
-            "Raspberry.IO.Components.Devices.PiFaceDigital",
+//            "Raspberry.IO.Components.Controllers.Pca9685",
+//            "Raspberry.IO.Components.Controllers.Tlc59711",
+//            "Raspberry.IO.Components.Converters.Mcp3002",
+//            "Raspberry.IO.Components.Converters.Mcp3008",
+//            "Raspberry.IO.Components.Converters.Mcp4822",
+//            "Raspberry.IO.Components.Displays.Hd44780",
+//            "Raspberry.IO.Components.Displays.Ssd1306",
+//            "Raspberry.IO.Components.Displays.Ssd1306.Fonts",
+//            "Raspberry.IO.Components.Displays.Sda5708",
+//            "Raspberry.IO.Components.Expanders.Mcp23017",
+//            "Raspberry.IO.Components.Expanders.Pcf8574",
+//            "Raspberry.IO.Components.Expanders.Mcp23008",
+//            "Raspberry.IO.Components.Leds.GroveBar",
+//            "Raspberry.IO.Components.Leds.GroveRgb",
+//            "Raspberry.IO.Components.Sensors",
+//            "Raspberry.IO.Components.Sensors.Distance.HcSr04",
+//            "Raspberry.IO.Components.Sensors.Pressure.Bmp085",
+//            "Raspberry.IO.Components.Sensors.Temperature.Dht",
+//            "Raspberry.IO.Components.Sensors.Temperature.Tmp36",
+//            "Raspberry.IO.Components.Devices.PiFaceDigital",
             "Raspberry.IO.GeneralPurpose",
             "Raspberry.IO.GeneralPurpose.Behaviors",
             "Raspberry.IO.GeneralPurpose.Configuration",
@@ -227,7 +227,8 @@ namespace HomeGenie.Automation.Scripting
             //if (Raspberry.Board.Current.IsRaspberryPi)
             {
                 compilerParams.ReferencedAssemblies.Add("Raspberry.IO.dll");
-                compilerParams.ReferencedAssemblies.Add("Raspberry.IO.Components.dll");
+                //compilerParams.ReferencedAssemblies.Add("Raspberry.IO.Components.dll");
+                compilerParams.ReferencedAssemblies.Add("Raspberry.IO.Interop.dll");
                 compilerParams.ReferencedAssemblies.Add("Raspberry.IO.GeneralPurpose.dll");
                 compilerParams.ReferencedAssemblies.Add("Raspberry.IO.InterIntegratedCircuit.dll");
                 compilerParams.ReferencedAssemblies.Add("Raspberry.IO.SerialPeripheralInterface.dll");
@@ -235,9 +236,9 @@ namespace HomeGenie.Automation.Scripting
                 compilerParams.ReferencedAssemblies.Add("UnitsNet.dll");
             }
 
-            compilerParams.ReferencedAssemblies.Add(Path.Combine("lib", "shared", "M2Mqtt.Net.dll"));
-            compilerParams.ReferencedAssemblies.Add(Path.Combine("lib", "shared", "Innovative.Geometry.dll"));
-            compilerParams.ReferencedAssemblies.Add(Path.Combine("lib", "shared", "Innovative.SolarCalculator.dll"));
+            compilerParams.ReferencedAssemblies.Add("M2Mqtt.Net.dll");
+            compilerParams.ReferencedAssemblies.Add("Innovative.Geometry.dll");
+            compilerParams.ReferencedAssemblies.Add("Innovative.SolarCalculator.dll");
 
             // compile and generate script assembly
             return provider.CompileAssemblyFromSource(compilerParams, source);

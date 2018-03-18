@@ -141,11 +141,23 @@
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
       <HintPath>..\packages\NLog.4.4.13\lib\net45\NLog.dll</HintPath>
     </Reference>
-    <Reference Include="Raspberry.IO.GeneralPurpose, Version=2.0.1.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Raspberry.IO.GeneralPurpose.2.0.1\lib\net40\Raspberry.IO.GeneralPurpose.dll</HintPath>
+    <Reference Include="Raspberry.IO, Version=3.1.1.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Raspberry.IO.SerialPeripheralInterface3.3.1.1\lib\net40\Raspberry.IO.dll</HintPath>
     </Reference>
-    <Reference Include="Raspberry.System, Version=1.2.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Raspberry.System.1.2.0\lib\net40\Raspberry.System.dll</HintPath>
+    <Reference Include="Raspberry.IO.GeneralPurpose">
+      <HintPath>..\packages\Raspberry.IO.GeneralPurpose3.3.1.1\lib\net40\Raspberry.IO.GeneralPurpose.dll</HintPath>
+    </Reference>
+    <Reference Include="Raspberry.IO.InterIntegratedCircuit, Version=3.1.1.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Raspberry.IO.InterIntegratedCircuit3.3.1.1\lib\net40\Raspberry.IO.InterIntegratedCircuit.dll</HintPath>
+    </Reference>
+    <Reference Include="Raspberry.IO.Interop, Version=3.1.1.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Raspberry.IO.SerialPeripheralInterface3.3.1.1\lib\net40\Raspberry.IO.Interop.dll</HintPath>
+    </Reference>
+    <Reference Include="Raspberry.IO.SerialPeripheralInterface, Version=3.1.1.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Raspberry.IO.SerialPeripheralInterface3.3.1.1\lib\net40\Raspberry.IO.SerialPeripheralInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="Raspberry.System, Version=3.1.1.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Raspberry.System3.3.1.1\lib\net40\Raspberry.System.dll</HintPath>
     </Reference>
     <Reference Include="SerialPortLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\SerialPortLib.1.0.12\lib\SerialPortLib.dll</HintPath>

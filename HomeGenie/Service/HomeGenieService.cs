@@ -82,10 +82,7 @@ namespace HomeGenie.Service
 
             ConfigureUpdater();
 
-
-            Thread.Sleep(5000);
-
-
+            Thread.Sleep(5000); // TODO: why do we need this?
 
             Start();
         }
@@ -796,10 +793,8 @@ namespace HomeGenie.Service
         public void Reload()
         {
             migService.StopService();
-
             LoadConfiguration();
 
-            webGateway = (WebServiceGateway)migService.GetGateway("WebServiceGateway");
             if (webGateway == null)
             {
                 RaiseEvent(
@@ -812,9 +807,9 @@ namespace HomeGenie.Service
                 );
                 Program.Quit(false);
             }
-            int webPort = int.Parse(webGateway.GetOption("Port").Value);
+            var webPort = int.Parse(webGateway.GetOption("Port").Value);
 
-            bool started = migService.StartService();
+            var started = migService.StartService();
             while (!started)
             {
                 RaiseEvent(
@@ -835,23 +830,20 @@ namespace HomeGenie.Service
                     webGateway.SetOption("Port", webPort.ToString());
                     started = webGateway.Start();
                 }
+                else
+                {
+                    Program.Quit(false);
+                }
             }
 
-            if (started)
-            {
-                RaiseEvent(
-                    Domains.HomeGenie_System,
-                    Domains.HomeAutomation_HomeGenie,
-                    SourceModule.Master,
-                    "HomeGenie service ready",
-                    Properties.SystemInfoHttpAddress,
-                    webGateway.GetOption("Host").Value + ":" + webGateway.GetOption("Port").Value
-                );
-            }
-            else
-            {
-                Program.Quit(false);
-            }
+            RaiseEvent(
+                Domains.HomeGenie_System,
+                Domains.HomeAutomation_HomeGenie,
+                SourceModule.Master,
+                "HomeGenie service ready",
+                Properties.SystemInfoHttpAddress,
+                webGateway.GetOption("Host").Value + ":" + webGateway.GetOption("Port").Value
+            );
         }
 
         /// <summary>
@@ -894,6 +886,7 @@ namespace HomeGenie.Service
         public void LoadConfiguration()
         {
             LoadSystemConfig();
+            webGateway = (WebServiceGateway) migService.GetGateway("WebServiceGateway");
             //
             // load modules data
             //
