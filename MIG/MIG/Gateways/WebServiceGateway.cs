@@ -452,26 +452,25 @@ namespace MIG.Gateways
                                                                 do
                                                                 {
                                                                     tagFound = false;
-                                                                    int ts = body.IndexOf("{include ");
+                                                                    var ts = body.IndexOf("{include ");
                                                                     if (ts >= 0)
                                                                     {
-                                                                        int te = body.IndexOf("}", ts);
+                                                                        var te = body.IndexOf("}", ts);
                                                                         if (te > ts)
                                                                         {
-                                                                            string rs = body.Substring(ts + (te - ts) + 1);
-                                                                            string cs = body.Substring(ts, te - ts + 1);
-                                                                            string ls = body.Substring(0, ts);
+                                                                            var rs = body.Substring(ts + (te - ts) + 1);
+                                                                            var cs = body.Substring(ts, te - ts + 1);
+                                                                            var ls = body.Substring(0, ts);
                                                                             //
                                                                             try
                                                                             {
                                                                                 if (cs.StartsWith("{include "))
                                                                                 {
-                                                                                    string fileName = cs.Substring(9).TrimEnd('}').Trim();
+                                                                                    var fileName = cs.Substring(9).TrimEnd('}').Trim();
                                                                                     fileName = GetWebFilePath(fileName);
-                                                                                    //
-                                                                                    Encoding fileEncoding = DetectWebFileEncoding(fileName);
-                                                                                    if (fileEncoding == null)
-                                                                                        fileEncoding = defaultWebFileEncoding;
+
+                                                                                    var fileEncoding = DetectWebFileEncoding(fileName) ??
+                                                                                                       defaultWebFileEncoding;
                                                                                     var incFile = File.ReadAllText(fileName, fileEncoding) + rs;
                                                                                     body = ls + incFile;
                                                                                 }
@@ -778,16 +777,16 @@ namespace MIG.Gateways
 
         private bool IsRemoteEndPointConnected(IPEndPoint ep)
         {
-            bool isConnected = false;
-            IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
-            TcpConnectionInformation[] connections = properties.GetActiveTcpConnections(); 
-            foreach (TcpConnectionInformation c in connections)
+            var isConnected = false;
+            var properties = IPGlobalProperties.GetIPGlobalProperties();
+            var connections = properties.GetActiveTcpConnections();
+            foreach (var tcpConnection in connections)
             {
-                if (c.RemoteEndPoint.ToString() == ep.ToString())
-                {
-                    isConnected = !(c.State == TcpState.CloseWait);
-                    break;
-                }
+                if (tcpConnection.RemoteEndPoint.ToString() != ep.ToString())
+                    continue;
+
+                isConnected = tcpConnection.State != TcpState.CloseWait;
+                break;
             }
             return isConnected;
         }

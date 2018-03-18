@@ -143,7 +143,7 @@ namespace HomeGenie.Data
 
         internal void AddValue(string fieldName, double value, DateTime timestamp)
         {
-            if (StatisticsLogger.IsValidField(fieldName))
+            if (StatisticsCoreService.IsValidField(fieldName))
             {
                 // add value for StatisticsLogger use
                 statValues.Add(new StatValue(value, timestamp));

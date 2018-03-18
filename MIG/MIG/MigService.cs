@@ -141,7 +141,7 @@ namespace MIG
             }
             catch (Exception e)
             {
-                MigService.Log.Error(e);
+                Log.Error(e);
                 success = false;
             }
             return success;
@@ -225,11 +225,15 @@ namespace MIG
                 try
                 {
                     var type = TypeLookup("MIG.Gateways." + className, assemblyName);
+                    if(type == null){
+                        Log.Error("Can't find type for Mig Gateway MIG.Gateways.{0} (assemblyName={1})", className, assemblyName);
+                        return null;
+                    }
                     migGateway = (IMigGateway)Activator.CreateInstance(type);
                 }
                 catch (Exception e)
                 {
-                    MigService.Log.Error(e);
+                    Log.Error(e);
                 }
                 if (migGateway != null)
                 {
@@ -286,14 +290,14 @@ namespace MIG
                 {
                     var type = TypeLookup("MIG.Interfaces." + domain, assemblyName);
                     if(type == null){
-                        MigService.Log.Error("Can't find type for Mig Interface with domain {0} (assemblyName={1})", domain, assemblyName);
+                        Log.Error("Can't find type for Mig Interface with domain {0} (assemblyName={1})", domain, assemblyName);
                         return null;
                     }                        
                     migInterface = (MigInterface)Activator.CreateInstance(type);
                 }
                 catch (Exception e)
                 {
-                    MigService.Log.Error(e);
+                    Log.Error(e);
                 }
                 if (migInterface != null)
                 {
@@ -465,42 +469,32 @@ namespace MIG
 
         public static Type TypeLookup(string typeName, string assemblyName)
         {
-            Type type = null;
-            if (!String.IsNullOrWhiteSpace(assemblyName))
+            if (string.IsNullOrWhiteSpace(assemblyName))
             {
-                Assembly assembly = null;
-                try
-                {
-                    assembly = AppDomain.CurrentDomain.Load(Path.GetFileNameWithoutExtension(assemblyName));
-                }
-                catch
-                { 
-                    try
-                    {
-                        assembly = Assembly.LoadFrom(Path.Combine("lib", "mig", assemblyName));
-                    }
-                    catch
-                    { 
-                        try
-                        {
-                            assembly = Assembly.LoadFrom(Path.Combine("lib", assemblyName));
-                        }
-                        catch
-                        { 
-                            assembly = Assembly.LoadFrom(Path.Combine(assemblyName));
-                        }
-                    }
-                }
-                if (assembly != null)
-                {
-                    type = (Type)assembly.GetType(typeName);
-                }
+                var type = Type.GetType(typeName);
+                return type;
             }
-            else
+
+            // look for assembly file
+            var filesFound = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "plugins") , assemblyName, SearchOption.AllDirectories);
+            if (filesFound.Length == 0)
             {
-                type = Type.GetType(typeName);
+                filesFound = Directory.GetFiles(Directory.GetCurrentDirectory(), assemblyName, SearchOption.TopDirectoryOnly);
             }
-            return type;
+            if (filesFound.Length == 0)
+            {
+                throw new FileNotFoundException($"Couldn't load assembly for interface/type {typeName}", assemblyName);
+            }
+
+            foreach (var fileName in filesFound)
+            {
+                var assembly = Assembly.LoadFrom(fileName);
+                var type = assembly.GetType(typeName);
+                if (type != null)
+                    return type;
+            }
+
+            return null;
         }
 
         public static Version VersionLookup(string assemblyName)
@@ -700,7 +694,7 @@ namespace MIG
                         }
                         catch (Exception ex)
                         {
-                            request.ResponseData = new ResponseStatus(Status.Error, MigService.JsonSerialize(ex));
+                            request.ResponseData = new ResponseStatus(Status.Error, JsonSerialize(ex));
                         }
                     //}
                     //else

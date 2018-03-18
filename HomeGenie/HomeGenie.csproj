@@ -26,7 +26,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
     <ReleaseVersion>1.1</ReleaseVersion>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -74,37 +74,81 @@
     <Reference Include="Common.Logging.Core, Version=3.1.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e">
       <HintPath>..\packages\Common.Logging.Core.3.1.0\lib\net40\Common.Logging.Core.dll</HintPath>
     </Reference>
-    <Reference Include="IronPython">
-      <HintPath>..\Externals\Scripting\IronPython.dll</HintPath>
+    <Reference Include="CronExpressionDescriptor, Version=1.17.0.0, Culture=neutral, PublicKeyToken=a2ab0e0f73f9b037">
+      <HintPath>..\packages\CronExpressionDescriptor.1.17.0\lib\net45\CronExpressionDescriptor.dll</HintPath>
     </Reference>
-    <Reference Include="IronPython.Modules">
-      <HintPath>..\Externals\Scripting\IronPython.Modules.dll</HintPath>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
-    <Reference Include="IronRuby">
-      <HintPath>..\Externals\Scripting\IronRuby.dll</HintPath>
+    <Reference Include="Innovative.Geometry, Version=1.0.2.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Angle.1.0.2.1\lib\net45\Innovative.Geometry.dll</HintPath>
     </Reference>
-    <Reference Include="IronRuby.Libraries">
-      <HintPath>..\Externals\Scripting\IronRuby.Libraries.dll</HintPath>
+    <Reference Include="Innovative.SolarCalculator, Version=1.0.8.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\SolarCalculator.1.0.8\lib\net45\Innovative.SolarCalculator.dll</HintPath>
     </Reference>
-    <Reference Include="IronRuby.Libraries.Yaml">
-      <HintPath>..\Externals\Scripting\IronRuby.Libraries.Yaml.dll</HintPath>
+    <Reference Include="IronPython, Version=2.7.8.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1">
+      <HintPath>..\packages\IronPython.2.7.8.1\lib\net45\IronPython.dll</HintPath>
     </Reference>
-    <Reference Include="Jint">
-      <HintPath>..\Externals\Scripting\Jint.dll</HintPath>
+    <Reference Include="IronPython.Modules, Version=2.7.8.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1">
+      <HintPath>..\packages\IronPython.2.7.8.1\lib\net45\IronPython.Modules.dll</HintPath>
+    </Reference>
+    <Reference Include="IronPython.SQLite, Version=2.7.8.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1">
+      <HintPath>..\packages\IronPython.2.7.8.1\lib\net45\IronPython.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="IronPython.Wpf, Version=2.7.8.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1">
+      <HintPath>..\packages\IronPython.2.7.8.1\lib\net45\IronPython.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="IronRuby, Version=1.1.3.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1">
+      <HintPath>..\packages\IronRuby.1.1.3\Lib\IronRuby.dll</HintPath>
+    </Reference>
+    <Reference Include="IronRuby.Libraries, Version=1.1.3.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1">
+      <HintPath>..\packages\IronRuby.1.1.3\Lib\IronRuby.Libraries.dll</HintPath>
+    </Reference>
+    <Reference Include="IronRuby.Libraries.Yaml, Version=1.1.3.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1">
+      <HintPath>..\packages\IronRuby.1.1.3\Lib\IronRuby.Libraries.Yaml.dll</HintPath>
+    </Reference>
+    <Reference Include="Jint, Version=2.4.0.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f">
+      <HintPath>..\packages\Jint.2.4.0\lib\portable-net40+sl50+win+wpa81+wp80\Jint.dll</HintPath>
+    </Reference>
+    <Reference Include="KNXLib, Version=1.1.9.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\KNX.net.1.1.9\lib\net40\KNXLib.dll</HintPath>
+    </Reference>
+    <Reference Include="LiteDB, Version=4.1.1.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27">
+      <HintPath>..\packages\LiteDB.4.1.1\lib\net40\LiteDB.dll</HintPath>
+    </Reference>
+    <Reference Include="M2Mqtt.Net, Version=4.3.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\M2Mqtt.4.3.0.0\lib\net45\M2Mqtt.Net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Dynamic">
-      <HintPath>..\Externals\Scripting\Microsoft.Dynamic.dll</HintPath>
+    <Reference Include="Microsoft.Dynamic, Version=1.2.0.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1">
+      <HintPath>..\packages\DynamicLanguageRuntime.1.2.1\lib\net45\Microsoft.Dynamic.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Scripting">
-      <HintPath>..\Externals\Scripting\Microsoft.Scripting.dll</HintPath>
+    <Reference Include="Microsoft.Scripting, Version=1.2.0.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1">
+      <HintPath>..\packages\DynamicLanguageRuntime.1.2.1\lib\net45\Microsoft.Scripting.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Scripting.Metadata">
-      <HintPath>..\Externals\Scripting\Microsoft.Scripting.Metadata.dll</HintPath>
+    <Reference Include="Microsoft.Scripting.Metadata, Version=1.2.0.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1">
+      <HintPath>..\packages\DynamicLanguageRuntime.1.2.1\lib\net45\Microsoft.Scripting.Metadata.dll</HintPath>
     </Reference>
-    <Reference Include="NCrontab">
-      <HintPath>..\Externals\NCrontab\NCrontab.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Microsoft.VisualStudio.CodeCoverage.Shim, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>..\packages\DynamicLanguageRuntime.1.2.1\lib\net45\Microsoft.VisualStudio.CodeCoverage.Shim.dll</HintPath>
+    </Reference>
+    <Reference Include="NCrontab, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\ncrontab.1.0.0\lib\NCrontab.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
+      <HintPath>..\packages\NLog.4.4.13\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="Raspberry.IO.GeneralPurpose, Version=2.0.1.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Raspberry.IO.GeneralPurpose.2.0.1\lib\net40\Raspberry.IO.GeneralPurpose.dll</HintPath>
+    </Reference>
+    <Reference Include="Raspberry.System, Version=1.2.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Raspberry.System.1.2.0\lib\net40\Raspberry.System.dll</HintPath>
+    </Reference>
+    <Reference Include="SerialPortLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\SerialPortLib.1.0.12\lib\SerialPortLib.dll</HintPath>
     </Reference>
     <Reference Include="SharpCompress, Version=0.19.2.0, Culture=neutral, PublicKeyToken=afb0a02973931d96">
       <HintPath>..\packages\SharpCompress.0.19.2\lib\net45\SharpCompress.dll</HintPath>
@@ -112,77 +156,26 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+    </Reference>
     <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="UnitsNet, Version=3.88.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\UnitsNet.3.88.0\lib\net40\UnitsNet.dll</HintPath>
+    </Reference>
     <Reference Include="UPnP, Version=1.0.5772.30730, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\Externals\upnp\UPnP.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
-    <Reference Include="Raspberry.System">
-      <HintPath>..\Externals\raspberry-sharp\Raspberry.System.dll</HintPath>
-    </Reference>
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\Externals\json\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.SQLite">
-      <HintPath>..\Externals\sqlite\System.Data.SQLite.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Raspberry.IO.SerialPeripheralInterface">
-      <HintPath>..\Externals\raspberry-sharp\Raspberry.IO.SerialPeripheralInterface.dll</HintPath>
-    </Reference>
-    <Reference Include="Raspberry.IO.Interop">
-      <HintPath>..\Externals\raspberry-sharp\Raspberry.IO.Interop.dll</HintPath>
-    </Reference>
-    <Reference Include="Raspberry.IO.InterIntegratedCircuit">
-      <HintPath>..\Externals\raspberry-sharp\Raspberry.IO.InterIntegratedCircuit.dll</HintPath>
-    </Reference>
-    <Reference Include="Raspberry.IO.GeneralPurpose">
-      <HintPath>..\Externals\raspberry-sharp\Raspberry.IO.GeneralPurpose.dll</HintPath>
-    </Reference>
-    <Reference Include="Raspberry.IO">
-      <HintPath>..\Externals\raspberry-sharp\Raspberry.IO.dll</HintPath>
-    </Reference>
-    <Reference Include="Raspberry.IO.Components">
-      <HintPath>..\Externals\raspberry-sharp\Raspberry.IO.Components.dll</HintPath>
-    </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="KNXLib">
-      <HintPath>..\Externals\knx.net\KNXLib.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnitsNet">
-      <HintPath>..\Externals\raspberry-sharp\UnitsNet.dll</HintPath>
-    </Reference>
-    <Reference Include="CronExpressionDescriptor">
-      <HintPath>..\Externals\CronExpressionDescriptor\CronExpressionDescriptor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="NLog">
-      <HintPath>..\Externals\g-labs\NLog.dll</HintPath>
-    </Reference>
-    <Reference Include="SerialPortLib">
-      <HintPath>..\Externals\g-labs\SerialPortLib.dll</HintPath>
-    </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib">
-      <HintPath>..\Externals\SharpZipLib\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
-    <Reference Include="M2Mqtt.Net">
-      <HintPath>..\Externals\M2Mqtt.Net\M2Mqtt.Net.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Innovative.SolarCalculator">
-      <HintPath>..\Externals\SolarCalculator\Innovative.SolarCalculator.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Innovative.Geometry">
-      <HintPath>..\Externals\SolarCalculator\Innovative.Geometry.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Automation\MacroRecorder.cs" />
@@ -202,6 +195,11 @@
     <Compile Include="Automation\Scripting\EventsHelper.cs" />
     <Compile Include="Automation\Scripting\TcpClientHelper.cs" />
     <Compile Include="Automation\Scripting\SerialPortHelper.cs" />
+    <Compile Include="Database\GenericRepository.cs" />
+    <Compile Include="Database\IStatisticsRepository.cs" />
+    <Compile Include="Database\LiteDbCollectionAttribute.cs" />
+    <Compile Include="Database\StatisticsDbEntry.cs" />
+    <Compile Include="Database\StatisticsRepository.cs" />
     <Compile Include="Data\ModuleEvent.cs" />
     <Compile Include="Data\ValueStatistics.cs" />
     <Compile Include="Data\VirtualModule.cs" />
@@ -214,8 +212,13 @@
     <Compile Include="Service\Handlers\Config.cs" />
     <Compile Include="Service\Handlers\Interconnection.cs" />
     <Compile Include="Service\Handlers\Statistics.cs" />
+    <Compile Include="Service\IDateTime.cs" />
     <Compile Include="Service\JsonHelper.cs" />
-    <Compile Include="Service\Logging\StatisticsLogger.cs" />
+    <Compile Include="Service\Logging\StatGraphEntry.cs" />
+    <Compile Include="Service\Logging\StatGroup.cs" />
+    <Compile Include="Service\Logging\StatisticsEntry.cs" />
+    <Compile Include="Service\Logging\StatisticsCoreService.cs" />
+    <Compile Include="Service\RealDateTime.cs" />
     <Compile Include="Service\Updates\ArchiveDownloadEventArgs.cs" />
     <Compile Include="Service\Updates\ArchiveDownloadStatus.cs" />
     <Compile Include="Service\Updates\InstallStatus.cs" />
@@ -312,6 +315,14 @@
     <ProjectReference Include="..\BaseFiles\Common\Common.csproj">
       <Project>{0A27EF44-EC80-4FDB-8764-B153C169905D}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MIG\MIG.HomeAutomation\MIG.HomeAutomation.csproj">
+      <Project>{8c90aaee-6245-4f6f-9d4a-854300c662f6}</Project>
+      <Name>MIG.HomeAutomation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MIG\MIG.Protocols\MIG.Protocols.csproj">
+      <Project>{c7538c18-d328-4509-b5d7-cda0491f90f5}</Project>
+      <Name>MIG.Protocols</Name>
     </ProjectReference>
     <ProjectReference Include="..\MIG\MIG\MIG.csproj">
       <Project>{005357c9-7f8e-458e-affa-bf84f7d6a6ae}</Project>

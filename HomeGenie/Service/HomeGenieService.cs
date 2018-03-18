@@ -12,6 +12,7 @@ using HomeGenie.Data;
 using HomeGenie.Service.Constants;
 using HomeGenie.Service.Logging;
 using HomeGenie.Automation.Scheduler;
+using HomeGenie.Database;
 using HomeGenie.Service.Updates;
 using MIG;
 using MIG.Gateways;
@@ -35,7 +36,7 @@ namespace HomeGenie.Service
         private UpdateManager _updateManager;
         private BackupManager backupManager;
         private PackageManager packageManager;
-        private StatisticsLogger statisticsLogger;
+        private StatisticsCoreService statisticsLogger;
         // Internal data structures
         private TsList<Module> systemModules = new TsList<Module>();
         private TsList<Module> modulesGarbage = new TsList<Module>();
@@ -64,6 +65,7 @@ namespace HomeGenie.Service
         public HomeGenieService()
         {
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+            EnsureDirectoryStructure();
             EnableOutputRedirect();
 
             InitializeSystem();
@@ -72,7 +74,7 @@ namespace HomeGenie.Service
             backupManager = new BackupManager(this);
             packageManager = new PackageManager(this);
 
-            statisticsLogger = new StatisticsLogger(this);
+            statisticsLogger = new StatisticsCoreService(this, new StatisticsRepository(), new RealDateTime());
             statisticsLogger.Start();
 
             // Setup local UPnP device
@@ -86,6 +88,14 @@ namespace HomeGenie.Service
 
 
             Start();
+        }
+
+        private void EnsureDirectoryStructure()
+        {
+            if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), "plugins")))
+            {
+                Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "plugins"));
+            }
         }
 
         private void ConfigureUpdater()
@@ -269,7 +279,7 @@ namespace HomeGenie.Service
         public PackageManager PackageManager => packageManager;
 
         // Reference to Statistics
-        public StatisticsLogger Statistics => statisticsLogger;
+        public StatisticsCoreService Statistics => statisticsLogger;
 
         // Public utility methods
         public string GetHttpServicePort()
@@ -286,14 +296,14 @@ namespace HomeGenie.Service
             {
                 try
                 {
-                    string domain = cmd.Domain;
+                    var domain = cmd.Domain;
                     if (domain.StartsWith("HGIC:"))
                         domain = domain.Substring(domain.IndexOf(".") + 1);
-                    string serviceUrl = "http://" + target.RoutingNode + "/api/" + domain + "/" + cmd.Address + "/" + cmd.Command + "/" + cmd.OptionsString;
-                    Automation.Scripting.NetHelper netHelper = new Automation.Scripting.NetHelper(this).WebService(serviceUrl);
-                    string username = webGateway.GetOption("Username").Value;
-                    string password = webGateway.GetOption("Password").Value;
-                    if (!String.IsNullOrWhiteSpace(username) && !String.IsNullOrWhiteSpace(password))
+                    var serviceUrl = "http://" + target.RoutingNode + "/api/" + domain + "/" + cmd.Address + "/" + cmd.Command + "/" + cmd.OptionsString;
+                    var netHelper = new Automation.Scripting.NetHelper(Parameters, GetHttpServicePort()).WebService(serviceUrl);
+                    var username = webGateway.GetOption("Username").Value;
+                    var password = webGateway.GetOption("Password").Value;
+                    if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password))
                     {
                         netHelper.WithCredentials(username, password);
                     }
@@ -582,13 +592,13 @@ namespace HomeGenie.Service
             {
                 try
                 {
-                    string domain = migCommand.Domain;
+                    var domain = migCommand.Domain;
                     if (domain.StartsWith("HGIC:")) domain = domain.Substring(domain.IndexOf(".") + 1);
-                    string serviceurl = "http://" + target.RoutingNode + "/api/" + domain + "/" + migCommand.Address + "/" + migCommand.Command + "/" + migCommand.OptionsString;
-                    Automation.Scripting.NetHelper neth = new Automation.Scripting.NetHelper(this).WebService(serviceurl);
-                    string username = webGateway.GetOption("Username").Value;
-                    string password = webGateway.GetOption("Password").Value;
-                    if (!String.IsNullOrWhiteSpace(username) && !String.IsNullOrWhiteSpace(password))
+                    var serviceurl = "http://" + target.RoutingNode + "/api/" + domain + "/" + migCommand.Address + "/" + migCommand.Command + "/" + migCommand.OptionsString;
+                    var neth = new Automation.Scripting.NetHelper(Parameters, GetHttpServicePort()).WebService(serviceurl);
+                    var username = webGateway.GetOption("Username").Value;
+                    var password = webGateway.GetOption("Password").Value;
+                    if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password))
                     {
                         neth.WithCredentials(
                             username,
@@ -1500,7 +1510,7 @@ namespace HomeGenie.Service
                 systemConfiguration.HomeGenie.GUID = uniqueDeviceName = Guid.NewGuid().ToString();
                 systemConfiguration.Update();
                 // initialize database for first use
-                statisticsLogger.ResetDatabase();
+                //statisticsLogger.ResetDatabase(); //TODO do we really need to reset stats DB?
             }
             //
             var localDevice = UPnPDevice.CreateRootDevice(900, 1, "web\\");

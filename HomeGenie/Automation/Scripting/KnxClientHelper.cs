@@ -1,32 +1,5 @@
-/*
-    This file is part of HomeGenie Project source code.
-
-    HomeGenie is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    HomeGenie is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with HomeGenie.  If not, see <http://www.gnu.org/licenses/>.  
-*/
-
-/*
- *     Author: Generoso Martello <gene@homegenie.it>
- *     Project Homepage: http://github.com/Bounz/HomeGenie-BE
- */
-
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using KNXLib;
-using KNXLib.DPT;
 
 namespace HomeGenie.Automation.Scripting
 {
@@ -40,14 +13,14 @@ namespace HomeGenie.Automation.Scripting
     {
         public class KnxEndPoint
         {
-            public string LocalIp = null;
-            public int LocalPort = 0;
-            public string RemoteIp = null;
-            public int RemotePort = 0;
+            public string LocalIp;
+            public int LocalPort;
+            public string RemoteIp;
+            public int RemotePort;
         }
 
-        private KNXConnection knxClient = null;
-        private KnxEndPoint knxEndPoint = null;
+        private KnxConnection knxClient;
+        private KnxEndPoint knxEndPoint;
         private Action<string, string> statusReceived;
         private Action<string, string> eventReceived;
         private Action<bool> statusChanged;
@@ -113,32 +86,32 @@ namespace HomeGenie.Automation.Scripting
             }
             if (knxEndPoint == null)
             {
-                knxClient = new KNXConnectionRouting();
+                knxClient = new KnxConnectionRouting();
             }
             else
             {
                 if (knxEndPoint.RemoteIp != null && knxEndPoint.LocalIp != null)
                 {
-                    knxClient = new KNXConnectionTunneling(knxEndPoint.RemoteIp, knxEndPoint.RemotePort, knxEndPoint.LocalIp, knxEndPoint.LocalPort);
+                    knxClient = new KnxConnectionTunneling(knxEndPoint.RemoteIp, knxEndPoint.RemotePort, knxEndPoint.LocalIp, knxEndPoint.LocalPort);
                 }
                 else if (knxEndPoint.LocalIp != null && knxEndPoint.LocalPort > 0)
                 {
-                    knxClient = new KNXConnectionRouting(knxEndPoint.LocalIp, knxEndPoint.LocalPort);
+                    knxClient = new KnxConnectionRouting(knxEndPoint.LocalIp, knxEndPoint.LocalPort);
                 }
                 else if (knxEndPoint.LocalIp != null && knxEndPoint.LocalPort == 0)
                 {
-                    knxClient = new KNXConnectionRouting(knxEndPoint.LocalIp);
+                    knxClient = new KnxConnectionRouting(knxEndPoint.LocalIp);
                 }
                 else if (knxEndPoint.LocalPort > 0)
                 {
-                    knxClient = new KNXConnectionRouting(knxEndPoint.LocalPort);
+                    knxClient = new KnxConnectionRouting(knxEndPoint.LocalPort);
                 }
             }
             knxClient.Connect();
-            knxClient.KNXConnectedDelegate += knxClient_Connected;
-            knxClient.KNXDisconnectedDelegate += knxClient_Disconnected;
-            knxClient.KNXEventDelegate += knxClient_EventReceived;
-            knxClient.KNXStatusDelegate += knxClient_StatusReceived;
+            knxClient.KnxConnectedDelegate += knxClient_Connected;
+            knxClient.KnxDisconnectedDelegate += knxClient_Disconnected;
+            knxClient.KnxEventDelegate += knxClient_EventReceived;
+            knxClient.KnxStatusDelegate += knxClient_StatusReceived;
             return this;
         }
         
@@ -149,10 +122,10 @@ namespace HomeGenie.Automation.Scripting
         {
             if (knxClient != null)
             {
-                knxClient.KNXConnectedDelegate -= knxClient_Connected;
-                knxClient.KNXDisconnectedDelegate -= knxClient_Disconnected;
-                knxClient.KNXEventDelegate -= knxClient_EventReceived;
-                knxClient.KNXStatusDelegate -= knxClient_StatusReceived;
+                knxClient.KnxConnectedDelegate -= knxClient_Connected;
+                knxClient.KnxDisconnectedDelegate -= knxClient_Disconnected;
+                knxClient.KnxEventDelegate -= knxClient_EventReceived;
+                knxClient.KnxStatusDelegate -= knxClient_StatusReceived;
                 try { knxClient.Disconnect(); } catch { }
                 knxClient = null;
             }
@@ -221,7 +194,7 @@ namespace HomeGenie.Automation.Scripting
         /// <param name="data">generic object action value.</param>
         public KnxClientHelper Action(string address, object data)
         {
-            knxClient.Action(address, knxClient.toDPT("9001", data));
+            knxClient.Action(address, knxClient.ToDataPoint("9001", data));
             return this;
         }
 
@@ -243,7 +216,7 @@ namespace HomeGenie.Automation.Scripting
         /// <param name="data">Data</param>
         public byte[] ConvertToDpt(string type, object data)
         {
-            return knxClient.toDPT(type, data);
+            return knxClient.ToDataPoint(type, data);
         }
 
         /// <summary>
@@ -257,11 +230,11 @@ namespace HomeGenie.Automation.Scripting
             object result;
             if (data.GetType() == typeof(String))
             {
-                result = knxClient.fromDPT(type, (String)data);
+                result = knxClient.FromDataPoint(type, (String)data);
             }
             else
             {
-                result = knxClient.fromDPT(type, (byte[])data);
+                result = knxClient.FromDataPoint(type, (byte[])data);
             }
             return result;
         }

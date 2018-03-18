@@ -46,17 +46,17 @@ namespace HomeGenie.Service.Handlers
 {
     public class Config
     {
-        private HomeGenieService homegenie;
-        private string widgetBasePath;
-        private string tempFolderPath;
-        private string groupWallpapersPath;
+        private readonly HomeGenieService _homegenie;
+        private readonly string _widgetBasePath;
+        private readonly string _tempFolderPath;
+        private readonly string _groupWallpapersPath;
 
         public Config(HomeGenieService hg)
         {
-            homegenie = hg;
-            tempFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Utility.GetTmpFolder());
-            widgetBasePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "html", "pages", "control", "widgets");
-            groupWallpapersPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "html", "images", "wallpapers");
+            _homegenie = hg;
+            _tempFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Utility.GetTmpFolder());
+            _widgetBasePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "html", "pages", "control", "widgets");
+            _groupWallpapersPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "html", "images", "wallpapers");
         }
 
         public void ProcessRequest(MigClientRequest request)
@@ -68,16 +68,16 @@ namespace HomeGenie.Service.Handlers
             {
             case "Interfaces.List":
                 response = "[ ";
-                foreach (var migInterface in homegenie.Interfaces)
+                foreach (var migInterface in _homegenie.Interfaces)
                 {
-                    var ifaceConfig = homegenie.SystemConfiguration.MigService.GetInterface(migInterface.GetDomain());
+                    var ifaceConfig = _homegenie.SystemConfiguration.MigService.GetInterface(migInterface.GetDomain());
                     if (ifaceConfig == null || !ifaceConfig.IsEnabled)
                     {
                         continue;
                     }
                     response += "{ \"Domain\" : \"" + migInterface.GetDomain() + "\", \"IsConnected\" : \"" + migInterface.IsConnected + "\" },";
                 }
-                if (homegenie.UpdateChecker != null && homegenie.UpdateChecker.IsUpdateAvailable)
+                if (_homegenie.UpdateChecker != null && _homegenie.UpdateChecker.IsUpdateAvailable)
                 {
                     response += "{ \"Domain\" : \"" + Domains.HomeGenie_UpdateChecker + "\", \"IsConnected\" : \"True\" }";
                     response += " ]";
@@ -91,9 +91,9 @@ namespace HomeGenie.Service.Handlers
 
             case "Interfaces.ListConfig":
                 response = "[ ";
-                foreach (var migInterface in homegenie.Interfaces)
+                foreach (var migInterface in _homegenie.Interfaces)
                 {
-                    var ifaceConfig = homegenie.SystemConfiguration.MigService.GetInterface(migInterface.GetDomain());
+                    var ifaceConfig = _homegenie.SystemConfiguration.MigService.GetInterface(migInterface.GetDomain());
                     if (ifaceConfig == null)
                         continue;
                     response += JsonConvert.SerializeObject(ifaceConfig) + ",";
@@ -136,8 +136,8 @@ namespace HomeGenie.Service.Handlers
             case "Interface.Import":
                 string downloadUrl = migCommand.GetOption(0);
                 response = "";
-                string ifaceFileName = Path.Combine(tempFolderPath, "mig_interface_import.zip");
-                string outputFolder = Path.Combine(tempFolderPath, "mig");
+                string ifaceFileName = Path.Combine(_tempFolderPath, "mig_interface_import.zip");
+                string outputFolder = Path.Combine(_tempFolderPath, "mig");
                 Utility.FolderCleanUp(outputFolder);
 
                 try
@@ -171,7 +171,7 @@ namespace HomeGenie.Service.Handlers
                     Utility.UncompressZip(ifaceFileName, outputFolder);
                     File.Delete(ifaceFileName);
 
-                    var migInt = homegenie.PackageManager.GetInterfaceConfig(Path.Combine(outputFolder, "configuration.xml"));
+                    var migInt = _homegenie.PackageManager.GetInterfaceConfig(Path.Combine(outputFolder, "configuration.xml"));
                     if (migInt != null)
                     {
                         response = String.Format("{0} ({1})\n{2}\n", migInt.Domain, migInt.AssemblyName, migInt.Description);
@@ -196,7 +196,7 @@ namespace HomeGenie.Service.Handlers
 
             case "Interface.Install":
                 // install the interface package from the unpacked archive folder
-                if (homegenie.PackageManager.InterfaceInstall(Path.Combine(tempFolderPath, "mig")))
+                if (_homegenie.PackageManager.InterfaceInstall(Path.Combine(_tempFolderPath, "mig")))
                     request.ResponseData = new ResponseText("OK");
                 else
                     request.ResponseData = new ResponseText("NOT A VALID ADD-ON PACKAGE");
@@ -213,16 +213,16 @@ namespace HomeGenie.Service.Handlers
                     bool success = false;
                     try
                     {
-                        homegenie.SystemConfiguration.HomeGenie.Location = request.RequestText;
-                        homegenie.SaveData();
+                        _homegenie.SystemConfiguration.HomeGenie.Location = request.RequestText;
+                        _homegenie.SaveData();
                         success = true;
                     } catch { }
                     request.ResponseData = new ResponseText(success ? "OK" : "ERROR");
                 }
                 if (migCommand.GetOption(0) == "Location.Get")
                 {
-                    request.ResponseData = JsonConvert.DeserializeObject(homegenie.SystemConfiguration.HomeGenie.Location) as dynamic;
-                    var location = homegenie.ProgramManager.SchedulerService.Location;
+                    request.ResponseData = JsonConvert.DeserializeObject(_homegenie.SystemConfiguration.HomeGenie.Location) as dynamic;
+                    var location = _homegenie.ProgramManager.SchedulerService.Location;
                     var sun = new SolarTimes(DateTime.UtcNow.ToLocalTime(), location["latitude"].Value, location["longitude"].Value);
                     var sunData = JsonConvert.SerializeObject(sun, Formatting.Indented,
                         new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore, Error = (sender, errorArgs)=>
@@ -239,19 +239,19 @@ namespace HomeGenie.Service.Handlers
                 }
                 else if (migCommand.GetOption(0) == "UpdateManager.UpdatesList")
                 {
-                    if (homegenie.UpdateChecker.NewReleases != null)
-                        request.ResponseData = homegenie.UpdateChecker.NewReleases;
+                    if (_homegenie.UpdateChecker.NewReleases != null)
+                        request.ResponseData = _homegenie.UpdateChecker.NewReleases;
                     else
                         request.ResponseData = new ResponseText("ERROR");
                 }
                 else if (migCommand.GetOption(0) == "UpdateManager.Check")
                 {
-                    bool checkSuccess = homegenie.UpdateChecker.Check();
+                    bool checkSuccess = _homegenie.UpdateChecker.Check();
                     request.ResponseData = new ResponseText(checkSuccess ? "OK" : "ERROR");
                 }
                 else if (migCommand.GetOption(0) == "UpdateManager.ManualUpdate")
                 {
-                    homegenie.RaiseEvent(
+                    _homegenie.RaiseEvent(
                         Domains.HomeGenie_System,
                         Domains.HomeGenie_UpdateChecker,
                         SourceModule.Master,
@@ -261,30 +261,30 @@ namespace HomeGenie.Service.Handlers
                     );
                     bool success = false;
                     // file uploaded by user
-                    Utility.FolderCleanUp(tempFolderPath);
-                    string archivename = Path.Combine(tempFolderPath, "homegenie_update_file.tgz");
+                    Utility.FolderCleanUp(_tempFolderPath);
+                    string archivename = Path.Combine(_tempFolderPath, "homegenie_update_file.tgz");
                     try
                     {
                         MIG.Gateways.WebServiceUtility.SaveFile(request.RequestData, archivename);
-                        var files = Utility.UncompressTgz(archivename, tempFolderPath);
+                        var files = Utility.UncompressTgz(archivename, _tempFolderPath);
                         File.Delete(archivename);
-                        string relInfo = Path.Combine(tempFolderPath, "homegenie", "release_info.xml");
+                        string relInfo = Path.Combine(_tempFolderPath, "homegenie", "release_info.xml");
                         if (File.Exists(relInfo))
                         {
                             var updateRelease = UpdatesHelper.GetReleaseInfoFromFile(relInfo);
-                            var currentRelease = homegenie.UpdateChecker.GetCurrentRelease();
+                            var currentRelease = _homegenie.UpdateChecker.GetCurrentRelease();
                             if (updateRelease.ReleaseDate >= currentRelease.ReleaseDate)
                             {
                                 string installPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "_update", "files");
                                 Utility.FolderCleanUp(installPath);
-                                Directory.Move(Path.Combine(tempFolderPath, "homegenie"), Path.Combine(installPath, "HomeGenie"));
-                                var installStatus = homegenie.UpdateInstaller.InstallFiles();
+                                Directory.Move(Path.Combine(_tempFolderPath, "homegenie"), Path.Combine(installPath, "HomeGenie"));
+                                var installStatus = _homegenie.UpdateInstaller.InstallFiles();
                                 if (installStatus != InstallStatus.Error)
                                 {
                                     success = true;
                                     if (installStatus == InstallStatus.RestartRequired)
                                     {
-                                        homegenie.RaiseEvent(
+                                        _homegenie.RaiseEvent(
                                             Domains.HomeGenie_System,
                                             Domains.HomeGenie_UpdateChecker,
                                             SourceModule.Master,
@@ -296,14 +296,14 @@ namespace HomeGenie.Service.Handlers
                                     }
                                     else
                                     {
-                                        homegenie.RaiseEvent(Domains.HomeGenie_System, Domains.HomeGenie_System, SourceModule.Master, "HomeGenie System", Properties.HomeGenieStatus, "UPDATED");
+                                        _homegenie.RaiseEvent(Domains.HomeGenie_System, Domains.HomeGenie_System, SourceModule.Master, "HomeGenie System", Properties.HomeGenieStatus, "UPDATED");
                                         Thread.Sleep(3000);
                                     }
                                 }
                             }
                             else
                             {
-                                homegenie.RaiseEvent(
+                                _homegenie.RaiseEvent(
                                     Domains.HomeGenie_System,
                                     Domains.HomeGenie_UpdateChecker,
                                     SourceModule.Master,
@@ -316,7 +316,7 @@ namespace HomeGenie.Service.Handlers
                         }
                         else 
                         {
-                            homegenie.RaiseEvent(
+                            _homegenie.RaiseEvent(
                                 Domains.HomeGenie_System,
                                 Domains.HomeGenie_UpdateChecker,
                                 SourceModule.Master,
@@ -329,7 +329,7 @@ namespace HomeGenie.Service.Handlers
                     }
                     catch (Exception e)
                     {
-                        homegenie.RaiseEvent(
+                        _homegenie.RaiseEvent(
                             Domains.HomeGenie_System,
                             Domains.HomeGenie_UpdateChecker,
                             SourceModule.Master,
@@ -344,8 +344,8 @@ namespace HomeGenie.Service.Handlers
                 else if (migCommand.GetOption(0) == "UpdateManager.DownloadUpdate")
                 {
                     var resultMessage = "ERROR";
-                    var latestRelease = homegenie.UpdateChecker.NewestRelease;
-                    bool success = homegenie.UpdateInstaller.DownloadUpdateFiles(latestRelease);
+                    var latestRelease = _homegenie.UpdateChecker.NewestRelease;
+                    bool success = _homegenie.UpdateInstaller.DownloadUpdateFiles(latestRelease);
                     if (success)
                     {
                         resultMessage = "RESTART";
@@ -355,8 +355,8 @@ namespace HomeGenie.Service.Handlers
                 else if (migCommand.GetOption(0) == "UpdateManager.InstallUpdate") //UpdateManager.InstallProgramsCommit")
                 {
                     string resultMessage = "OK";
-                    homegenie.SaveData();
-                    var installStatus = homegenie.UpdateInstaller.InstallFiles();
+                    _homegenie.SaveData();
+                    var installStatus = _homegenie.UpdateInstaller.InstallFiles();
                     if (installStatus == InstallStatus.Error)
                     {
                         resultMessage = "ERROR";
@@ -374,28 +374,20 @@ namespace HomeGenie.Service.Handlers
                         }
                         else
                         {
-                            homegenie.LoadConfiguration();
-                            homegenie.UpdateChecker.Check();
+                            _homegenie.LoadConfiguration();
+                            _homegenie.UpdateChecker.Check();
                         }
                     }
                     request.ResponseData = new ResponseText(resultMessage);
                 }
                 else if (migCommand.GetOption(0) == "Statistics.GetStatisticsDatabaseMaximumSize")
                 {
-                    request.ResponseData = new ResponseText(homegenie.SystemConfiguration.HomeGenie.Statistics.MaxDatabaseSizeMBytes.ToString());
+                    request.ResponseData = new ResponseText(_homegenie.SystemConfiguration.HomeGenie.Statistics.MaxDatabaseSizeMBytes.ToString());
                 }
+                // Obsolete
+                // TODO remove this command from frontend
                 else if (migCommand.GetOption(0) == "Statistics.SetStatisticsDatabaseMaximumSize")
                 {
-                    try
-                    {
-                        int sizeLimit = int.Parse(migCommand.GetOption(1));
-                        homegenie.SystemConfiguration.HomeGenie.Statistics.MaxDatabaseSizeMBytes = sizeLimit;
-                        homegenie.SystemConfiguration.Update();
-                        homegenie.Statistics.SizeLimit = sizeLimit * 1024 * 1024;
-                    }
-                    catch
-                    {
-                    }
                 }
                 else if (migCommand.GetOption(0) == "SystemLogging.DownloadCsv")
                 {
@@ -423,34 +415,34 @@ namespace HomeGenie.Service.Handlers
                 else if (migCommand.GetOption(0) == "SystemLogging.Enable")
                 {
                     SystemLogger.Instance.OpenLog();
-                    homegenie.SystemConfiguration.HomeGenie.EnableLogFile = "true";
-                    homegenie.SystemConfiguration.Update();
+                    _homegenie.SystemConfiguration.HomeGenie.EnableLogFile = "true";
+                    _homegenie.SystemConfiguration.Update();
                 }
                 else if (migCommand.GetOption(0) == "SystemLogging.Disable")
                 {
                     SystemLogger.Instance.CloseLog();
-                    homegenie.SystemConfiguration.HomeGenie.EnableLogFile = "false";
-                    homegenie.SystemConfiguration.Update();
+                    _homegenie.SystemConfiguration.HomeGenie.EnableLogFile = "false";
+                    _homegenie.SystemConfiguration.Update();
                 }
                 else if (migCommand.GetOption(0) == "SystemLogging.IsEnabled")
                 {
-                    request.ResponseData = new ResponseText((homegenie.SystemConfiguration.HomeGenie.EnableLogFile.ToLower().Equals("true") ? "1" : "0"));
+                    request.ResponseData = new ResponseText((_homegenie.SystemConfiguration.HomeGenie.EnableLogFile.ToLower().Equals("true") ? "1" : "0"));
                 }
                 else if (migCommand.GetOption(0) == "Security.SetPassword")
                 {
                     // password only for now, with fixed user login 'admin'
                     string pass = migCommand.GetOption(1) == "" ? "" : MIG.Utility.Encryption.SHA1.GenerateHashString(migCommand.GetOption(1));
-                    homegenie.MigService.GetGateway("WebServiceGateway").SetOption("Password", pass);
-                    homegenie.SaveData();
+                    _homegenie.MigService.GetGateway("WebServiceGateway").SetOption("Password", pass);
+                    _homegenie.SaveData();
                 }
                 else if (migCommand.GetOption(0) == "Security.ClearPassword")
                 {
-                    homegenie.MigService.GetGateway("WebServiceGateway").SetOption("Password", "");
-                    homegenie.SaveData();
+                    _homegenie.MigService.GetGateway("WebServiceGateway").SetOption("Password", "");
+                    _homegenie.SaveData();
                 }
                 else if (migCommand.GetOption(0) == "Security.HasPassword")
                 {
-                    var webGateway = homegenie.MigService.GetGateway("WebServiceGateway");
+                    var webGateway = _homegenie.MigService.GetGateway("WebServiceGateway");
                     var password = webGateway.GetOption("Password");
                     request.ResponseData = new ResponseText((password == null || String.IsNullOrEmpty(password.Value) ? "0" : "1"));
                 }
@@ -458,49 +450,49 @@ namespace HomeGenie.Service.Handlers
                 {
                     if (migCommand.GetOption(1) == "1")
                     {
-                        homegenie.MigService.GetGateway("WebServiceGateway").SetOption("EnableFileCaching", "true");
+                        _homegenie.MigService.GetGateway("WebServiceGateway").SetOption("EnableFileCaching", "true");
                     }
                     else
                     {
-                        homegenie.MigService.GetGateway("WebServiceGateway").SetOption("EnableFileCaching", "false");
+                        _homegenie.MigService.GetGateway("WebServiceGateway").SetOption("EnableFileCaching", "false");
                     }
-                    homegenie.SystemConfiguration.Update();
+                    _homegenie.SystemConfiguration.Update();
                     request.ResponseData = new ResponseText("OK");
                 }
                 else if (migCommand.GetOption(0) == "HttpService.GetWebCacheEnabled")
                 {
-                    var fileCaching = homegenie.MigService.GetGateway("WebServiceGateway").GetOption("EnableFileCaching");
+                    var fileCaching = _homegenie.MigService.GetGateway("WebServiceGateway").GetOption("EnableFileCaching");
                     request.ResponseData = new ResponseText(fileCaching != null ? fileCaching.Value : "false");  
                 }
                 else if (migCommand.GetOption(0) == "HttpService.GetPort")
                 {
-                    var port = homegenie.MigService.GetGateway("WebServiceGateway").GetOption("Port");
+                    var port = _homegenie.MigService.GetGateway("WebServiceGateway").GetOption("Port");
                     request.ResponseData = new ResponseText(port != null ? port.Value : "8080");
                 }
                 else if (migCommand.GetOption(0) == "HttpService.SetPort")
                 {
-                    homegenie.MigService.GetGateway("WebServiceGateway").SetOption("Port", migCommand.GetOption(1));
-                    homegenie.SystemConfiguration.Update();
+                    _homegenie.MigService.GetGateway("WebServiceGateway").SetOption("Port", migCommand.GetOption(1));
+                    _homegenie.SystemConfiguration.Update();
                 }
                 else if (migCommand.GetOption(0) == "HttpService.GetHostHeader")
                 {
-                    var host = homegenie.MigService.GetGateway("WebServiceGateway").GetOption("Host");
+                    var host = _homegenie.MigService.GetGateway("WebServiceGateway").GetOption("Host");
                     request.ResponseData = new ResponseText(host != null ? host.Value : "*");
                 }
                 else if (migCommand.GetOption(0) == "HttpService.SetHostHeader")
                 {
-                    homegenie.MigService.GetGateway("WebServiceGateway").SetOption("Host", migCommand.GetOption(1));
-                    homegenie.SystemConfiguration.Update();
+                    _homegenie.MigService.GetGateway("WebServiceGateway").SetOption("Host", migCommand.GetOption(1));
+                    _homegenie.SystemConfiguration.Update();
                 }
                 else if (migCommand.GetOption(0) == "System.ConfigurationRestore")
                 {
                     // file uploaded by user
-                    Utility.FolderCleanUp(tempFolderPath);
-                    string archivename = Path.Combine(tempFolderPath, "homegenie_restore_config.zip");
+                    Utility.FolderCleanUp(_tempFolderPath);
+                    string archivename = Path.Combine(_tempFolderPath, "homegenie_restore_config.zip");
                     try
                     {
                         MIG.Gateways.WebServiceUtility.SaveFile(request.RequestData, archivename);
-                        Utility.UncompressZip(archivename, tempFolderPath);
+                        Utility.UncompressZip(archivename, _tempFolderPath);
                         File.Delete(archivename);
                         request.ResponseData = new ResponseStatus(Status.Ok);
                     }
@@ -512,7 +504,7 @@ namespace HomeGenie.Service.Handlers
                 else if (migCommand.GetOption(0) == "System.ConfigurationRestoreS1")
                 {
                     var serializer = new XmlSerializer(typeof(List<ProgramBlock>));
-                    var reader = new StreamReader(Path.Combine(tempFolderPath, "programs.xml"));
+                    var reader = new StreamReader(Path.Combine(_tempFolderPath, "programs.xml"));
                     var newProgramsData = (List<ProgramBlock>)serializer.Deserialize(reader);
                     reader.Close();
                     var newProgramList = new List<ProgramBlock>();
@@ -537,28 +529,28 @@ namespace HomeGenie.Service.Handlers
                 }
                 else if (migCommand.GetOption(0) == "System.ConfigurationRestoreS2")
                 {
-                    var success = homegenie.BackupManager.RestoreConfiguration(tempFolderPath, migCommand.GetOption(1));
+                    var success = _homegenie.BackupManager.RestoreConfiguration(_tempFolderPath, migCommand.GetOption(1));
                     request.ResponseData = new ResponseText(success ? "OK" : "ERROR");
                 }
                 else if (migCommand.GetOption(0) == "System.ConfigurationReset")
                 {
-                    homegenie.RestoreFactorySettings();
+                    _homegenie.RestoreFactorySettings();
                 }
                 else if (migCommand.GetOption(0) == "System.ConfigurationBackup")
                 {
-                    homegenie.BackupManager.BackupConfiguration("html/homegenie_backup_config.zip");
+                    _homegenie.BackupManager.BackupConfiguration("html/homegenie_backup_config.zip");
                     (request.Context.Data as HttpListenerContext).Response.Redirect("/hg/html/homegenie_backup_config.zip");
                 }
                 else if (migCommand.GetOption(0) == "System.ConfigurationLoad")
                 {
-                    homegenie.SoftReload();
+                    _homegenie.SoftReload();
                 }
                 break;
 
             case "Modules.Get":
                 try
                 {
-                    var module = homegenie.Modules.Find(m => m.Domain == migCommand.GetOption(0) && m.Address == migCommand.GetOption(1));
+                    var module = _homegenie.Modules.Find(m => m.Domain == migCommand.GetOption(0) && m.Address == migCommand.GetOption(1));
                     request.ResponseData = Utility.Module2Json(module, false);
                 }
                 catch (Exception ex)
@@ -570,7 +562,7 @@ namespace HomeGenie.Service.Handlers
             case "Modules.ParameterGet":
                 try
                 {
-                    var module = homegenie.Modules.Find(m => m.Domain == migCommand.GetOption(0) && m.Address == migCommand.GetOption(1));
+                    var module = _homegenie.Modules.Find(m => m.Domain == migCommand.GetOption(0) && m.Address == migCommand.GetOption(1));
                     var parameter = Utility.ModuleParameterGet(module, migCommand.GetOption(2));
                     if (parameter != null)
                         request.ResponseData = JsonConvert.SerializeObject(parameter, Formatting.Indented);
@@ -586,8 +578,8 @@ namespace HomeGenie.Service.Handlers
             case "Modules.ParameterSet":
                 try
                 {
-                    var module = homegenie.Modules.Find(m => m.Domain == migCommand.GetOption(0) && m.Address == migCommand.GetOption(1));
-                    homegenie.RaiseEvent(Domains.HomeGenie_System, module.Domain, module.Address, module.Description, migCommand.GetOption(2), migCommand.GetOption(3));
+                    var module = _homegenie.Modules.Find(m => m.Domain == migCommand.GetOption(0) && m.Address == migCommand.GetOption(1));
+                    _homegenie.RaiseEvent(Domains.HomeGenie_System, module.Domain, module.Address, module.Description, migCommand.GetOption(2), migCommand.GetOption(3));
                     request.ResponseData = new ResponseText("OK");
                 }
                 catch (Exception ex)
@@ -599,7 +591,7 @@ namespace HomeGenie.Service.Handlers
             case "Modules.StatisticsGet":
                 try
                 {
-                    var module = homegenie.Modules.Find(m => m.Domain == migCommand.GetOption(0) && m.Address == migCommand.GetOption(1));
+                    var module = _homegenie.Modules.Find(m => m.Domain == migCommand.GetOption(0) && m.Address == migCommand.GetOption(1));
                     var parameter = Utility.ModuleParameterGet(module, migCommand.GetOption(2));
                     if (parameter != null)
                         request.ResponseData = JsonConvert.SerializeObject(parameter.Statistics, Formatting.Indented);
@@ -615,8 +607,8 @@ namespace HomeGenie.Service.Handlers
             case "Modules.List":
                 try
                 {
-                    homegenie.modules_Sort();
-                    request.ResponseData = homegenie.GetJsonSerializedModules(migCommand.GetOption(0).ToLower() == "short");
+                    _homegenie.modules_Sort();
+                    request.ResponseData = _homegenie.GetJsonSerializedModules(migCommand.GetOption(0).ToLower() == "short");
                 }
                 catch (Exception ex)
                 {
@@ -627,9 +619,9 @@ namespace HomeGenie.Service.Handlers
             case "Modules.RoutingReset":
                 try
                 {
-                    for (int m = 0; m < homegenie.Modules.Count; m++)
+                    for (int m = 0; m < _homegenie.Modules.Count; m++)
                     {
-                        homegenie.Modules[m].RoutingNode = "";
+                        _homegenie.Modules[m].RoutingNode = "";
                     }
                     request.ResponseData = new ResponseText("OK");
                 }
@@ -646,7 +638,7 @@ namespace HomeGenie.Service.Handlers
                 {
                     try
                     {
-                        var module = homegenie.Modules.Find(m => m.Address == newModules[i]["Address"].ToString() && m.Domain == newModules[i]["Domain"].ToString());
+                        var module = _homegenie.Modules.Find(m => m.Address == newModules[i]["Address"].ToString() && m.Domain == newModules[i]["Domain"].ToString());
                         module.Name = newModules[i]["Name"].ToString();
                         //
                         try
@@ -702,17 +694,17 @@ namespace HomeGenie.Service.Handlers
                         //TODO: notify exception?
                     }
                 }
-                homegenie.UpdateModulesDatabase();//write modules
+                _homegenie.UpdateModulesDatabase();//write modules
                 break;
 
             case "Modules.Update":
                 string streamContent = request.RequestText;
                 var newModule = JsonConvert.DeserializeObject<Module>(streamContent);
-                var currentModule = homegenie.Modules.Find(p => p.Domain == newModule.Domain && p.Address == newModule.Address);
+                var currentModule = _homegenie.Modules.Find(p => p.Domain == newModule.Domain && p.Address == newModule.Address);
                 //
                 if (currentModule == null)
                 {
-                    homegenie.Modules.Add(newModule);
+                    _homegenie.Modules.Add(newModule);
                 }
                 else
                 {
@@ -725,18 +717,18 @@ namespace HomeGenie.Service.Handlers
                         if (currentParameter == null)
                         {
                             currentModule.Properties.Add(newParameter);
-                            homegenie.RaiseEvent(Domains.HomeGenie_System, currentModule.Domain, currentModule.Address, currentModule.Description, newParameter.Name, newParameter.Value);
+                            _homegenie.RaiseEvent(Domains.HomeGenie_System, currentModule.Domain, currentModule.Address, currentModule.Description, newParameter.Name, newParameter.Value);
                         }
                         else if (newParameter.NeedsUpdate)
                         {
                             // reset current reporting Watts if VMWatts field is set to 0
                             if (newParameter.Name == Properties.VirtualMeterWatts && newParameter.DecimalValue == 0 && currentParameter.DecimalValue != 0)
                             {
-                                homegenie.RaiseEvent(Domains.HomeGenie_System, currentModule.Domain, currentModule.Address, currentModule.Description, Properties.MeterWatts, "0.0");
+                                _homegenie.RaiseEvent(Domains.HomeGenie_System, currentModule.Domain, currentModule.Address, currentModule.Description, Properties.MeterWatts, "0.0");
                             }
                             else if (newParameter.Value != currentParameter.Value)
                             {
-                                homegenie.RaiseEvent(Domains.HomeGenie_System, currentModule.Domain, currentModule.Address, currentModule.Description, newParameter.Name, newParameter.Value);
+                                _homegenie.RaiseEvent(Domains.HomeGenie_System, currentModule.Domain, currentModule.Address, currentModule.Description, newParameter.Name, newParameter.Value);
                             }
                         }
                     }
@@ -757,23 +749,23 @@ namespace HomeGenie.Service.Handlers
                     deletedParameters.Clear();
                 }
                 //
-                homegenie.UpdateModulesDatabase();
+                _homegenie.UpdateModulesDatabase();
                 break;
 
             case "Modules.Delete":
-                var deletedModule = homegenie.Modules.Find(m => m.Domain == migCommand.GetOption(0) && m.Address == migCommand.GetOption(1));
+                var deletedModule = _homegenie.Modules.Find(m => m.Domain == migCommand.GetOption(0) && m.Address == migCommand.GetOption(1));
                 if (deletedModule != null)
                 {
-                    homegenie.Modules.Remove(deletedModule);
+                    _homegenie.Modules.Remove(deletedModule);
                 }
                 request.ResponseData = new ResponseText("OK");
                 //
-                homegenie.UpdateModulesDatabase();
+                _homegenie.UpdateModulesDatabase();
                 break;
 
             case "Stores.List":
                 {
-                    var module = homegenie.Modules.Find(m => m.Domain == migCommand.GetOption(0) && m.Address == migCommand.GetOption(1));
+                    var module = _homegenie.Modules.Find(m => m.Domain == migCommand.GetOption(0) && m.Address == migCommand.GetOption(1));
                     if (module != null)
                     {
                         //module.Stores
@@ -794,7 +786,7 @@ namespace HomeGenie.Service.Handlers
 
             case "Stores.ItemList":
                 {
-                    var module = homegenie.Modules.Find(m => m.Domain == migCommand.GetOption(0) && m.Address == migCommand.GetOption(1));
+                    var module = _homegenie.Modules.Find(m => m.Domain == migCommand.GetOption(0) && m.Address == migCommand.GetOption(1));
                     if (module != null)
                     {
                         response = "[";
@@ -811,7 +803,7 @@ namespace HomeGenie.Service.Handlers
 
             case "Stores.ItemDelete":
                 {
-                    var module = homegenie.Modules.Find(m => m.Domain == migCommand.GetOption(0) && m.Address == migCommand.GetOption(1));
+                    var module = _homegenie.Modules.Find(m => m.Domain == migCommand.GetOption(0) && m.Address == migCommand.GetOption(1));
                     if (module != null)
                     {
                         var name = migCommand.GetOption(3);
@@ -823,7 +815,7 @@ namespace HomeGenie.Service.Handlers
 
             case "Stores.ItemGet":
                 {
-                    var module = homegenie.Modules.Find(m => m.Domain == migCommand.GetOption(0) && m.Address == migCommand.GetOption(1));
+                    var module = _homegenie.Modules.Find(m => m.Domain == migCommand.GetOption(0) && m.Address == migCommand.GetOption(1));
                     if (module != null)
                     {
                         var store = new StoreHelper(module.Stores, migCommand.GetOption(2));
@@ -836,7 +828,7 @@ namespace HomeGenie.Service.Handlers
                 {
                     // value is the POST body
                     string itemData = request.RequestText;
-                    var module = homegenie.Modules.Find(m => m.Domain == migCommand.GetOption(0) && m.Address == migCommand.GetOption(1));
+                    var module = _homegenie.Modules.Find(m => m.Domain == migCommand.GetOption(0) && m.Address == migCommand.GetOption(1));
                     if (module != null)
                     {
                         var store = new StoreHelper(module.Stores, migCommand.GetOption(2));
@@ -846,13 +838,13 @@ namespace HomeGenie.Service.Handlers
                 break;
 
             case "Groups.ModulesList":
-                var theGroup = homegenie.Groups.Find(z => z.Name.ToLower() == migCommand.GetOption(0).Trim().ToLower());
+                var theGroup = _homegenie.Groups.Find(z => z.Name.ToLower() == migCommand.GetOption(0).Trim().ToLower());
                 if (theGroup != null)
                 {
                     string jsonmodules = "[";
                     for (int m = 0; m < theGroup.Modules.Count; m++)
                     {
-                        var groupModule = homegenie.Modules.Find(mm => mm.Domain == theGroup.Modules[m].Domain && mm.Address == theGroup.Modules[m].Address);
+                        var groupModule = _homegenie.Modules.Find(mm => mm.Domain == theGroup.Modules[m].Domain && mm.Address == theGroup.Modules[m].Address);
                         if (groupModule != null)
                         {
                             jsonmodules += Utility.Module2Json(groupModule, false) + ",\n";
@@ -866,7 +858,7 @@ namespace HomeGenie.Service.Handlers
             case "Groups.List":
                 try
                 {
-                    request.ResponseData = homegenie.GetGroups(migCommand.GetOption(0));
+                    request.ResponseData = _homegenie.GetGroups(migCommand.GetOption(0));
                 }
                 catch (Exception ex)
                 {
@@ -877,13 +869,13 @@ namespace HomeGenie.Service.Handlers
             case "Groups.Rename":
                 string oldName = migCommand.GetOption(1);
                 string newName = request.RequestText;
-                var currentGroup = homegenie.GetGroups(migCommand.GetOption(0)).Find(g => g.Name == oldName);
-                var newGroup = homegenie.GetGroups(migCommand.GetOption(0)).Find(g => g.Name == newName);
+                var currentGroup = _homegenie.GetGroups(migCommand.GetOption(0)).Find(g => g.Name == oldName);
+                var newGroup = _homegenie.GetGroups(migCommand.GetOption(0)).Find(g => g.Name == newName);
                 // ensure that the new group name is not already defined
                 if (newGroup == null && currentGroup != null)
                 {
                     currentGroup.Name = newName;
-                    homegenie.UpdateGroupsDatabase(migCommand.GetOption(0));
+                    _homegenie.UpdateGroupsDatabase(migCommand.GetOption(0));
                     //cmd.response = JsonHelper.GetSimpleResponse("OK");
                 }
                 else
@@ -898,16 +890,16 @@ namespace HomeGenie.Service.Handlers
                     string[] newPositionOrder = request.RequestText.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
                     for (int i = 0; i < newPositionOrder.Length; i++)
                     {
-                        newGroupList.Add(homegenie.GetGroups(migCommand.GetOption(0))[int.Parse(newPositionOrder[i])]);
+                        newGroupList.Add(_homegenie.GetGroups(migCommand.GetOption(0))[int.Parse(newPositionOrder[i])]);
                     }
-                    homegenie.GetGroups(migCommand.GetOption(0)).Clear();
-                    homegenie.GetGroups(migCommand.GetOption(0)).RemoveAll(g => true);
-                    homegenie.GetGroups(migCommand.GetOption(0)).AddRange(newGroupList);
-                    homegenie.UpdateGroupsDatabase(migCommand.GetOption(0));
+                    _homegenie.GetGroups(migCommand.GetOption(0)).Clear();
+                    _homegenie.GetGroups(migCommand.GetOption(0)).RemoveAll(g => true);
+                    _homegenie.GetGroups(migCommand.GetOption(0)).AddRange(newGroupList);
+                    _homegenie.UpdateGroupsDatabase(migCommand.GetOption(0));
                 }
                 try
                 {
-                    request.ResponseData = homegenie.GetGroups(migCommand.GetOption(0));
+                    request.ResponseData = _homegenie.GetGroups(migCommand.GetOption(0));
                 }
                 catch (Exception ex)
                 {
@@ -919,7 +911,7 @@ namespace HomeGenie.Service.Handlers
                 {
                     string groupName = migCommand.GetOption(1);
                     Group sortGroup = null;
-                    sortGroup = homegenie.GetGroups(migCommand.GetOption(0)).Find(zn => zn.Name == groupName);
+                    sortGroup = _homegenie.GetGroups(migCommand.GetOption(0)).Find(zn => zn.Name == groupName);
                     if (sortGroup != null)
                     {
                         var newModulesReference = new List<ModuleReference>();
@@ -930,12 +922,12 @@ namespace HomeGenie.Service.Handlers
                         }
                         sortGroup.Modules.Clear();
                         sortGroup.Modules = newModulesReference;
-                        homegenie.UpdateGroupsDatabase(migCommand.GetOption(0));
+                        _homegenie.UpdateGroupsDatabase(migCommand.GetOption(0));
                     }
                 }
                 try
                 {
-                    request.ResponseData = homegenie.GetGroups(migCommand.GetOption(0));
+                    request.ResponseData = _homegenie.GetGroups(migCommand.GetOption(0));
                 }
                 catch (Exception ex)
                 {
@@ -945,8 +937,8 @@ namespace HomeGenie.Service.Handlers
 
             case "Groups.Add":
                 string newGroupName = request.RequestText;
-                homegenie.GetGroups(migCommand.GetOption(0)).Add(new Group() { Name = newGroupName });
-                homegenie.UpdateGroupsDatabase(migCommand.GetOption(0));//write groups
+                _homegenie.GetGroups(migCommand.GetOption(0)).Add(new Group() { Name = newGroupName });
+                _homegenie.UpdateGroupsDatabase(migCommand.GetOption(0));//write groups
                 break;
 
             case "Groups.Delete":
@@ -954,7 +946,7 @@ namespace HomeGenie.Service.Handlers
                 Group deletedGroup = null;
                 try
                 {
-                    deletedGroup = homegenie.GetGroups(migCommand.GetOption(0)).Find(zn => zn.Name == deletedGroupName);
+                    deletedGroup = _homegenie.GetGroups(migCommand.GetOption(0)).Find(zn => zn.Name == deletedGroupName);
                 }
                 catch
                 {
@@ -962,11 +954,11 @@ namespace HomeGenie.Service.Handlers
                 //
                 if (deletedGroup != null)
                 {
-                    homegenie.GetGroups(migCommand.GetOption(0)).Remove(deletedGroup);
-                    homegenie.UpdateGroupsDatabase(migCommand.GetOption(0));//write groups
+                    _homegenie.GetGroups(migCommand.GetOption(0)).Remove(deletedGroup);
+                    _homegenie.UpdateGroupsDatabase(migCommand.GetOption(0));//write groups
                     if (migCommand.GetOption(0).ToLower() == "automation")
                     {
-                        var groupPrograms = homegenie.ProgramManager.Programs.FindAll(p => p.Group.ToLower() == deletedGroup.Name.ToLower());
+                        var groupPrograms = _homegenie.ProgramManager.Programs.FindAll(p => p.Group.ToLower() == deletedGroup.Name.ToLower());
                         if (groupPrograms != null)
                         {
                             // delete group association from programs
@@ -986,7 +978,7 @@ namespace HomeGenie.Service.Handlers
                 {
                     try
                     {
-                        var group = homegenie.Groups.Find(z => z.Name == newGroups[i].Name);
+                        var group = _homegenie.Groups.Find(z => z.Name == newGroups[i].Name);
                         group.Modules.Clear();
                         group.Modules = newGroups[i].Modules;
                     }
@@ -994,12 +986,12 @@ namespace HomeGenie.Service.Handlers
                     {
                     }
                 }
-                homegenie.UpdateGroupsDatabase(migCommand.GetOption(0));//write groups
+                _homegenie.UpdateGroupsDatabase(migCommand.GetOption(0));//write groups
                 break;
 
             case "Groups.WallpaperList":
                 List<string> wallpaperList = new List<string>();
-                var images = Directory.GetFiles(groupWallpapersPath);
+                var images = Directory.GetFiles(_groupWallpapersPath);
                 for (int i = 0; i < images.Length; i++)
                 {
                     wallpaperList.Add(Path.GetFileName(images[i]));
@@ -1013,7 +1005,7 @@ namespace HomeGenie.Service.Handlers
                     string wallpaperFile = "";
                     try
                     {
-                        wallpaperFile = MIG.Gateways.WebServiceUtility.SaveFile(request.RequestData, groupWallpapersPath);
+                        wallpaperFile = MIG.Gateways.WebServiceUtility.SaveFile(request.RequestData, _groupWallpapersPath);
                     }
                     catch
                     {
@@ -1025,11 +1017,11 @@ namespace HomeGenie.Service.Handlers
             case "Groups.WallpaperSet":
                 {
                     string wpGroupName = migCommand.GetOption(0);
-                    var wpGroup = homegenie.GetGroups(migCommand.GetOption(0)).Find(g => g.Name == wpGroupName);
+                    var wpGroup = _homegenie.GetGroups(migCommand.GetOption(0)).Find(g => g.Name == wpGroupName);
                     if (wpGroup != null)
                     {
                         wpGroup.Wallpaper = migCommand.GetOption(1);
-                        homegenie.UpdateGroupsDatabase("Control");
+                        _homegenie.UpdateGroupsDatabase("Control");
                     }
                 }
                 break;
@@ -1037,7 +1029,7 @@ namespace HomeGenie.Service.Handlers
             case "Groups.WallpaperDelete":
                 {
                     string wallpaperFile = migCommand.GetOption(0);
-                    wallpaperFile = Path.Combine(groupWallpapersPath, Path.GetFileName(wallpaperFile));
+                    wallpaperFile = Path.Combine(_groupWallpapersPath, Path.GetFileName(wallpaperFile));
                     if (File.Exists(wallpaperFile))
                     {
                         File.Delete(wallpaperFile);
@@ -1048,14 +1040,14 @@ namespace HomeGenie.Service.Handlers
 
             case "Widgets.List":
                 List<string> widgetsList = new List<string>();
-                var groups = Directory.GetDirectories(widgetBasePath);
+                var groups = Directory.GetDirectories(_widgetBasePath);
                 for (int d = 0; d < groups.Length; d++)
                 {
                     var categories = Directory.GetDirectories(groups[d]);
                     for (int c = 0; c < categories.Length; c++)
                     {
                         var widgets = Directory.GetFiles(categories[c], "*.js");
-                        var group = groups[d].Replace(widgetBasePath, "").Substring(1);
+                        var group = groups[d].Replace(_widgetBasePath, "").Substring(1);
                         var category = categories[c].Replace(groups[d], "").Substring(1);
                         for (int w = 0; w < widgets.Length; w++)
                         {
@@ -1076,7 +1068,7 @@ namespace HomeGenie.Service.Handlers
                     widgetParts[2] = new String(widgetParts[2].Where(Char.IsLetter).ToArray()).ToLower();
                     if (!String.IsNullOrWhiteSpace(widgetParts[0]) && !String.IsNullOrWhiteSpace(widgetParts[1]) && !String.IsNullOrWhiteSpace(widgetParts[2]))
                     {
-                        string filePath = Path.Combine(widgetBasePath, widgetParts[0], widgetParts[1]);
+                        string filePath = Path.Combine(_widgetBasePath, widgetParts[0], widgetParts[1]);
                         if (!Directory.Exists(filePath))
                         {
                             Directory.CreateDirectory(filePath);
@@ -1086,8 +1078,8 @@ namespace HomeGenie.Service.Handlers
                         var jsFile = Path.Combine(filePath, widgetParts[2] + ".js");
                         if (!File.Exists(htmlFile) && !File.Exists(jsFile))
                         {
-                            File.Copy(Path.Combine(widgetBasePath, "template.html"), htmlFile);
-                            File.Copy(Path.Combine(widgetBasePath, "template.js"), jsFile);
+                            File.Copy(Path.Combine(_widgetBasePath, "template.html"), htmlFile);
+                            File.Copy(Path.Combine(_widgetBasePath, "template.js"), jsFile);
                             status = Status.Ok;
                         }
                     }
@@ -1102,7 +1094,7 @@ namespace HomeGenie.Service.Handlers
                     string fileType = migCommand.GetOption(0);
                     string widgetPath = migCommand.GetOption(1); // eg. homegenie/generic/dimmer
                     string[] widgetParts = widgetPath.Split('/');
-                    string filePath = Path.Combine(widgetBasePath, widgetParts[0], widgetParts[1]);
+                    string filePath = Path.Combine(_widgetBasePath, widgetParts[0], widgetParts[1]);
                     if (!Directory.Exists(filePath))
                     {
                         Directory.CreateDirectory(filePath);
@@ -1139,7 +1131,7 @@ namespace HomeGenie.Service.Handlers
                     var status = Status.Error;
                     string widgetPath = migCommand.GetOption(0); // eg. homegenie/generic/dimmer
                     string[] widgetParts = widgetPath.Split('/');
-                    string filePath = Path.Combine(widgetBasePath, widgetParts[0], widgetParts[1], widgetParts[2] + ".");
+                    string filePath = Path.Combine(_widgetBasePath, widgetParts[0], widgetParts[1], widgetParts[2] + ".");
                     if (File.Exists(filePath + "html"))
                     {
                         File.Delete(filePath + "html");
@@ -1158,7 +1150,7 @@ namespace HomeGenie.Service.Handlers
                 {
                     string widgetPath = migCommand.GetOption(0); // eg. homegenie/generic/dimmer
                     string[] widgetParts = widgetPath.Split('/');
-                    string widgetBundle = Path.Combine(tempFolderPath, "export", widgetPath.Replace('/', '_') + ".zip");
+                    string widgetBundle = Path.Combine(_tempFolderPath, "export", widgetPath.Replace('/', '_') + ".zip");
                     if (File.Exists(widgetBundle))
                     {
                         File.Delete(widgetBundle);
@@ -1167,7 +1159,7 @@ namespace HomeGenie.Service.Handlers
                     {
                         Directory.CreateDirectory(Path.GetDirectoryName(widgetBundle));
                     }
-                    string inputPath = Path.Combine(widgetBasePath, widgetParts[0], widgetParts[1]);
+                    string inputPath = Path.Combine(_widgetBasePath, widgetParts[0], widgetParts[1]);
                     string outputPath = Path.Combine(widgetParts[0], widgetParts[1]);
                     string infoFilePath = Path.Combine(inputPath, "widget.info");
                     File.WriteAllText(infoFilePath, "HomeGenie exported widget.");
@@ -1183,12 +1175,12 @@ namespace HomeGenie.Service.Handlers
                 
             case "Widgets.Import":
                 {
-                    string archiveFile = Path.Combine(tempFolderPath, "import_widget.zip");
-                    string importPath = Path.Combine(tempFolderPath, "import");
+                    string archiveFile = Path.Combine(_tempFolderPath, "import_widget.zip");
+                    string importPath = Path.Combine(_tempFolderPath, "import");
                     if (Directory.Exists(importPath))
                         Directory.Delete(importPath, true);
                     MIG.Gateways.WebServiceUtility.SaveFile(request.RequestData, archiveFile);
-                    if (homegenie.PackageManager.WidgetImport(archiveFile, importPath))
+                    if (_homegenie.PackageManager.WidgetImport(archiveFile, importPath))
                     {
                         request.ResponseData = new ResponseText("OK");
                     }
@@ -1218,7 +1210,7 @@ namespace HomeGenie.Service.Handlers
             case "Package.Get":
                 {
                     string pkgFolderUrl = migCommand.GetOption(0);
-                    var pkg = homegenie.PackageManager.GetInstalledPackage(pkgFolderUrl);
+                    var pkg = _homegenie.PackageManager.GetInstalledPackage(pkgFolderUrl);
                     request.ResponseData = pkg;
                 }
                 break;
@@ -1230,12 +1222,12 @@ namespace HomeGenie.Service.Handlers
             case "Package.Install":
                 {
                     string pkgFolderUrl = migCommand.GetOption(0);
-                    string installFolder = Path.Combine(tempFolderPath, "pkg");
-                    bool success = homegenie.PackageManager.InstallPackage(pkgFolderUrl, installFolder);
+                    string installFolder = Path.Combine(_tempFolderPath, "pkg");
+                    bool success = _homegenie.PackageManager.InstallPackage(pkgFolderUrl, installFolder);
                     if (success)
                     {
-                        homegenie.UpdateProgramsDatabase();
-                        homegenie.SaveData();
+                        _homegenie.UpdateProgramsDatabase();
+                        _homegenie.SaveData();
                     }
                     request.ResponseData = new ResponseText(success ? "OK" : "ERROR");
                 }
