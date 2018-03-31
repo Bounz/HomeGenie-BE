@@ -59,4 +59,15 @@
     <Folder Include="lib\" />
     <Folder Include="lib\mig\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="homegenie">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="startup.sh">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="startup_debug.sh">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>

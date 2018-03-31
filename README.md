@@ -6,6 +6,10 @@ http://homegenie.club
 
 https://bounz.github.io/HomeGenie-BE/
 
+## Status
+
+![Build Version status](http://tc.homegenie.club:8880/app/rest/builds/buildType:(id:HomeGenieBe_BuildVersion)/statusIcon.png)
+
 ## Precompiled packages and install instructions
 
 **Windows, Mac, Linux**
