@@ -27,7 +27,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MIG.Protocols", "..\MIG\MIG
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.WebService", "..\MIG\Tests.WebService\Tests.WebService.csproj", "{E4CB8D80-39EC-4347-8FA1-292904B13AD0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StatsGenerator", "..\StatsGenerator\StatsGenerator.csproj", "{2861AEA2-E0E9-4050-8927-DC5DFBB4FFD0}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utils", "Utils", "{B6627FB9-CC64-426B-AF2E-82F4D6667D8C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StatsGenerator", "..\Utils\StatsGenerator\StatsGenerator.csproj", "{2861AEA2-E0E9-4050-8927-DC5DFBB4FFD0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -108,6 +110,7 @@ Global
 		{8C90AAEE-6245-4F6F-9D4A-854300C662F6} = {B79CECC3-16B4-434D-A3F9-15B81C0792FA}
 		{C7538C18-D328-4509-B5D7-CDA0491F90F5} = {B79CECC3-16B4-434D-A3F9-15B81C0792FA}
 		{E4CB8D80-39EC-4347-8FA1-292904B13AD0} = {B79CECC3-16B4-434D-A3F9-15B81C0792FA}
+		{2861AEA2-E0E9-4050-8927-DC5DFBB4FFD0} = {B6627FB9-CC64-426B-AF2E-82F4D6667D8C}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
