@@ -1,0 +1,3 @@
+sudo docker build -t mono -f dockerfile-mono .
+
+sudo docker run -t -i --privileged -v /dev/bus/usb:/dev/bus/usb -p 10001:80 bounz/homegenie:test3

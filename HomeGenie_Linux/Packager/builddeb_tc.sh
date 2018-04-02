@@ -12,7 +12,7 @@ hg_location=/usr/local/bin/homegenie
 if [ -d "${hg_target_folder}" ]
 then
 
-    hg_target_folder="${hg_target_folder}/HGBE_${hg_revision_number}_all"
+    hg_target_folder="${hg_target_folder}/HGBE_V${hg_revision_number}_all"
 	mkdir -p "$hg_target_folder$hg_location"
 
 	echo "\n- Extracting archive files to '$hg_target_folder'..."
