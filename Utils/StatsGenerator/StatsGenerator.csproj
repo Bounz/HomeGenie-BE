@@ -48,7 +48,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HomeGenie\HomeGenie.csproj">
+    <ProjectReference Include="..\..\HomeGenie\HomeGenie.csproj">
       <Project>{bfd3c868-1f62-43ff-8771-cf21825f0c0a}</Project>
       <Name>HomeGenie</Name>
     </ProjectReference>
