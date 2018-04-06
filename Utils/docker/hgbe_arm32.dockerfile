@@ -1,5 +1,5 @@
 #FROM resin/rpi-raspbian
-FROM arm32v7/mono:5.8.0.127
+FROM arm32v7/mono
 LABEL maintainer="Alexander Sidorenko <me@bounz.net>"
 
 # MONO: slim install
@@ -44,7 +44,8 @@ RUN unzip /tmp/homegenie-beta_1.1.r526.1_all.zip -d /usr/local/bin
 # cleanup 
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN chmod -R 777 /usr/local/bin/homegenie
-RUN chmod +x /usr/local/bin/homegenie/startup.sh
-CMD ["usr/local/bin/homegenie/startup.sh", "/usr/local/bin/homegenie"]
+#RUN chmod +x /usr/local/bin/homegenie/startup.sh
+#CMD ["usr/local/bin/homegenie/startup.sh", "/usr/local/bin/homegenie"]
+CMD ["/usr/bin/mono" , "/usr/local/bin/homegenie/HomeGenie.exe"] 
 
 EXPOSE 8080 80
