@@ -22,7 +22,7 @@ do
   # Если есть - запустить его, если нет - скачать и запустить
   cont_id=`docker ps -q -f name=${cont_name}`
   echo "1st check: $cont_id"
-  if [ -z ${cont_id} ]; then
+  if [ -z "${cont_id}" ]; then
     cont_id=`docker ps -aq -f status=exited -f name=${cont_name}`
     echo 2nd check: $cont_id
     if [ -n "$cont_id" ]; then
@@ -31,7 +31,7 @@ do
     else
       # run your container
       echo "No existing container ${cont_name}, running it..."
-      docker run -it --privileged \
+      docker run -d --privileged \
         --name ${cont_name} \
         -p ${http_port}:80 \
         -v /usr/local/bin/hgdata:/usr/local/bin/homegenie/data \
@@ -43,7 +43,7 @@ do
   exit_code=`docker wait ${cont_name}`
   echo "Container ${cont_name} exited with code ${exit_code}"
 
-  if [ ${exit_code} == 5 ]; then
+  if [ "${exit_code}" == 5 ]; then
     echo "Removing container ${cont_name}..."
     docker container rm ${cont_name}
     echo "Removing image ${image_and_tag}..."

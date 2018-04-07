@@ -14,8 +14,8 @@ KillMode=mixed
 
 User=root
 
-ExecStart=__install_directory__/service/start.sh
-ExecStop=__install_directory__/service/stop.sh
+ExecStart=/bin/bash __install_directory__/service/start.sh
+ExecStop=/bin/bash __install_directory__/service/stop.sh
 WorkingDirectory=__install_directory__/service
 TimeoutSec=300
 
