@@ -40,7 +40,7 @@ fi
 
 #HomeGenie
 echo "Enter installation path [${default_install_directory}]: "
-read install_directory
+read install_directory </dev/tty
 install_directory=${install_directory:-${default_install_directory}}
 echo "Installing HomeGenie (Bounz Edition) into $install_directory"
 
