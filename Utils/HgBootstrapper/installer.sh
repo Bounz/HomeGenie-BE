@@ -21,8 +21,8 @@ read install_directory
 install_directory=${install_directory:-${default_install_directory}}
 echo "Installing HomeGenie (Bounz Edition) into $install_directory"
 
-mkdir -p $install_directory
-mkdir -p $install_directory/service
+sudo mkdir -p $install_directory
+sudo mkdir -p $install_directory/service
 
 downloadSource=https://raw.githubusercontent.com/Bounz/HomeGenie-BE/master/Utils/HgBootstrapper
 #curl -o $install_directory/service/start.sh ${downloadSource}/start.sh
@@ -32,10 +32,10 @@ wget -qO $install_directory/service/start.sh ${downloadSource}/start.sh
 wget -qO $install_directory/service/stop.sh ${downloadSource}/stop.sh
 wget -qO /etc/systemd/system/hgbe.service ${downloadSource}/hgbe.svc
 
-sed -i "s#__install_directory__#${install_directory}#g" /etc/systemd/system/hgbe.service
+sudo sed -i "s#__install_directory__#${install_directory}#g" /etc/systemd/system/hgbe.service
 
-systemctl enable hgbe
-systemctl start hgbe
+sudo systemctl enable hgbe
+sudo systemctl start hgbe
 
 echo "${LG}HomeGenie (Bounz Edition) successfully installed${NC}"
 echo "Use following commands to start/stop service:"
