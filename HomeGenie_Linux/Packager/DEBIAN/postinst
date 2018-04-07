@@ -1,9 +1,7 @@
 #!/bin/sh
-sudo cp /usr/local/bin/homegenie/DEBIAN/homegenie /etc/init.d/
+sudo cp /usr/local/bin/homegenie/homegenie /etc/init.d/
 sudo chmod +x /etc/init.d/homegenie
-sudo cp /usr/local/bin/homegenie/DEBIAN/startup.sh /usr/local/bin/homegenie/
 sudo chmod +x /usr/local/bin/homegenie/startup.sh
-sudo cp /usr/local/bin/homegenie/DEBIAN/startup_debug.sh /usr/local/bin/homegenie/
 sudo chmod +x /usr/local/bin/homegenie/startup_debug.sh
 sudo update-rc.d -f homegenie defaults
 sudo /etc/init.d/homegenie start

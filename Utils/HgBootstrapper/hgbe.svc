@@ -1,0 +1,23 @@
+[Unit]
+Description=HomeGenie (Bounz Edition/Docker)
+After=network.target
+After=docker.service
+Requires=docker.service
+
+[Service]
+StandardOutput=inherit
+StandardError=inherit
+KillMode=mixed
+#Restart=always
+#RestartForceExitStatus=1
+#RestartPreventExitStatus=0
+
+User=root
+
+ExecStart=__install_directory__/service/start.sh
+ExecStop=__install_directory__/service/stop.sh
+WorkingDirectory=__install_directory__/service
+TimeoutSec=300
+
+[Install]
+WantedBy=multi-user.target 
