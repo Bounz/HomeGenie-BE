@@ -1,26 +1,4 @@
-﻿/*
-    This file is part of HomeGenie Project source code.
-
-    HomeGenie is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    HomeGenie is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with HomeGenie.  If not, see <http://www.gnu.org/licenses/>.  
-*/
-
-/*
-*     Author: Generoso Martello <gene@homegenie.it>
-*     Project Homepage: http://github.com/Bounz/HomeGenie-BE
-*/
-
-using System;
+﻿using System;
 using System.Threading;
 using HomeGenie.Service;
 using HomeGenie.Service.Constants;
@@ -31,79 +9,91 @@ namespace HomeGenie.Automation.Scheduler
 {
     public class SchedulerScriptingEngine
     {
-        private HomeGenieService homegenie;
-        private SchedulerItem eventItem;
-        private Thread programThread;
-        private bool isRunning;
+        private HomeGenieService _hgService;
+        private SchedulerItem _eventItem;
+        private Thread _programThread;
+        private bool _isRunning;
 
-        private Engine scriptEngine;
-        private SchedulerScriptingHost hgScriptingHost;
-        private string initScript = @"var $$ = {
+        private Engine _scriptEngine;
+        private readonly SchedulerScriptingHost _hgScriptingHost;
+
+        public const string InitScript = @"var $$ = {
           // ModulesManager
-          modules: hg.modules,
-          boundModules: hg.boundModules,
+          modules: hg.Modules,
+          boundModules: hg.BoundModules,
+
           // ProgramHelperBase
           program: hg.Program,
+
           // SettingsHelper
-          settings: hg.settings,
+          settings: hg.Settings,
+
           // NetHelper
-          net: hg.net,
+          net: hg.Net,
+
           // SerialPortHelper
-          serial: hg.serialPort,
+          serial: hg.SerialPort,
+
           // TcpClientHelper
-          tcp: hg.tcpClient,
+          tcp: hg.TcpClient,
+
           // UdpClientHelper
-          udp: hg.udpClient, 
+          udp: hg.UdpClient,
+
           // MqttClientHelper
-          mqtt: hg.mqttClient,
+          mqtt: hg.MqttClient,
+
           // KnxClientHelper
-          knx: hg.knxClient,
+          knx: hg.KnxClient,
+
           // SchedulerHelper
-          scheduler: hg.scheduler,
+          scheduler: hg.Scheduler,
+
           // Miscellaneous functions
-          pause: function(seconds) { hg.pause(seconds); },
-          delay: function(seconds) { this.pause(seconds); },
-          event: hg.event
+          pause: function(seconds) { hg.Pause(seconds); },
+          delay: function(seconds) { this.Pause(seconds); },
+          event: hg.Event,
+          say: hg.Say
         };
         $$.onNext = function() {
           var nextMin = new Date();
           nextMin.setSeconds(0);
           nextMin = new Date(nextMin.getTime()+60000);
-          return $$.scheduler.isOccurrence(nextMin, event.CronExpression);
+          return $$.scheduler.IsOccurrence(nextMin, event.CronExpression);
         };
         $$.onPrevious = function() {
           var prevMin = new Date();
           prevMin.setSeconds(0);
           prevMin = new Date(prevMin.getTime()-60000);
-          return $$.scheduler.isOccurrence(prevMin, event.CronExpression);
+          return $$.scheduler.IsOccurrence(prevMin, event.CronExpression);
         };
         $$.data = function(k,v) {
             if (typeof v == 'undefined') {
-                return hg.data(k).value;
+                return hg.Data(k).Value;
             } else {
-                hg.data(k).value = v;
+                hg.Data(k).Value = v;
                 return $$;
             }
         };
         $$.onUpdate = function(handler) {
-            hg.onModuleUpdate(handler);
+            hg.OnModuleUpdate(handler);
         };
         ";
 
         public SchedulerScriptingEngine()
         {
             // we do not dispose the scripting host to keep volatile data persistent across instances
-            hgScriptingHost = new SchedulerScriptingHost();
+            _hgScriptingHost = new SchedulerScriptingHost();
         }
 
         public void SetHost(HomeGenieService hg, SchedulerItem item)
         {
-            homegenie = hg;
-            eventItem = item;
-            scriptEngine = new Engine();
-            hgScriptingHost.SetHost(homegenie, item);
-            scriptEngine.SetValue("hg", hgScriptingHost);
-            scriptEngine.SetValue("event", eventItem);
+            _hgService = hg;
+            _eventItem = item;
+            _scriptEngine = new Engine();
+            _hgScriptingHost.SetHost(_hgService, item);
+            _scriptEngine.SetValue("hg", _hgScriptingHost);
+            _scriptEngine.SetValue("event", _eventItem);
         }
 
         public void Dispose()
@@ -111,53 +101,49 @@ namespace HomeGenie.Automation.Scheduler
             StopScript();
         }
 
-        public bool IsRunning
-        {
-            get { return isRunning; }
-        }
+        public bool IsRunning => _isRunning;
 
         public void StartScript()
         {
-            if (homegenie == null || eventItem == null || isRunning || String.IsNullOrWhiteSpace(eventItem.Script))
+            if (_hgService == null || _eventItem == null || _isRunning || string.IsNullOrWhiteSpace(_eventItem.Script))
                 return;
             
-            if (programThread != null)
+            if (_programThread != null)
                 StopScript();
 
-            isRunning = true;
-            homegenie.RaiseEvent(this, Domains.HomeAutomation_HomeGenie, SourceModule.Scheduler, eventItem.Name, Properties.SchedulerScriptStatus, eventItem.Name+":Start");
+            _isRunning = true;
+            _hgService.RaiseEvent(this, Domains.HomeAutomation_HomeGenie, SourceModule.Scheduler, _eventItem.Name, Properties.SchedulerScriptStatus, _eventItem.Name+":Start");
 
-            programThread = new Thread(() =>
+            _programThread = new Thread(() =>
             {
                 try
                 {
                     MethodRunResult result = null;
                     try
                     {
-                        scriptEngine.Execute(initScript+eventItem.Script);
+                        _scriptEngine.Execute(InitScript+_eventItem.Script);
                     }
                     catch (Exception ex)
                     {
-                        result = new MethodRunResult();
-                        result.Exception = ex;
+                        result = new MethodRunResult {Exception = ex};
                     }
-                    programThread = null;
-                    isRunning = false;
+                    _programThread = null;
+                    _isRunning = false;
                     if (result != null && result.Exception != null && !result.Exception.GetType().Equals(typeof(System.Reflection.TargetException)))
-                        homegenie.RaiseEvent(this, Domains.HomeAutomation_HomeGenie, SourceModule.Scheduler, eventItem.Name, Properties.SchedulerScriptStatus, "Error ("+result.Exception.Message.Replace('\n', ' ').Replace('\r', ' ')+")");
+                        _hgService.RaiseEvent(this, Domains.HomeAutomation_HomeGenie, SourceModule.Scheduler, _eventItem.Name, Properties.SchedulerScriptStatus, "Error ("+result.Exception.Message.Replace('\n', ' ').Replace('\r', ' ')+")");
                 }
                 catch (ThreadAbortException)
                 {
-                    programThread = null;
-                    isRunning = false;
-                    homegenie.RaiseEvent(this, Domains.HomeAutomation_HomeGenie, SourceModule.Scheduler, eventItem.Name, Properties.SchedulerScriptStatus, "Interrupted");
+                    _programThread = null;
+                    _isRunning = false;
+                    _hgService.RaiseEvent(this, Domains.HomeAutomation_HomeGenie, SourceModule.Scheduler, _eventItem.Name, Properties.SchedulerScriptStatus, "Interrupted");
                 }
-                homegenie.RaiseEvent(this, Domains.HomeAutomation_HomeGenie, SourceModule.Scheduler, eventItem.Name, Properties.SchedulerScriptStatus, "End");
+                _hgService.RaiseEvent(this, Domains.HomeAutomation_HomeGenie, SourceModule.Scheduler, _eventItem.Name, Properties.SchedulerScriptStatus, "End");
             });
 
             try
             {
-                programThread.Start();
+                _programThread.Start();
             }
             catch
             {
@@ -167,27 +153,27 @@ namespace HomeGenie.Automation.Scheduler
 
         public void StopScript()
         {
-            isRunning = false;
-            if (programThread != null)
+            _isRunning = false;
+            if (_programThread != null)
             {
                 try
                 {
-                    if (!programThread.Join(1000))
-                        programThread.Abort();
+                    if (!_programThread.Join(1000))
+                        _programThread.Abort();
                 } catch { }
-                programThread = null;
+                _programThread = null;
             }
-            if (hgScriptingHost != null)
+            if (_hgScriptingHost != null)
             {
-                hgScriptingHost.OnModuleUpdate(null);
-                hgScriptingHost.Reset();
+                _hgScriptingHost.OnModuleUpdate(null);
+                _hgScriptingHost.Reset();
             }
         }
 
         public void RouteModuleEvent(object eventData)
         {
-            var moduleEvent = (HomeGenie.Automation.ProgramManager.RoutedEvent)eventData;
-            hgScriptingHost.RouteModuleEvent(moduleEvent);
+            var moduleEvent = (ProgramManager.RoutedEvent)eventData;
+            _hgScriptingHost.RouteModuleEvent(moduleEvent);
         }
 
     }

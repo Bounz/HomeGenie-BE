@@ -1,26 +1,4 @@
-﻿/*
-    This file is part of HomeGenie Project source code.
-
-    HomeGenie is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    HomeGenie is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with HomeGenie.  If not, see <http://www.gnu.org/licenses/>.  
-*/
-
-/*
-*     Author: Generoso Martello <gene@homegenie.it>
-*     Project Homepage: http://github.com/Bounz/HomeGenie-BE
-*/
-
-using System;
+﻿using System;
 using HomeGenie.Service;
 
 using HomeGenie.Automation.Scripting;
@@ -38,7 +16,7 @@ namespace HomeGenie.Automation.Scheduler
     }
 
     [Serializable]
-    public class SchedulerScriptingHost
+    public class SchedulerScriptingHost : ISchedulerScriptingHost
     {
 
         private HomeGenieService homegenie = null;
@@ -77,7 +55,7 @@ namespace HomeGenie.Automation.Scheduler
             programHelper = new ProgramHelperBase(homegenie);
         }
 
-        public void RouteModuleEvent(HomeGenie.Automation.ProgramManager.RoutedEvent eventData)
+        public void RouteModuleEvent(ProgramManager.RoutedEvent eventData)
         {
             if (moduleUpdateHandler != null)
             {
@@ -124,103 +102,43 @@ namespace HomeGenie.Automation.Scheduler
             return this;
         }
 
-        public ProgramHelperBase Program
-        {
-            get
-            {
-                return programHelper;
-            }
-        }
+        public ProgramHelperBase Program => programHelper;
 
-        public ModulesManager Modules
-        {
-            get
-            {
-                return new ModulesManager(homegenie);
-            }
-        }
+        public ModulesManager Modules => new ModulesManager(homegenie);
 
         public ModulesManager BoundModules
         {
             get
             {
                 var boundModulesManager = new ModulesManager(homegenie);
-                boundModulesManager.ModulesListCallback = new Func<ModulesManager,TsList<Module>>((sender)=>{
-                    TsList<Module> modules = new TsList<Module>();
+                boundModulesManager.ModulesListCallback = sender => {
+                    var modules = new TsList<Module>();
                     foreach(var m in schedulerItem.BoundModules) {
                         var mod = homegenie.Modules.Find(e=>e.Address == m.Address && e.Domain == m.Domain);
                         if (mod != null)
                             modules.Add(mod);
                     }
                     return modules;
-                });
+                };
                 return boundModulesManager;
             }
         }
 
-        public SettingsHelper Settings
-        {
-            get
-            {
-                return new SettingsHelper(homegenie);
-            }
-        }
+        public SettingsHelper Settings => new SettingsHelper(homegenie);
 
-        public NetHelper Net
-        {
-            get
-            {
-                return netHelper;
-            }
-        }
+        public NetHelper Net => netHelper;
 
-        public SerialPortHelper SerialPort
-        {
-            get
-            {
-                return serialPortHelper;
-            }
-        }
+        public SerialPortHelper SerialPort => serialPortHelper;
 
-        public TcpClientHelper TcpClient
-        {
-            get
-            {
-                return tcpClientHelper;
-            }
-        }
+        public TcpClientHelper TcpClient => tcpClientHelper;
 
-        public UdpClientHelper UdpClient
-        {
-            get
-            {
-                return udpClientHelper;
-            }
-        }
+        public UdpClientHelper UdpClient => udpClientHelper;
 
-        public MqttClientHelper MqttClient
-        {
-            get
-            {
-                return mqttClientHelper;
-            }
-        }
+        public MqttClientHelper MqttClient => mqttClientHelper;
 
-        public KnxClientHelper KnxClient
-        {
-            get
-            {
-                return knxClientHelper;
-            }
-        }
+        public KnxClientHelper KnxClient => knxClientHelper;
 
-        public SchedulerHelper Scheduler
-        {
-            get
-            {
-                return schedulerHelper;
-            }
-        }
+        public SchedulerHelper Scheduler => schedulerHelper;
 
         public ModuleParameter Data(string name)
         {
@@ -229,7 +147,7 @@ namespace HomeGenie.Automation.Scheduler
 
         public void Pause(double seconds)
         {
-            System.Threading.Thread.Sleep((int)(seconds * 1000));
+            Thread.Sleep((int)(seconds * 1000));
         }
 
         public void Delay(double seconds)
@@ -239,9 +157,9 @@ namespace HomeGenie.Automation.Scheduler
 
         public void Say(string sentence, string locale = null, bool goAsync = false)
         {
-            if (String.IsNullOrWhiteSpace(locale))
+            if (string.IsNullOrWhiteSpace(locale))
             {
-                locale = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
+                locale = Thread.CurrentThread.CurrentCulture.Name;
             }
             try
             {
