@@ -38,13 +38,12 @@ namespace HomeGenie.Automation.Scripting
     [Serializable]
     public class SchedulerHelper
     {
-
-        private HomeGenieService homegenie;
-        private string scheduleName;
+        private readonly HomeGenieService _homegenie;
+        private string _scheduleName;
 
         public SchedulerHelper(HomeGenieService hg)
         {
-            homegenie = hg;
+            _homegenie = hg;
         }
 
         /// <summary>
@@ -53,7 +52,7 @@ namespace HomeGenie.Automation.Scripting
         /// <param name="name">Name.</param>
         public SchedulerHelper WithName(string name)
         {
-            scheduleName = name;
+            _scheduleName = name;
             return this;
         }
 
@@ -62,7 +61,7 @@ namespace HomeGenie.Automation.Scripting
         /// </summary>
         public SchedulerItem Get()
         {
-            return homegenie.ProgramManager.SchedulerService.Get(scheduleName);
+            return _homegenie.ProgramManager.SchedulerService.Get(_scheduleName);
         }
 
         /// <summary>
@@ -71,7 +70,7 @@ namespace HomeGenie.Automation.Scripting
         /// <param name="cronExpression">Cron expression.</param>
         public SchedulerHelper SetSchedule(string cronExpression)
         {
-            homegenie.ProgramManager.SchedulerService.AddOrUpdate(scheduleName, cronExpression);
+            _homegenie.ProgramManager.SchedulerService.AddOrUpdate(_scheduleName, cronExpression);
             return this;
         }
 
@@ -82,7 +81,7 @@ namespace HomeGenie.Automation.Scripting
         [Obsolete()]
         public SchedulerHelper SetProgram(string programId)
         {
-            homegenie.ProgramManager.SchedulerService.SetProgram(scheduleName, programId);
+            _homegenie.ProgramManager.SchedulerService.SetProgram(_scheduleName, programId);
             return this;
         }
 
@@ -92,10 +91,10 @@ namespace HomeGenie.Automation.Scripting
         /// <returns><c>true</c> if the selected schedule is matching, otherwise, <c>false</c>.</returns>
         public bool IsScheduling()
         {
-            var eventItem = homegenie.ProgramManager.SchedulerService.Get(scheduleName);
+            var eventItem = _homegenie.ProgramManager.SchedulerService.Get(_scheduleName);
             if (eventItem != null)
             {
-                return homegenie.ProgramManager.SchedulerService.IsScheduling(DateTime.Now, eventItem.CronExpression);
+                return _homegenie.ProgramManager.SchedulerService.IsScheduling(DateTime.Now, eventItem.CronExpression);
             }
             return false;
         }
@@ -107,7 +106,7 @@ namespace HomeGenie.Automation.Scripting
         /// <param name="cronExpression">Cron expression.</param>
         public bool IsScheduling(string cronExpression)
         {
-            return homegenie.ProgramManager.SchedulerService.IsScheduling(DateTime.Now, cronExpression);
+            return _homegenie.ProgramManager.SchedulerService.IsScheduling(DateTime.Now, cronExpression);
         }
 
         /// <summary>
@@ -118,7 +117,7 @@ namespace HomeGenie.Automation.Scripting
         /// <param name="cronExpression">Cron expression.</param>
         public bool IsOccurrence(DateTime date, string cronExpression)
         {
-            return homegenie.ProgramManager.SchedulerService.IsScheduling(date, cronExpression);
+            return _homegenie.ProgramManager.SchedulerService.IsScheduling(date, cronExpression);
         }
 
         /// <summary>
@@ -128,7 +127,7 @@ namespace HomeGenie.Automation.Scripting
         /// <param name="date">Date.</param>
         public SolarTimes SolarTimes(DateTime date)
         {
-            return new SolarTimes(date, homegenie.ProgramManager.SchedulerService.Location["latitude"].Value, homegenie.ProgramManager.SchedulerService.Location["longitude"].Value);
+            return new SolarTimes(date, _homegenie.ProgramManager.SchedulerService.Location["latitude"].Value, _homegenie.ProgramManager.SchedulerService.Location["longitude"].Value);
         }
     }
 }

@@ -5,6 +5,7 @@ using HomeGenie.Automation.Scripting;
 using System.Threading;
 using System.IO;
 using System.Net;
+using Raspberry;
 
 namespace HomeGenie
 {
@@ -55,6 +56,7 @@ namespace HomeGenie
             }
             return this;
         }
+
         // these redundant method definitions are for Jint compatibility
         public ProgramHelperBase Say(string sentence)
         {
