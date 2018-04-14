@@ -104,8 +104,8 @@
                                 if (cp != null) {
                                     if (!cp.IsEnabled)
                                         continue;
-                                    else if (cp.Type.toLowerCase() != 'wizard' && widget == '')
-                                        continue;
+                                    // else if (cp.Type.toLowerCase() != 'wizard' && widget == '')
+                                    //     continue;
                                 }
                             }
 
