@@ -4,7 +4,7 @@ YL='\033[1;33m' # Yellow
 RED='\033[0;31m' # Red
 NC='\033[0m'     # No Color
 default_install_directory=/usr/local/bin/hgbe
-image_and_tag="bounz/homegenie:test3"
+image_and_tag="bounz/homegenie:latest"
 
 command_exists() {
 	command -v "$@" > /dev/null 2>&1

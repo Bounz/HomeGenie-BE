@@ -1,7 +1,7 @@
 #!/bin/bash
 http_port=8090
 cont_name="homegenie_be"
-image_and_tag="bounz/homegenie:test3"
+image_and_tag="bounz/homegenie:latest"
 
 # Проверить и при необходимости создать папки для HG
 if [ ! -d /usr/local/bin/hgdata ]; then
