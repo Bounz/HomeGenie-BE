@@ -4,3 +4,6 @@ sudo docker run -t -i --privileged -v /dev/bus/usb:/dev/bus/usb -p 10001:80 boun
 
 
 wget -qO- https://raw.githubusercontent.com/Bounz/HomeGenie-BE/master/Utils/HgBootstrapper/installer.sh | bash
+
+# build for ARM
+sudo docker build -f hgbe_arm32.dockerfile -t bounz/homegenie:latest -t bounz/homegenie:V1.1.16 HomeGenie/bin/Debug
