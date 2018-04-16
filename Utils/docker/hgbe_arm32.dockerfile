@@ -1,6 +1,8 @@
 FROM arm32v7/mono
 LABEL maintainer="Alexander Sidorenko <me@bounz.net>"
 
+COPY ./qemu-arm-static /usr/bin/qemu-arm-static
+
 RUN apt-get update && apt-get install -y \
   unzip \
   alsa-utils lame \
@@ -14,7 +16,7 @@ RUN apt-get update && apt-get install -y \
 #ADD https://github.com/Bounz/HomeGenie/releases/download/v1.1-beta.526.1.bounz/homegenie-beta_1.1.r526.1_all.zip /tmp/
 #RUN unzip /tmp/homegenie-beta_1.1.r526.1_all.zip -d /usr/local/bin
 
-COPY * /usr/local/bin/homegenie/bin
+COPY ./hg_compiled/* /usr/local/bin/homegenie/bin
 
 # cleanup 
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
