@@ -23,7 +23,7 @@ RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN chmod -R 777 /usr/local/bin/homegenie
 #RUN chmod +x /usr/local/bin/homegenie/startup.sh
 #CMD ["usr/local/bin/homegenie/startup.sh", "/usr/local/bin/homegenie"]
-CMD ["/usr/bin/mono" , "/usr/local/bin/homegenie/HomeGenie.exe"] 
+CMD ["/usr/bin/mono" , "/usr/local/bin/homegenie/bin/HomeGenie.exe"] 
 
 EXPOSE 80
 VOLUME /usr/local/bin/homegenie/data
