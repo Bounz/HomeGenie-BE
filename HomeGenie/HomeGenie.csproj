@@ -77,9 +77,6 @@
     <Reference Include="CronExpressionDescriptor, Version=1.17.0.0, Culture=neutral, PublicKeyToken=a2ab0e0f73f9b037">
       <HintPath>..\packages\CronExpressionDescriptor.1.17.0\lib\net45\CronExpressionDescriptor.dll</HintPath>
     </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73">
-      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
     <Reference Include="Innovative.Geometry, Version=1.0.2.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Angle.1.0.2.1\lib\net45\Innovative.Geometry.dll</HintPath>
     </Reference>
@@ -162,8 +159,8 @@
     <Reference Include="SerialPortLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\SerialPortLib.1.0.12\lib\SerialPortLib.dll</HintPath>
     </Reference>
-    <Reference Include="SharpCompress, Version=0.19.2.0, Culture=neutral, PublicKeyToken=afb0a02973931d96">
-      <HintPath>..\packages\SharpCompress.0.19.2\lib\net45\SharpCompress.dll</HintPath>
+    <Reference Include="SharpCompress, Version=0.20.0.0, Culture=neutral, PublicKeyToken=afb0a02973931d96">
+      <HintPath>..\packages\SharpCompress.0.20.0\lib\net45\SharpCompress.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />

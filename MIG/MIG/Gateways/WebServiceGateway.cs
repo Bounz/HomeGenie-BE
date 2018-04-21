@@ -330,7 +330,7 @@ namespace MIG.Gateways
                                         if (!File.Exists(requestedFile))
                                         {
                                             response.StatusCode = (int)HttpStatusCode.NotFound;
-                                            WebServiceUtility.WriteStringToContext(context, "<h1>404 - Not Found</h1>");
+                                            WebServiceUtility.WriteStringToContext(context, $"<h1>404 - Not Found</h1><br/>{requestedFile}");
                                         }
                                         else
                                         {
