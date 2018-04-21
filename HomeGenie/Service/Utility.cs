@@ -1,28 +1,5 @@
-﻿/*
-    This file is part of HomeGenie Project source code.
-
-    HomeGenie is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    HomeGenie is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with HomeGenie.  If not, see <http://www.gnu.org/licenses/>.  
-*/
-
-/*
- *     Author: Generoso Martello <gene@homegenie.it>
- *     Project Homepage: http://github.com/Bounz/HomeGenie-BE
- */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using System.Dynamic;
@@ -33,20 +10,18 @@ using System.Threading;
 using System.Runtime.InteropServices;
 
 using Newtonsoft.Json;
-
-using ICSharpCode.SharpZipLib.Zip;
-using ICSharpCode.SharpZipLib.Core;
-
+using Newtonsoft.Json.Serialization;
 using HomeGenie.Data;
 using HomeGenie.Service.Constants;
-using Newtonsoft.Json.Serialization;
-using ICSharpCode.SharpZipLib.GZip;
-using ICSharpCode.SharpZipLib.Tar;
+using SharpCompress.Archives;
+using SharpCompress.Archives.Zip;
+using SharpCompress.Common;
 using SharpCompress.Readers;
+using SharpCompress.Writers.Zip;
 
 namespace HomeGenie.Service
 {
-    
+
     public static class SerializationExtensions
     {
         /// <summary>
@@ -58,7 +33,7 @@ namespace HomeGenie.Service
         public static T DeepClone<T>(this T source)
         {
             // Don't serialize a null object, simply return the default for that object
-            if (Object.ReferenceEquals(source, null))
+            if (ReferenceEquals(source, null))
             {
                 return default(T);
             }
@@ -70,7 +45,7 @@ namespace HomeGenie.Service
     {
         public static DateTime StartOfWeek(this DateTime dt, DayOfWeek startOfWeek)
         {
-            int diff = dt.DayOfWeek - startOfWeek;
+            var diff = dt.DayOfWeek - startOfWeek;
             if (diff < 0)
             {
                 diff += 7;
@@ -80,7 +55,7 @@ namespace HomeGenie.Service
     }
 
     [Serializable()]
-    public class TsList<T> : System.Collections.Generic.List<T>
+    public class TsList<T> : List<T>
     {
         private object syncLock = new object();
 
@@ -89,31 +64,31 @@ namespace HomeGenie.Service
             get { return syncLock; }
         }
 
-        new public void Clear()
+        public new void Clear()
         {
             lock (syncLock)
                 base.Clear();
         }
 
-        new public void Add(T value)
+        public new void Add(T value)
         {
             lock (syncLock)
                 base.Add(value);
         }
 
-        new public void RemoveAll(Predicate<T> predicate)
+        public new void RemoveAll(Predicate<T> predicate)
         {
             lock (syncLock)
                 base.RemoveAll(predicate);
         }
 
-        new public void Remove(T item)
+        public new void Remove(T item)
         {
             lock (syncLock)
                 base.Remove(item);
         }
 
-        new public void Sort(Comparison<T> comparison)
+        public new void Sort(Comparison<T> comparison)
         {
             lock (syncLock)
                 base.Sort(comparison);
@@ -126,7 +101,7 @@ namespace HomeGenie.Service
         public static dynamic ParseXmlToDynamic(string xml)
         {
             var document = XElement.Load(new StringReader(xml));
-            XElement root = new XElement("Root", document);
+            var root = new XElement("Root", document);
             return new DynamicXmlParser(root);
         }
 
@@ -215,7 +190,7 @@ namespace HomeGenie.Service
 
         public static string GetTmpFolder()
         {
-            string tempFolder = "tmp";
+            var tempFolder = "tmp";
             if (!Directory.Exists(tempFolder))
             {
                 Directory.CreateDirectory(tempFolder);
@@ -239,7 +214,7 @@ namespace HomeGenie.Service
                 // TODO: report exception
             }
         }
-        
+
         private static string picoPath = "/usr/bin/pico2wave";
         public static void Say(string sentence, string locale, bool async = false)
         {
@@ -274,7 +249,7 @@ namespace HomeGenie.Service
                 }
             }
         }
-        
+
         public static void Play(string wavFile)
         {
 
@@ -346,13 +321,13 @@ namespace HomeGenie.Service
                 var mp3File = Path.Combine(GetTmpFolder(), "_synthesis_tmp.mp3");
                 using (var client = new WebClient())
                 {
-                    client.Encoding = UTF8Encoding.UTF8;
+                    client.Encoding = Encoding.UTF8;
                     client.Headers.Add("Referer", "http://translate.google.com");
                     var audioData = client.DownloadData("http://translate.google.com/translate_tts?ie=UTF-8&tl=" + Uri.EscapeDataString(locale) + "&q=" + Uri.EscapeDataString(sentence) + "&client=homegenie&ts=" + DateTime.UtcNow.Ticks);
 
                     if (File.Exists(mp3File))
                         File.Delete(mp3File);
-                    
+
                     var stream = File.OpenWrite(mp3File);
                     stream.Write(audioData, 0, audioData.Length);
                     stream.Close();
@@ -409,98 +384,60 @@ namespace HomeGenie.Service
 
         internal static List<string> UncompressZip(string archiveName, string destinationFolder)
         {
-            ZipConstants.DefaultCodePage = System.Text.Encoding.UTF8.CodePage;
-            List<string> extractedFiles = new List<string>();
-            ZipFile zipFile = null;
+            var extractedFiles = new List<string>();
             try
             {
-                FileStream fs = File.OpenRead(archiveName);
-                zipFile = new ZipFile(fs);
-                //if (!String.IsNullOrEmpty(password)) {
-                //    zf.Password = password;  // AES encrypted entries are handled automatically
-                //}
-                foreach (ZipEntry zipEntry in zipFile)
+                using (Stream stream = File.OpenRead(archiveName))
+                using (var reader = ReaderFactory.Open(stream))
                 {
-                    if (!zipEntry.IsFile)
+                    while (reader.MoveToNextEntry())
                     {
-                        continue; // Ignore directories
-                    }
+                        if (reader.Entry.IsDirectory)
+                            continue;
 
-                    string filePath = zipEntry.Name;
-                    string target = Path.Combine(destinationFolder, filePath.TrimStart(new char[]{'/', '\\'}));
-                    if (!Directory.Exists(Path.GetDirectoryName(target)))
-                    {
-                        Directory.CreateDirectory(Path.GetDirectoryName(target));
+                        extractedFiles.Add(reader.Entry.Key);
+                        reader.WriteEntryToDirectory(destinationFolder, new ExtractionOptions
+                        {
+                            ExtractFullPath = true,
+                            Overwrite = true
+                        });
                     }
-
-                    if (File.Exists(target))
-                        File.Delete(target);
-                    
-                    byte[] buffer = new byte[4096];
-                    Stream zipStream = zipFile.GetInputStream(zipEntry);
-                    String fullZipToPath = Path.Combine(destinationFolder, filePath);
-                    using (FileStream streamWriter = File.Create(fullZipToPath))
-                    {
-                        StreamUtils.Copy(zipStream, streamWriter, buffer);
-                    }
-                    try { extractedFiles.Add(filePath); } catch { }
                 }
             }
             catch (Exception e)
             {
-                extractedFiles.Clear();
-                // TODO: something to do here?
-                Console.WriteLine("Unzip error: " + e.Message);
+                Console.WriteLine("UnZip error: " + e.Message);
             }
-            finally
-            {
-                if (zipFile != null)
-                {
-                    zipFile.IsStreamOwner = true;
-                    zipFile.Close();
-                }
-            }
+
             return extractedFiles;
         }
 
         internal static void AddFileToZip(string zipFilename, string fileToAdd, string storeAsName = null)
         {
-            ZipConstants.DefaultCodePage = System.Text.Encoding.UTF8.CodePage;
-            if (!File.Exists(zipFilename))
-            {
-                FileStream zfs = File.Create(zipFilename);
-                ZipOutputStream zipStream = new ZipOutputStream(zfs);
-                zipStream.SetLevel(3); //0-9, 9 being the highest level of compression
-                /*
-                // NOTE: commented code because this is raising an error "Extra data extended Zip64 information length is invalid"
-                // For compatibility with previous HG, we add the "[Content_Types].xml" file
-                zipStream.PutNextEntry(new ZipEntry("[Content_Types].xml"));
-                using (FileStream streamReader = File.OpenRead(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "[Content_Types].xml"))) {
-                    StreamUtils.Copy(streamReader, zipStream, new byte[4096]);
-                }
-                zipStream.CloseEntry();
-                */
-                zipStream.IsStreamOwner = true; // Makes the Close also close the underlying stream
-                zipStream.Close();
-            }
-            ZipFile zipFile = new ZipFile(zipFilename);
-            zipFile.BeginUpdate();
-            zipFile.Add(fileToAdd, (String.IsNullOrWhiteSpace(storeAsName) ? fileToAdd : storeAsName));
-            zipFile.CommitUpdate();
-            zipFile.IsStreamOwner = true;
-            zipFile.Close();
-        }
+            // TODO it may be useful to prepare temp directory and use AddAllFromDirectory method
+            // rather then add files one by one
+            // archive.AddAllFromDirectory(@"C:\source");
 
-        private static void CopyStream(System.IO.FileStream inputStream, System.IO.Stream outputStream)
-        {
-            long bufferSize = inputStream.Length < BUFFER_SIZE ? inputStream.Length : BUFFER_SIZE;
-            long bytesWritten = 0;
-            int bytesRead = 0;
-            byte[] buffer = new byte[bufferSize];
-            while ((bytesRead = inputStream.Read(buffer, 0, buffer.Length)) != 0)
+            var tempZipName = zipFilename + "_tmp";
+            try
             {
-                outputStream.Write(buffer, 0, bytesRead);
-                bytesWritten += bufferSize;
+                if (!File.Exists(zipFilename))
+                {
+                    ZipArchive.Create().SaveTo(zipFilename, new ZipWriterOptions(CompressionType.Deflate));
+                }
+
+                using (var archive = ZipArchive.Open(zipFilename))
+                {
+                    archive.AddEntry(string.IsNullOrWhiteSpace(storeAsName) ? fileToAdd : storeAsName, fileToAdd);
+                    archive.SaveTo(tempZipName, CompressionType.Deflate);
+                }
+                File.Delete(zipFilename);
+                File.Move(tempZipName, zipFilename);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
 
@@ -523,13 +460,13 @@ namespace HomeGenie.Service
 
         public static DateTime JavascriptToDate(long timestamp)
         {
-            var baseDate = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            var baseDate = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             return (baseDate.AddMilliseconds(timestamp));
         }
 
         public static DateTime JavascriptToDateUtc(double timestamp)
         {
-            var baseDate = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Local);
+            var baseDate = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Local);
             return (baseDate.AddMilliseconds(timestamp).ToUniversalTime());
         }
 
@@ -570,7 +507,7 @@ namespace HomeGenie.Service
                 return false;
             }
 
-            XElement sub = element.Element(binder.Name);
+            var sub = element.Element(binder.Name);
             if (sub == null)
             {
                 result = null;
@@ -621,28 +558,28 @@ namespace HomeGenie.Service
 
         public override void Write(string message)
         {
-            string newLine = new string(CoreNewLine);
+            var newLine = new string(CoreNewLine);
             if (message.IndexOf(newLine) >= 0)
             {
-                string[] parts = message.Split(CoreNewLine);
+                var parts = message.Split(CoreNewLine);
                 if (message.StartsWith(newLine))
-                    this.WriteLine(this.lineBuffer);
+                    WriteLine(lineBuffer);
                 else
-                    parts[0] = this.lineBuffer + parts[0];
-                this.lineBuffer = "";
+                    parts[0] = lineBuffer + parts[0];
+                lineBuffer = "";
                 if (parts.Length > 1 && !parts[parts.Length - 1].EndsWith(newLine))
                 {
-                    this.lineBuffer += parts[parts.Length - 1];
+                    lineBuffer += parts[parts.Length - 1];
                     parts[parts.Length - 1] = "";
                 }
                 foreach (var s in parts)
                 {
                     if (!String.IsNullOrWhiteSpace(s))
-                        this.WriteLine(s);
+                        WriteLine(s);
                 }
                 message = "";
             }
-            this.lineBuffer += message;
+            lineBuffer += message;
         }
         public override void WriteLine(string message)
         {
@@ -652,16 +589,16 @@ namespace HomeGenie.Service
                 //SystemLogger.Instance.WriteToLog(new HomeGenie.Data.LogEntry() {
                 //    Domain = "# " + this.lineBuffer + message
                 //});
-                ProcessOutput(this.lineBuffer + message);
+                ProcessOutput(lineBuffer + message);
             }
-            this.lineBuffer = "";
+            lineBuffer = "";
         }
 
-        public override System.Text.Encoding Encoding
+        public override Encoding Encoding
         {
             get
             {
-                return UTF8Encoding.UTF8;
+                return Encoding.UTF8;
             }
         }
 

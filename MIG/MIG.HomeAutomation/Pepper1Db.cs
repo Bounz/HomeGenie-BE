@@ -5,10 +5,9 @@ using System.Linq;
 using System.Net;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using ICSharpCode.SharpZipLib.Core;
-using ICSharpCode.SharpZipLib.Zip;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using SharpCompress.Readers;
 
 namespace MIG.Interfaces.HomeAutomation
 {
@@ -31,8 +30,6 @@ namespace MIG.Interfaces.HomeAutomation
 
         public bool Update(string pepper1Url = defaultPepper1Url)
         {
-            ZipConstants.DefaultCodePage = System.Text.Encoding.UTF8.CodePage;
-
             // request archive from P1 db
             using (var client = new WebClient())
             {
@@ -50,7 +47,7 @@ namespace MIG.Interfaces.HomeAutomation
 
             // extract archive
             MigService.Log.Debug("Extracting archive from '{0}' to '{1}' folder.", archiveFilename, tempFolder);
-            ExtractZipFile(archiveFilename, null, tempFolder);
+            ExtractZipFile(archiveFilename, tempFolder);
 
             MigService.Log.Debug("Creating consolidated DB.");
             var p1db = new XDocument();
@@ -144,53 +141,29 @@ namespace MIG.Interfaces.HomeAutomation
             return path;
         }
 
-        private static void ExtractZipFile(string archiveFilenameIn, string password, string outFolder)
+        private static void ExtractZipFile(string archiveFilenameIn, string outFolder)
         {
-            ZipFile zf = null;
             try
             {
-                FileStream fs = File.OpenRead(archiveFilenameIn);
-                zf = new ZipFile(fs);
-                if (!String.IsNullOrEmpty(password))
+                using (Stream stream = File.OpenRead(archiveFilenameIn))
+                using (var reader = ReaderFactory.Open(stream))
                 {
-                    zf.Password = password;     // AES encrypted entries are handled automatically
-                }
-                foreach (ZipEntry zipEntry in zf)
-                {
-                    if (!zipEntry.IsFile)
+                    while (reader.MoveToNextEntry())
                     {
-                        continue;           // Ignore directories
-                    }
-                    String entryFileName = zipEntry.Name;
-                    // to remove the folder from the entry:- entryFileName = Path.GetFileName(entryFileName);
-                    // Optionally match entrynames against a selection list here to skip as desired.
-                    // The unpacked length is available in the zipEntry.Size property.
+                        if (reader.Entry.IsDirectory)
+                            continue;
 
-                    byte[] buffer = new byte[4096];     // 4K is optimum
-                    Stream zipStream = zf.GetInputStream(zipEntry);
-
-                    // Manipulate the output filename here as desired.
-                    String fullZipToPath = Path.Combine(outFolder, entryFileName);
-                    string directoryName = Path.GetDirectoryName(fullZipToPath);
-                    if (directoryName.Length > 0)
-                        Directory.CreateDirectory(directoryName);
-
-                    // Unzip file in buffered chunks. This is just as fast as unpacking to a buffer the full size
-                    // of the file, but does not waste memory.
-                    // The "using" will close the stream even if an exception occurs.
-                    using (FileStream streamWriter = File.Create(fullZipToPath))
-                    {
-                        StreamUtils.Copy(zipStream, streamWriter, buffer);
+                        reader.WriteEntryToDirectory(outFolder, new ExtractionOptions
+                        {
+                            ExtractFullPath = true,
+                            Overwrite = true
+                        });
                     }
                 }
             }
-            finally
+            catch (Exception e)
             {
-                if (zf != null)
-                {
-                    zf.IsStreamOwner = true; // Makes close also shut the underlying stream
-                    zf.Close(); // Ensure we release resources
-                }
+                Console.WriteLine("UnZip error: " + e.Message);
             }
         }
     }
