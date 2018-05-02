@@ -163,7 +163,7 @@ namespace MIG.Interfaces.HomeAutomation
             }
             catch (Exception e)
             {
-                Console.WriteLine("UnZip error: " + e.Message);
+                MigService.Log.Error(e, "UnZip error: " + e.Message);
             }
         }
     }
