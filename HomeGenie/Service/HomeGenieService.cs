@@ -78,7 +78,7 @@ namespace HomeGenie.Service
             statisticsLogger.Start();
 
             // Setup local UPnP device
-            SetupUpnp();
+            //SetupUpnp();
 
             ConfigureUpdater();
 
@@ -1357,7 +1357,7 @@ namespace HomeGenie.Service
             {
                 // load config
                 var serializer = new XmlSerializer(typeof(SystemConfiguration));
-                using (var reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "systemconfig.xml")))
+                using (var reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FilePaths.SystemConfigFileName)))
                 {
                     systemConfiguration = (SystemConfiguration)serializer.Deserialize(reader);
                     // setup logging

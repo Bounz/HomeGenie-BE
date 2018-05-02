@@ -8,7 +8,6 @@ if [ ! -d /usr/local/bin/hgdata ]; then
   mkdir -p /usr/local/bin/hgdata
   mkdir -p /usr/local/bin/hgdata/data
   mkdir -p /usr/local/bin/hgdata/logs
-  mkdir -p /usr/local/bin/hgdata/plugins
 fi
 
 # При определенном коде завершения - 1 - перезапустить контейнер

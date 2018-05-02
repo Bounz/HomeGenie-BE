@@ -210,6 +210,8 @@
     <Compile Include="Database\LiteDbCollectionAttribute.cs" />
     <Compile Include="Database\StatisticsDbEntry.cs" />
     <Compile Include="Database\StatisticsRepository.cs" />
+    <Compile Include="Data\FilePaths.cs" />
+    <Compile Include="Data\HomeGenieConfiguration.cs" />
     <Compile Include="Data\ModuleEvent.cs" />
     <Compile Include="Data\ValueStatistics.cs" />
     <Compile Include="Data\VirtualModule.cs" />

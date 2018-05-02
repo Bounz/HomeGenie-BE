@@ -28,16 +28,16 @@ namespace HomeGenie.Service
             _homegenie.UpdateGroupsDatabase("Control");
             _homegenie.SaveData();
             if (File.Exists(archiveName))
-            {
                 File.Delete(archiveName);
-            }
 
             // Add USERSPACE automation program binaries (csharp)
             foreach (var program in _homegenie.ProgramManager.Programs)
             {
-                if (program.Address >= ProgramManager.USERSPACE_PROGRAMS_START && program.Address < ProgramManager.PACKAGE_PROGRAMS_START)
+                if (program.Address >= ProgramManager.USERSPACE_PROGRAMS_START &&
+                    program.Address < ProgramManager.PACKAGE_PROGRAMS_START)
                 {
-                    var relFile = Path.Combine("programs/", program.Address + ".dll");
+                    //var relFile = Path.Combine("programs/", program.Address + ".dll");
+                    var relFile = Path.Combine(FilePaths.ProgramsFolder, program.Address + ".dll");
                     if (File.Exists(relFile))
                     {
                         Utility.AddFileToZip(archiveName, relFile);
@@ -45,7 +45,7 @@ namespace HomeGenie.Service
 
                     if (program.Type.ToLower() == "arduino")
                     {
-                        var arduinoFolder = Path.Combine("programs", "arduino", program.Address.ToString());
+                        var arduinoFolder = Path.Combine(FilePaths.ProgramsFolder, "arduino", program.Address.ToString());
                         var filePaths = Directory.GetFiles(arduinoFolder);
                         foreach (var f in filePaths)
                         {
@@ -56,13 +56,13 @@ namespace HomeGenie.Service
             }
 
             // Add system config files
-            Utility.AddFileToZip(archiveName, "systemconfig.xml");
-            Utility.AddFileToZip(archiveName, "automationgroups.xml");
-            Utility.AddFileToZip(archiveName, "modules.xml");
-            Utility.AddFileToZip(archiveName, "programs.xml");
-            Utility.AddFileToZip(archiveName, "scheduler.xml");
-            Utility.AddFileToZip(archiveName, "groups.xml");
-            Utility.AddFileToZip(archiveName, "release_info.xml");
+            Utility.AddFileToZip(archiveName, FilePaths.SystemConfigFileName);
+            Utility.AddFileToZip(archiveName, FilePaths.AutomationProgramsFileName);
+            Utility.AddFileToZip(archiveName, FilePaths.ModulesFileName);
+            Utility.AddFileToZip(archiveName, FilePaths.ProgramsFileName);
+            Utility.AddFileToZip(archiveName, FilePaths.SchedulerFileName);
+            Utility.AddFileToZip(archiveName, FilePaths.GroupsFileName);
+            Utility.AddFileToZip(archiveName, FilePaths.ReleaseInfoFileName);
             // Statistics db
             if (File.Exists(StatisticsRepository.StatisticsDbFile))
             {
@@ -74,6 +74,7 @@ namespace HomeGenie.Service
             // Installed packages
             if (File.Exists(PackageManager.PACKAGE_LIST_FILE))
                 Utility.AddFileToZip(archiveName, PackageManager.PACKAGE_LIST_FILE);
+
             // Add MIG Interfaces config/data files (lib/mig/*.xml)
             var migLibFolder = Path.Combine("lib", "mig");
             if (Directory.Exists(migLibFolder))
@@ -398,7 +399,7 @@ namespace HomeGenie.Service
         // Backward compatibility method for HG < 1.1
         private void UpdateSystemConfig(string configPath, string selectedPrograms)
         {
-            var configFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "systemconfig.xml");
+            var configFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FilePaths.SystemConfigFileName);
             var configText = File.ReadAllText(Path.Combine(configPath, "systemconfig.xml"));
             if (configText.IndexOf("<ServicePort>") > 0)
             {

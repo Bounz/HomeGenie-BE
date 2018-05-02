@@ -44,7 +44,8 @@ namespace HomeGenie.Service
         private HomeGenieService homegenie;
         private string widgetBasePath;
 
-        public const string PACKAGE_LIST_FILE = "installed_packages.json";
+        //public const string PACKAGE_LIST_FILE = "installed_packages.json";
+        public const string PACKAGE_LIST_FILE = FilePaths.DataFolder + "installed_packages.json";
 
         public PackageManager(HomeGenieService hg)
         {
