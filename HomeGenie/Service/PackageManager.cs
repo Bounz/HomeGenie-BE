@@ -19,9 +19,6 @@ namespace HomeGenie.Service
         private readonly HomeGenieService _homegenie;
         private readonly string _widgetBasePath;
 
-        //public const string PACKAGE_LIST_FILE = "installed_packages.json";
-        public const string PACKAGE_LIST_FILE = FilePaths.DataFolder + "installed_packages.json";
-
         public PackageManager(HomeGenieService hg)
         {
             _homegenie = hg;
@@ -42,6 +39,7 @@ namespace HomeGenie.Service
                 Properties.InstallProgressMessage,
                 "= Downloading: package.json"
             );
+
             using (var client = new WebClient())
             {
                 try
@@ -141,7 +139,7 @@ namespace HomeGenie.Service
                                 if (_homegenie.AutomationGroups.Find(g => g.Name == newGroup.Name) == null)
                                 {
                                     _homegenie.AutomationGroups.Add(newGroup);
-                                    _homegenie.UpdateGroupsDatabase("Automation");
+                                    _homegenie.UpdateAutomationGroupsDatabase();
                                 }
                             }
                             programBlock.IsEnabled = enabled;
@@ -314,17 +312,17 @@ namespace HomeGenie.Service
             var pkgList = LoadInstalledPackages();
             pkgList.RemoveAll(p => p.folder_url.ToString() == pkgObject.folder_url.ToString());
             pkgList.Add(pkgObject);
-            File.WriteAllText(PACKAGE_LIST_FILE, JsonConvert.SerializeObject(pkgList, Formatting.Indented));
+            File.WriteAllText(FilePaths.InstalledPackagesFilePath, JsonConvert.SerializeObject(pkgList, Formatting.Indented));
         }
 
         public List<dynamic> LoadInstalledPackages()
         {
             var pkgList = new List<dynamic>();
-            if (File.Exists(PACKAGE_LIST_FILE))
+            if (File.Exists(FilePaths.InstalledPackagesFilePath))
             {
                 try
                 {
-                    pkgList = JArray.Parse(File.ReadAllText(PACKAGE_LIST_FILE)).ToObject<List<dynamic>>();
+                    pkgList = JArray.Parse(File.ReadAllText(FilePaths.InstalledPackagesFilePath)).ToObject<List<dynamic>>();
                 }
                 catch (Exception e)
                 {
@@ -515,6 +513,5 @@ namespace HomeGenie.Service
             }
             return success;
         }
-
     }
 }

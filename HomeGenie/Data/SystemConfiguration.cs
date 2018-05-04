@@ -32,6 +32,17 @@ namespace HomeGenie.Data
 
         public bool Update()
         {
+            var fileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FilePaths.SystemConfigFilePath);
+            return UpdateInternal(fileName);
+        }
+
+        public bool Update(string fileName)
+        {
+            return UpdateInternal(fileName);
+        }
+
+        private bool UpdateInternal(string fileName)
+        {
             var success = false;
             try
             {
@@ -48,21 +59,18 @@ namespace HomeGenie.Data
                     }
                 }
 
-                var fileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FilePaths.SystemConfigFileName);
                 if (File.Exists(fileName))
-                {
                     File.Delete(fileName);
-                }
 
-                var ws = new System.Xml.XmlWriterSettings
+                var xmlWriterSettings = new System.Xml.XmlWriterSettings
                 {
                     Indent = true,
                     Encoding = Encoding.UTF8
                 };
-                var x = new XmlSerializer(syscopy.GetType());
-                using (var wri = System.Xml.XmlWriter.Create(fileName, ws))
+                var xmlSerializer = new XmlSerializer(syscopy.GetType());
+                using (var xmlWriter = System.Xml.XmlWriter.Create(fileName, xmlWriterSettings))
                 {
-                    x.Serialize(wri, syscopy);
+                    xmlSerializer.Serialize(xmlWriter, syscopy);
                 }
                 success = true;
             }

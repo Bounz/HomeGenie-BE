@@ -184,345 +184,7 @@ namespace HomeGenie.Service.Handlers
                 break;
 
             case "System.Configure":
-                if (migCommand.GetOption(0) == "Location.Set")
-                {
-                    var success = false;
-                    try
-                    {
-                        _homegenie.SystemConfiguration.HomeGenie.Location = request.RequestText;
-                        _homegenie.SaveData();
-                        success = true;
-                    } catch { }
-                    request.ResponseData = new ResponseText(success ? "OK" : "ERROR");
-                }
-                if (migCommand.GetOption(0) == "Location.Get")
-                {
-                    request.ResponseData = JsonConvert.DeserializeObject(_homegenie.SystemConfiguration.HomeGenie.Location) as dynamic;
-                    var location = _homegenie.ProgramManager.SchedulerService.Location;
-                    var sun = new SolarTimes(DateTime.UtcNow.ToLocalTime(), location["latitude"].Value, location["longitude"].Value);
-                    var sunData = JsonConvert.SerializeObject(sun, Formatting.Indented,
-                        new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore, Error = (sender, errorArgs)=>
-                        {
-                            var currentError = errorArgs.ErrorContext.Error.Message;
-                            errorArgs.ErrorContext.Handled = true;
-                        } });
-                    (request.ResponseData as dynamic).sunData = JsonConvert.DeserializeObject(sunData);
-                }
-                else if (migCommand.GetOption(0) == "Service.Restart")
-                {
-                    Program.Quit(true);
-                    request.ResponseData = new ResponseText("OK");
-                }
-                else if (migCommand.GetOption(0) == "UpdateManager.UpdatesList")
-                {
-                    if (_homegenie.UpdateChecker.NewReleases != null)
-                        request.ResponseData = _homegenie.UpdateChecker.NewReleases;
-                    else
-                        request.ResponseData = new ResponseText("ERROR");
-                }
-                else if (migCommand.GetOption(0) == "UpdateManager.Check")
-                {
-                    var checkSuccess = _homegenie.UpdateChecker.Check();
-                    request.ResponseData = new ResponseText(checkSuccess ? "OK" : "ERROR");
-                }
-                else if (migCommand.GetOption(0) == "UpdateManager.ManualUpdate")
-                {
-                    _homegenie.RaiseEvent(
-                        Domains.HomeGenie_System,
-                        Domains.HomeGenie_UpdateChecker,
-                        SourceModule.Master,
-                        "HomeGenie Manual Update",
-                        Properties.InstallProgressMessage,
-                        "Receiving update file"
-                    );
-                    var success = false;
-                    // file uploaded by user
-                    Utility.FolderCleanUp(_tempFolderPath);
-                    var archivename = Path.Combine(_tempFolderPath, "homegenie_update_file.tgz");
-                    try
-                    {
-                        MIG.Gateways.WebServiceUtility.SaveFile(request.RequestData, archivename);
-                        var files = Utility.UncompressTgz(archivename, _tempFolderPath);
-                        File.Delete(archivename);
-                        var relInfo = Path.Combine(_tempFolderPath, "homegenie", "release_info.xml");
-                        if (File.Exists(relInfo))
-                        {
-                            var updateRelease = UpdatesHelper.GetReleaseInfoFromFile(relInfo);
-                            var currentRelease = _homegenie.UpdateChecker.GetCurrentRelease();
-                            if (updateRelease.ReleaseDate >= currentRelease.ReleaseDate)
-                            {
-                                var installPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "_update", "files");
-                                Utility.FolderCleanUp(installPath);
-                                Directory.Move(Path.Combine(_tempFolderPath, "homegenie"), Path.Combine(installPath, "HomeGenie"));
-                                var installStatus = _homegenie.UpdateInstaller.InstallFiles();
-                                if (installStatus != InstallStatus.Error)
-                                {
-                                    success = true;
-                                    if (installStatus == InstallStatus.RestartRequired)
-                                    {
-                                        _homegenie.RaiseEvent(
-                                            Domains.HomeGenie_System,
-                                            Domains.HomeGenie_UpdateChecker,
-                                            SourceModule.Master,
-                                            "HomeGenie Manual Update",
-                                            Properties.InstallProgressMessage,
-                                            "HomeGenie will now restart."
-                                        );
-                                        Program.Quit(true);
-                                    }
-                                    else
-                                    {
-                                        _homegenie.RaiseEvent(Domains.HomeGenie_System, Domains.HomeGenie_System, SourceModule.Master, "HomeGenie System", Properties.HomeGenieStatus, "UPDATED");
-                                        Thread.Sleep(3000);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                _homegenie.RaiseEvent(
-                                    Domains.HomeGenie_System,
-                                    Domains.HomeGenie_UpdateChecker,
-                                    SourceModule.Master,
-                                    "HomeGenie Manual Update",
-                                    Properties.InstallProgressMessage,
-                                    "ERROR: Installed release is newer than update file"
-                                );
-                                Thread.Sleep(3000);
-                            }
-                        }
-                        else
-                        {
-                            _homegenie.RaiseEvent(
-                                Domains.HomeGenie_System,
-                                Domains.HomeGenie_UpdateChecker,
-                                SourceModule.Master,
-                                "HomeGenie Manual Update",
-                                Properties.InstallProgressMessage,
-                                "ERROR: Invalid update file"
-                            );
-                            Thread.Sleep(3000);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        _homegenie.RaiseEvent(
-                            Domains.HomeGenie_System,
-                            Domains.HomeGenie_UpdateChecker,
-                            SourceModule.Master,
-                            "HomeGenie Update Checker",
-                            Properties.InstallProgressMessage,
-                            "ERROR: Exception occurred ("+e.Message+")"
-                        );
-                        Thread.Sleep(3000);
-                    }
-                    request.ResponseData = new ResponseStatus(success ? Status.Ok : Status.Error);
-                }
-                else if (migCommand.GetOption(0) == "UpdateManager.DownloadUpdate")
-                {
-                    var resultMessage = "ERROR";
-                    var latestRelease = _homegenie.UpdateChecker.NewestRelease;
-                    var success = _homegenie.UpdateInstaller.DownloadUpdateFiles(latestRelease);
-                    if (success)
-                    {
-                        resultMessage = "RESTART";
-                    }
-                    request.ResponseData = new ResponseText(resultMessage);
-                }
-                else if (migCommand.GetOption(0) == "UpdateManager.InstallUpdate") //UpdateManager.InstallProgramsCommit")
-                {
-                    var resultMessage = "OK";
-                    _homegenie.SaveData();
-                    var installStatus = _homegenie.UpdateInstaller.InstallFiles();
-                    if (installStatus == InstallStatus.Error)
-                    {
-                        resultMessage = "ERROR";
-                    }
-                    else
-                    {
-                        if (installStatus == InstallStatus.RestartRequired)
-                        {
-                            resultMessage = "RESTART";
-                            Utility.RunAsyncTask(() =>
-                            {
-                                Thread.Sleep(2000);
-                                Program.Quit(true);
-                            });
-                        }
-                        else
-                        {
-                            _homegenie.LoadConfiguration();
-                            _homegenie.UpdateChecker.Check();
-                        }
-                    }
-                    request.ResponseData = new ResponseText(resultMessage);
-                }
-                else if (migCommand.GetOption(0) == "Statistics.GetStatisticsDatabaseMaximumSize")
-                {
-                    request.ResponseData = new ResponseText(_homegenie.SystemConfiguration.HomeGenie.Statistics.MaxDatabaseSizeMBytes.ToString());
-                }
-                // Obsolete
-                // TODO remove this command from frontend
-                else if (migCommand.GetOption(0) == "Statistics.SetStatisticsDatabaseMaximumSize")
-                {
-                }
-                else if (migCommand.GetOption(0) == "SystemLogging.DownloadCsv")
-                {
-                    var csvlog = "";
-                    var logpath = Path.Combine("log", "homegenie.log");
-                    if (migCommand.GetOption(1) == "1")
-                    {
-                        logpath = Path.Combine("log", "homegenie.log.bak");
-                    }
-                    else if (SystemLogger.Instance != null)
-                    {
-                        SystemLogger.Instance.FlushLog();
-                    }
-                    if (File.Exists(logpath))
-                    {
-                        using (var fs = new FileStream(logpath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                        using (var sr = new StreamReader(fs, Encoding.Default))
-                        {
-                            csvlog = sr.ReadToEnd();
-                        }
-                    }
-                    (request.Context.Data as HttpListenerContext).Response.AddHeader("Content-Disposition", "attachment;filename=homegenie_log_" + migCommand.GetOption(1) + ".csv");
-                    request.ResponseData = csvlog;
-                }
-                else if (migCommand.GetOption(0) == "SystemLogging.Enable")
-                {
-                    SystemLogger.Instance.OpenLog();
-                    _homegenie.SystemConfiguration.HomeGenie.EnableLogFile = "true";
-                    _homegenie.SystemConfiguration.Update();
-                }
-                else if (migCommand.GetOption(0) == "SystemLogging.Disable")
-                {
-                    SystemLogger.Instance.CloseLog();
-                    _homegenie.SystemConfiguration.HomeGenie.EnableLogFile = "false";
-                    _homegenie.SystemConfiguration.Update();
-                }
-                else if (migCommand.GetOption(0) == "SystemLogging.IsEnabled")
-                {
-                    request.ResponseData = new ResponseText((_homegenie.SystemConfiguration.HomeGenie.EnableLogFile.ToLower().Equals("true") ? "1" : "0"));
-                }
-                else if (migCommand.GetOption(0) == "Security.SetPassword")
-                {
-                    // password only for now, with fixed user login 'admin'
-                    var pass = migCommand.GetOption(1) == "" ? "" : MIG.Utility.Encryption.SHA1.GenerateHashString(migCommand.GetOption(1));
-                    _homegenie.MigService.GetGateway("WebServiceGateway").SetOption("Password", pass);
-                    _homegenie.SaveData();
-                }
-                else if (migCommand.GetOption(0) == "Security.ClearPassword")
-                {
-                    _homegenie.MigService.GetGateway("WebServiceGateway").SetOption("Password", "");
-                    _homegenie.SaveData();
-                }
-                else if (migCommand.GetOption(0) == "Security.HasPassword")
-                {
-                    var webGateway = _homegenie.MigService.GetGateway("WebServiceGateway");
-                    var password = webGateway.GetOption("Password");
-                    request.ResponseData = new ResponseText((password == null || String.IsNullOrEmpty(password.Value) ? "0" : "1"));
-                }
-                else if (migCommand.GetOption(0) == "HttpService.SetWebCacheEnabled")
-                {
-                    if (migCommand.GetOption(1) == "1")
-                    {
-                        _homegenie.MigService.GetGateway("WebServiceGateway").SetOption("EnableFileCaching", "true");
-                    }
-                    else
-                    {
-                        _homegenie.MigService.GetGateway("WebServiceGateway").SetOption("EnableFileCaching", "false");
-                    }
-                    _homegenie.SystemConfiguration.Update();
-                    request.ResponseData = new ResponseText("OK");
-                }
-                else if (migCommand.GetOption(0) == "HttpService.GetWebCacheEnabled")
-                {
-                    var fileCaching = _homegenie.MigService.GetGateway("WebServiceGateway").GetOption("EnableFileCaching");
-                    request.ResponseData = new ResponseText(fileCaching != null ? fileCaching.Value : "false");
-                }
-                else if (migCommand.GetOption(0) == "HttpService.GetPort")
-                {
-                    var port = _homegenie.MigService.GetGateway("WebServiceGateway").GetOption("Port");
-                    request.ResponseData = new ResponseText(port != null ? port.Value : "8080");
-                }
-                else if (migCommand.GetOption(0) == "HttpService.SetPort")
-                {
-                    _homegenie.MigService.GetGateway("WebServiceGateway").SetOption("Port", migCommand.GetOption(1));
-                    _homegenie.SystemConfiguration.Update();
-                }
-                else if (migCommand.GetOption(0) == "HttpService.GetHostHeader")
-                {
-                    var host = _homegenie.MigService.GetGateway("WebServiceGateway").GetOption("Host");
-                    request.ResponseData = new ResponseText(host != null ? host.Value : "*");
-                }
-                else if (migCommand.GetOption(0) == "HttpService.SetHostHeader")
-                {
-                    _homegenie.MigService.GetGateway("WebServiceGateway").SetOption("Host", migCommand.GetOption(1));
-                    _homegenie.SystemConfiguration.Update();
-                }
-                else if (migCommand.GetOption(0) == "System.ConfigurationRestore")
-                {
-                    // file uploaded by user
-                    Utility.FolderCleanUp(_tempFolderPath);
-                    var archivename = Path.Combine(_tempFolderPath, "homegenie_restore_config.zip");
-                    try
-                    {
-                        MIG.Gateways.WebServiceUtility.SaveFile(request.RequestData, archivename);
-                        Utility.UncompressZip(archivename, _tempFolderPath);
-                        File.Delete(archivename);
-                        request.ResponseData = new ResponseStatus(Status.Ok);
-                    }
-                    catch
-                    {
-                        request.ResponseData = new ResponseStatus(Status.Error);
-                    }
-                }
-                else if (migCommand.GetOption(0) == "System.ConfigurationRestoreS1")
-                {
-                    var serializer = new XmlSerializer(typeof(List<ProgramBlock>));
-                    var reader = new StreamReader(Path.Combine(_tempFolderPath, "programs.xml"));
-                    var newProgramsData = (List<ProgramBlock>)serializer.Deserialize(reader);
-                    reader.Close();
-                    var newProgramList = new List<ProgramBlock>();
-                    foreach (var program in newProgramsData)
-                    {
-                        if (program.Address >= ProgramManager.USERSPACE_PROGRAMS_START && program.Address < ProgramManager.PACKAGE_PROGRAMS_START)
-                        {
-                            var p = new ProgramBlock();
-                            p.Address = program.Address;
-                            p.Name = program.Name;
-                            p.Description = program.Description;
-                            newProgramList.Add(p);
-                        }
-                    }
-                    newProgramList.Sort(delegate(ProgramBlock p1, ProgramBlock p2)
-                    {
-                        var c1 = p1.Address.ToString();
-                        var c2 = p2.Address.ToString();
-                        return c1.CompareTo(c2);
-                    });
-                    request.ResponseData = newProgramList;
-                }
-                else if (migCommand.GetOption(0) == "System.ConfigurationRestoreS2")
-                {
-                    var success = _homegenie.BackupManager.RestoreConfiguration(_tempFolderPath, migCommand.GetOption(1));
-                    request.ResponseData = new ResponseText(success ? "OK" : "ERROR");
-                }
-                else if (migCommand.GetOption(0) == "System.ConfigurationReset")
-                {
-                    _homegenie.RestoreFactorySettings();
-                }
-                else if (migCommand.GetOption(0) == "System.ConfigurationBackup")
-                {
-                    _homegenie.BackupManager.BackupConfiguration("html/homegenie_backup_config.zip");
-                    //(request.Context.Data as HttpListenerContext).Response.Redirect("/hg/html/homegenie_backup_config.zip");
-                    var httpListenerCtx = request.Context.Data as HttpListenerContext;
-                    WriteFile(httpListenerCtx, "html/homegenie_backup_config.zip");
-                }
-                else if (migCommand.GetOption(0) == "System.ConfigurationLoad")
-                {
-                    _homegenie.SoftReload();
-                }
+                HandleSystemConfigure(migCommand, request);
                 break;
 
             case "Modules.Get":
@@ -853,8 +515,11 @@ namespace HomeGenie.Service.Handlers
                 if (newGroup == null && currentGroup != null)
                 {
                     currentGroup.Name = newName;
-                    _homegenie.UpdateGroupsDatabase(migCommand.GetOption(0));
-                    //cmd.response = JsonHelper.GetSimpleResponse("OK");
+                    var cmdOption = migCommand.GetOption(0);
+                    if (cmdOption == "automation")
+                        _homegenie.UpdateAutomationGroupsDatabase();
+                    else
+                        _homegenie.UpdateGroupsDatabase();
                 }
                 else
                 {
@@ -873,7 +538,11 @@ namespace HomeGenie.Service.Handlers
                     _homegenie.GetGroups(migCommand.GetOption(0)).Clear();
                     _homegenie.GetGroups(migCommand.GetOption(0)).RemoveAll(g => true);
                     _homegenie.GetGroups(migCommand.GetOption(0)).AddRange(newGroupList);
-                    _homegenie.UpdateGroupsDatabase(migCommand.GetOption(0));
+                    var cmdOption = migCommand.GetOption(0);
+                    if (cmdOption == "automation")
+                        _homegenie.UpdateAutomationGroupsDatabase();
+                    else
+                        _homegenie.UpdateGroupsDatabase();
                 }
                 try
                 {
@@ -900,7 +569,10 @@ namespace HomeGenie.Service.Handlers
                         }
                         sortGroup.Modules.Clear();
                         sortGroup.Modules = newModulesReference;
-                        _homegenie.UpdateGroupsDatabase(migCommand.GetOption(0));
+                        if (migCommand.GetOption(0) == "automation")
+                            _homegenie.UpdateAutomationGroupsDatabase();
+                        else
+                            _homegenie.UpdateGroupsDatabase();
                     }
                 }
                 try
@@ -916,7 +588,11 @@ namespace HomeGenie.Service.Handlers
             case "Groups.Add":
                 var newGroupName = request.RequestText;
                 _homegenie.GetGroups(migCommand.GetOption(0)).Add(new Group() { Name = newGroupName });
-                _homegenie.UpdateGroupsDatabase(migCommand.GetOption(0));//write groups
+                // write groups
+                if (migCommand.GetOption(0) == "automation")
+                    _homegenie.UpdateAutomationGroupsDatabase();
+                else
+                    _homegenie.UpdateGroupsDatabase();
                 break;
 
             case "Groups.Delete":
@@ -933,7 +609,11 @@ namespace HomeGenie.Service.Handlers
                 if (deletedGroup != null)
                 {
                     _homegenie.GetGroups(migCommand.GetOption(0)).Remove(deletedGroup);
-                    _homegenie.UpdateGroupsDatabase(migCommand.GetOption(0));//write groups
+                    // write groups
+                    if (migCommand.GetOption(0) == "automation")
+                        _homegenie.UpdateAutomationGroupsDatabase();
+                    else
+                        _homegenie.UpdateGroupsDatabase();
                     if (migCommand.GetOption(0).ToLower() == "automation")
                     {
                         var groupPrograms = _homegenie.ProgramManager.Programs.FindAll(p => p.Group.ToLower() == deletedGroup.Name.ToLower());
@@ -964,7 +644,11 @@ namespace HomeGenie.Service.Handlers
                     {
                     }
                 }
-                _homegenie.UpdateGroupsDatabase(migCommand.GetOption(0));//write groups
+                // write groups
+                if (migCommand.GetOption(0) == "automation")
+                    _homegenie.UpdateAutomationGroupsDatabase();
+                else
+                    _homegenie.UpdateGroupsDatabase();
                 break;
 
             case "Groups.WallpaperList":
@@ -999,7 +683,7 @@ namespace HomeGenie.Service.Handlers
                     if (wpGroup != null)
                     {
                         wpGroup.Wallpaper = migCommand.GetOption(1);
-                        _homegenie.UpdateGroupsDatabase("Control");
+                        _homegenie.UpdateGroupsDatabase();
                     }
                 }
                 break;
@@ -1215,6 +899,410 @@ namespace HomeGenie.Service.Handlers
                 // TODO: uninstall a package....
                 break;
 
+            }
+        }
+
+        private void HandleSystemConfigure(MigInterfaceCommand migCommand, MigClientRequest request)
+        {
+            var subCommand = migCommand.GetOption(0);
+            switch (subCommand)
+            {
+                case "Location.Set":
+                {
+                    var success = false;
+                    try
+                    {
+                        _homegenie.SystemConfiguration.HomeGenie.Location = request.RequestText;
+                        _homegenie.SaveData();
+                        success = true;
+                    } catch { }
+                    request.ResponseData = new ResponseText(success ? "OK" : "ERROR");
+                    break;
+                }
+
+                case "Location.Get":
+                {
+                    request.ResponseData = JsonConvert.DeserializeObject(_homegenie.SystemConfiguration.HomeGenie.Location) as dynamic;
+                    var location = _homegenie.ProgramManager.SchedulerService.Location;
+                    var sun = new SolarTimes(DateTime.UtcNow.ToLocalTime(), location["latitude"].Value, location["longitude"].Value);
+                    var sunData = JsonConvert.SerializeObject(sun, Formatting.Indented,
+                        new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore, Error = (sender, errorArgs)=>
+                        {
+                            var currentError = errorArgs.ErrorContext.Error.Message;
+                            errorArgs.ErrorContext.Handled = true;
+                        } });
+                    (request.ResponseData as dynamic).sunData = JsonConvert.DeserializeObject(sunData);
+                    break;
+                }
+
+                case "Service.Restart":
+                {
+                    Program.Quit(true);
+                    request.ResponseData = new ResponseText("OK");
+                    break;
+                }
+
+                case "UpdateManager.UpdatesList":
+                {
+                    if (_homegenie.UpdateChecker.NewReleases != null)
+                        request.ResponseData = _homegenie.UpdateChecker.NewReleases;
+                    else
+                        request.ResponseData = new ResponseText("ERROR");
+                    break;
+                }
+
+                case "UpdateManager.Check":
+                {
+                    var checkSuccess = _homegenie.UpdateChecker.Check();
+                    request.ResponseData = new ResponseText(checkSuccess ? "OK" : "ERROR");
+                    break;
+                }
+
+                case "UpdateManager.ManualUpdate":
+                {
+                    _homegenie.RaiseEvent(
+                        Domains.HomeGenie_System,
+                        Domains.HomeGenie_UpdateChecker,
+                        SourceModule.Master,
+                        "HomeGenie Manual Update",
+                        Properties.InstallProgressMessage,
+                        "Receiving update file"
+                    );
+                    var success = false;
+                    // file uploaded by user
+                    Utility.FolderCleanUp(_tempFolderPath);
+                    var archivename = Path.Combine(_tempFolderPath, "homegenie_update_file.tgz");
+                    try
+                    {
+                        MIG.Gateways.WebServiceUtility.SaveFile(request.RequestData, archivename);
+                        var files = Utility.UncompressTgz(archivename, _tempFolderPath);
+                        File.Delete(archivename);
+                        var relInfo = Path.Combine(_tempFolderPath, "homegenie", "release_info.xml");
+                        if (File.Exists(relInfo))
+                        {
+                            var updateRelease = UpdatesHelper.GetReleaseInfoFromFile(relInfo);
+                            var currentRelease = _homegenie.UpdateChecker.GetCurrentRelease();
+                            if (updateRelease.ReleaseDate >= currentRelease.ReleaseDate)
+                            {
+                                var installPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "_update", "files");
+                                Utility.FolderCleanUp(installPath);
+                                Directory.Move(Path.Combine(_tempFolderPath, "homegenie"), Path.Combine(installPath, "HomeGenie"));
+                                var installStatus = _homegenie.UpdateInstaller.InstallFiles();
+                                if (installStatus != InstallStatus.Error)
+                                {
+                                    success = true;
+                                    if (installStatus == InstallStatus.RestartRequired)
+                                    {
+                                        _homegenie.RaiseEvent(
+                                            Domains.HomeGenie_System,
+                                            Domains.HomeGenie_UpdateChecker,
+                                            SourceModule.Master,
+                                            "HomeGenie Manual Update",
+                                            Properties.InstallProgressMessage,
+                                            "HomeGenie will now restart."
+                                        );
+                                        Program.Quit(true);
+                                    }
+                                    else
+                                    {
+                                        _homegenie.RaiseEvent(Domains.HomeGenie_System, Domains.HomeGenie_System, SourceModule.Master, "HomeGenie System", Properties.HomeGenieStatus, "UPDATED");
+                                        Thread.Sleep(3000);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                _homegenie.RaiseEvent(
+                                    Domains.HomeGenie_System,
+                                    Domains.HomeGenie_UpdateChecker,
+                                    SourceModule.Master,
+                                    "HomeGenie Manual Update",
+                                    Properties.InstallProgressMessage,
+                                    "ERROR: Installed release is newer than update file"
+                                );
+                                Thread.Sleep(3000);
+                            }
+                        }
+                        else
+                        {
+                            _homegenie.RaiseEvent(
+                                Domains.HomeGenie_System,
+                                Domains.HomeGenie_UpdateChecker,
+                                SourceModule.Master,
+                                "HomeGenie Manual Update",
+                                Properties.InstallProgressMessage,
+                                "ERROR: Invalid update file"
+                            );
+                            Thread.Sleep(3000);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        _homegenie.RaiseEvent(
+                            Domains.HomeGenie_System,
+                            Domains.HomeGenie_UpdateChecker,
+                            SourceModule.Master,
+                            "HomeGenie Update Checker",
+                            Properties.InstallProgressMessage,
+                            "ERROR: Exception occurred ("+e.Message+")"
+                        );
+                        Thread.Sleep(3000);
+                    }
+                    request.ResponseData = new ResponseStatus(success ? Status.Ok : Status.Error);
+                    break;
+                }
+
+                case "UpdateManager.DownloadUpdate":
+                {
+                    var resultMessage = "ERROR";
+                    var latestRelease = _homegenie.UpdateChecker.NewestRelease;
+                    var success = _homegenie.UpdateInstaller.DownloadUpdateFiles(latestRelease);
+                    if (success)
+                    {
+                        resultMessage = "RESTART";
+                    }
+                    request.ResponseData = new ResponseText(resultMessage);
+                    break;
+                }
+
+                case "UpdateManager.InstallUpdate":
+                {
+                    var resultMessage = "OK";
+                    _homegenie.SaveData();
+                    var installStatus = _homegenie.UpdateInstaller.InstallFiles();
+                    if (installStatus == InstallStatus.Error)
+                    {
+                        resultMessage = "ERROR";
+                    }
+                    else
+                    {
+                        if (installStatus == InstallStatus.RestartRequired)
+                        {
+                            resultMessage = "RESTART";
+                            Utility.RunAsyncTask(() =>
+                            {
+                                Thread.Sleep(2000);
+                                Program.Quit(true);
+                            });
+                        }
+                        else
+                        {
+                            _homegenie.LoadConfiguration();
+                            _homegenie.UpdateChecker.Check();
+                        }
+                    }
+                    request.ResponseData = new ResponseText(resultMessage);
+                    break;
+                }
+
+                case "Statistics.GetStatisticsDatabaseMaximumSize":
+                {
+                    request.ResponseData = new ResponseText(_homegenie.SystemConfiguration.HomeGenie.Statistics.MaxDatabaseSizeMBytes.ToString());
+                    break;
+                }
+
+                case "Statistics.SetStatisticsDatabaseMaximumSize":
+                {
+                    // Obsolete
+                    // TODO remove this command from frontend
+                    break;
+                }
+
+                case "SystemLogging.DownloadCsv":
+                {
+                    var csvlog = "";
+                    var logpath = Path.Combine("log", "homegenie.log");
+                    if (migCommand.GetOption(1) == "1")
+                    {
+                        logpath = Path.Combine("log", "homegenie.log.bak");
+                    }
+                    else if (SystemLogger.Instance != null)
+                    {
+                        SystemLogger.Instance.FlushLog();
+                    }
+                    if (File.Exists(logpath))
+                    {
+                        using (var fs = new FileStream(logpath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                        using (var sr = new StreamReader(fs, Encoding.Default))
+                        {
+                            csvlog = sr.ReadToEnd();
+                        }
+                    }
+                    (request.Context.Data as HttpListenerContext).Response.AddHeader("Content-Disposition", "attachment;filename=homegenie_log_" + migCommand.GetOption(1) + ".csv");
+                    request.ResponseData = csvlog;
+                    break;
+                }
+
+                case "SystemLogging.Enable":
+                {
+                    SystemLogger.Instance.OpenLog();
+                    _homegenie.SystemConfiguration.HomeGenie.EnableLogFile = "true";
+                    _homegenie.SystemConfiguration.Update();
+                    break;
+                }
+
+                case "SystemLogging.Disable":
+                {
+                    SystemLogger.Instance.CloseLog();
+                    _homegenie.SystemConfiguration.HomeGenie.EnableLogFile = "false";
+                    _homegenie.SystemConfiguration.Update();
+                    break;
+                }
+
+                case "SystemLogging.IsEnabled":
+                {
+                    request.ResponseData = new ResponseText((_homegenie.SystemConfiguration.HomeGenie.EnableLogFile.ToLower().Equals("true") ? "1" : "0"));
+                    break;
+                }
+
+                case "Security.SetPassword":
+                {
+                    // password only for now, with fixed user login 'admin'
+                    var pass = migCommand.GetOption(1) == "" ? "" : MIG.Utility.Encryption.SHA1.GenerateHashString(migCommand.GetOption(1));
+                    _homegenie.MigService.GetGateway("WebServiceGateway").SetOption("Password", pass);
+                    _homegenie.SaveData();
+                    break;
+                }
+
+                case "Security.ClearPassword":
+                {
+                    _homegenie.MigService.GetGateway("WebServiceGateway").SetOption("Password", "");
+                    _homegenie.SaveData();
+                    break;
+                }
+
+                case "Security.HasPassword":
+                {
+                    var webGateway = _homegenie.MigService.GetGateway("WebServiceGateway");
+                    var password = webGateway.GetOption("Password");
+                    request.ResponseData = new ResponseText((password == null || String.IsNullOrEmpty(password.Value) ? "0" : "1"));
+                    break;
+                }
+
+                case "HttpService.SetWebCacheEnabled":
+                {
+                    _homegenie.MigService.GetGateway("WebServiceGateway").SetOption("EnableFileCaching", migCommand.GetOption(1) == "1" ? "true" : "false");
+                    _homegenie.SystemConfiguration.Update();
+                    request.ResponseData = new ResponseText("OK");
+                    break;
+                }
+
+                case "HttpService.GetWebCacheEnabled":
+                {
+                    var fileCaching = _homegenie.MigService.GetGateway("WebServiceGateway").GetOption("EnableFileCaching");
+                    request.ResponseData = new ResponseText(fileCaching != null ? fileCaching.Value : "false");
+                    break;
+                }
+
+                case "HttpService.GetPort":
+                {
+                    var port = _homegenie.MigService.GetGateway("WebServiceGateway").GetOption("Port");
+                    request.ResponseData = new ResponseText(port != null ? port.Value : "8080");
+                    break;
+                }
+
+                case "HttpService.SetPort":
+                {
+                    _homegenie.MigService.GetGateway("WebServiceGateway").SetOption("Port", migCommand.GetOption(1));
+                    _homegenie.SystemConfiguration.Update();
+                    break;
+                }
+
+                case "HttpService.GetHostHeader":
+                {
+                    var host = _homegenie.MigService.GetGateway("WebServiceGateway").GetOption("Host");
+                    request.ResponseData = new ResponseText(host != null ? host.Value : "*");
+                    break;
+                }
+
+                case "HttpService.SetHostHeader":
+                {
+                    _homegenie.MigService.GetGateway("WebServiceGateway").SetOption("Host", migCommand.GetOption(1));
+                    _homegenie.SystemConfiguration.Update();
+                    break;
+                }
+
+                // user uploads archive file
+                case "System.ConfigurationRestore":
+                {
+                    // file uploaded by user
+                    Utility.FolderCleanUp(_tempFolderPath);
+                    var archivename = Path.Combine(_tempFolderPath, "homegenie_restore_config.zip");
+                    try
+                    {
+                        MIG.Gateways.WebServiceUtility.SaveFile(request.RequestData, archivename);
+                        Utility.UncompressZip(archivename, _tempFolderPath);
+                        File.Delete(archivename);
+                        request.ResponseData = new ResponseStatus(Status.Ok);
+                    }
+                    catch
+                    {
+                        request.ResponseData = new ResponseStatus(Status.Error);
+                    }
+                    break;
+                }
+
+                // get the list of custom automation programs in backup
+                case "System.ConfigurationRestoreS1":
+                {
+                    var serializer = new XmlSerializer(typeof(List<ProgramBlock>));
+                    var reader = new StreamReader(Path.Combine(_tempFolderPath, "programs.xml"));
+                    var newProgramsData = (List<ProgramBlock>)serializer.Deserialize(reader);
+                    reader.Close();
+                    var newProgramList = new List<ProgramBlock>();
+                    foreach (var program in newProgramsData)
+                    {
+                        if (program.Address >= ProgramManager.USERSPACE_PROGRAMS_START &&
+                            program.Address < ProgramManager.PACKAGE_PROGRAMS_START)
+                        {
+                            var p = new ProgramBlock
+                            {
+                                Address = program.Address,
+                                Name = program.Name,
+                                Description = program.Description
+                            };
+                            newProgramList.Add(p);
+                        }
+                    }
+                    newProgramList.Sort((p1, p2) =>
+                    {
+                        var c1 = p1.Address.ToString();
+                        var c2 = p2.Address.ToString();
+                        return c1.CompareTo(c2);
+                    });
+                    request.ResponseData = newProgramList;
+                    break;
+                }
+
+                // restores system configuration with respect to user-selected list of custom automation programs
+                case "System.ConfigurationRestoreS2":
+                {
+                    var selectedPrograms = migCommand.GetOption(1);
+                    var success = _homegenie.BackupManager.RestoreConfiguration(_tempFolderPath, selectedPrograms);
+                    request.ResponseData = new ResponseText(success ? "OK" : "ERROR");
+                    break;
+                }
+
+                case "System.ConfigurationReset":
+                {
+                    _homegenie.RestoreFactorySettings();
+                    break;
+                }
+
+                case "System.ConfigurationBackup":
+                {
+                    _homegenie.BackupManager.BackupConfiguration("html/homegenie_backup_config.zip");
+                    //(request.Context.Data as HttpListenerContext).Response.Redirect("/hg/html/homegenie_backup_config.zip");
+                    var httpListenerCtx = request.Context.Data as HttpListenerContext;
+                    WriteFile(httpListenerCtx, "html/homegenie_backup_config.zip");
+                    break;
+                }
+
+                case "System.ConfigurationLoad":
+                {
+                    _homegenie.SoftReload();
+                    break;
+                }
             }
         }
 

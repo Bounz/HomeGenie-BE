@@ -210,6 +210,7 @@
     <Compile Include="Database\LiteDbCollectionAttribute.cs" />
     <Compile Include="Database\StatisticsDbEntry.cs" />
     <Compile Include="Database\StatisticsRepository.cs" />
+    <Compile Include="Data\EnvVars.cs" />
     <Compile Include="Data\FilePaths.cs" />
     <Compile Include="Data\HomeGenieConfiguration.cs" />
     <Compile Include="Data\ModuleEvent.cs" />
@@ -270,7 +271,6 @@
     <Compile Include="Automation\Scripting\MqttClientHelper.cs" />
     <Compile Include="Data\Store.cs" />
     <Compile Include="Automation\Scripting\StoreHelper.cs" />
-    <Compile Include="Data\SystemConfiguration_1_0.cs" />
     <Compile Include="Automation\Engines\CSharpEngine.cs" />
     <Compile Include="Automation\Engines\WizardEngine.cs" />
     <Compile Include="Automation\ProgramManager.cs" />
