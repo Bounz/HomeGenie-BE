@@ -475,12 +475,15 @@ namespace MIG
                 return type;
             }
 
-            // look for assembly file
-            var filesFound = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "plugins") , assemblyName, SearchOption.AllDirectories);
-            if (filesFound.Length == 0)
+
+            if (! assemblyName.EndsWith("DLL", StringComparison.OrdinalIgnoreCase))
             {
-                filesFound = Directory.GetFiles(Directory.GetCurrentDirectory(), assemblyName, SearchOption.TopDirectoryOnly);
+                assemblyName = assemblyName + ".dll";
             }
+            
+            // Look in default folder and include subfolders - thus getting plugins when migrated to and providing backwards compatability
+            var filesFound = Directory.GetFiles(Directory.GetCurrentDirectory(), assemblyName, SearchOption.AllDirectories);
+            
             if (filesFound.Length == 0)
             {
                 throw new FileNotFoundException($"Couldn't load assembly for interface/type {typeName}", assemblyName);
@@ -488,6 +491,7 @@ namespace MIG
 
             foreach (var fileName in filesFound)
             {
+                Log.Debug($"Loading {fileName}");
                 var assembly = Assembly.LoadFrom(fileName);
                 var type = assembly.GetType(typeName);
                 if (type != null)
