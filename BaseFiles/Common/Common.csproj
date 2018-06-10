@@ -1270,11 +1270,7 @@
     <None Include="..\..\MIG\MIG.Interfaces.HomeAutomation.ZWave\bin\Release\SharpCompress.dll">
       <Link>factory_config\interfaces\ZWave\SharpCompress.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\MIG\MIG.Interfaces.HomeAutomation.ZWave\bin\Release\System.Xml.Linq.dll">
-      <Link>factory_config\interfaces\ZWave\System.Xml.Linq.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </None>    
     <None Include="..\..\MIG\MIG.Interfaces.HomeAutomation.ZWave\bin\Release\ZWaveLib.dll">
       <Link>factory_config\interfaces\ZWave\ZWaveLib.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1301,10 +1297,6 @@
     </None>
     <None Include="..\..\MIG\MIG.Interfaces.Protocols.UPnP\bin\Release\MIG.Interfaces.Protocols.UPnP.pdb">
       <Link>factory_config\interfaces\UPnP\MIG.Interfaces.Protocols.UPnP.pdb</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\MIG\MIG.Interfaces.Protocols.UPnP\bin\Release\System.Xml.Linq.dll">
-      <Link>factory_config\interfaces\UPnP\System.Xml.Linq.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="..\..\MIG\MIG.Interfaces.Protocols.UPnP\bin\Release\UPnP.dll">
