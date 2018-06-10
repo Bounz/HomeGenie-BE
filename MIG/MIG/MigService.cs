@@ -476,13 +476,11 @@ namespace MIG
             }
 
 
-            if (! assemblyName.EndsWith("DLL", StringComparison.OrdinalIgnoreCase))
-            {
+            if (!assemblyName.EndsWith("dll", StringComparison.OrdinalIgnoreCase))
                 assemblyName = assemblyName + ".dll";
-            }
 
             // Look in default folder and include subfolders - thus getting plugins when migrated to and providing backwards compatability
-            var filesFound = Directory.GetFiles(Directory.GetCurrentDirectory(), assemblyName, SearchOption.AllDirectories);
+            var filesFound = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "../"), assemblyName, SearchOption.AllDirectories);
 
             if (filesFound.Length == 0)
             {
