@@ -5,6 +5,7 @@ namespace HomeGenie.Data
     public class FilePaths
     {
         public const string DataFolder = "../data/";
+        public const string LogsFolder = "../logs/";
 
         public const string SystemConfigFileName = "systemconfig.xml";
         public const string SystemConfigFilePath = DataFolder + SystemConfigFileName;
