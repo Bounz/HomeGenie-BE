@@ -63,12 +63,11 @@ namespace HomeGenie.Service
             Utility.AddFileToZip(archiveName, FilePaths.SchedulerFileName);
             Utility.AddFileToZip(archiveName, FilePaths.GroupsFileName);
             Utility.AddFileToZip(archiveName, FilePaths.ReleaseInfoFileName);
+
             // Statistics db
-            if (File.Exists(StatisticsRepository.StatisticsDbFile))
+            if (File.Exists(FilePaths.StatisticsDbFilePath))
             {
-                //homegenie.Statistics.CloseStatisticsDatabase();
-                Utility.AddFileToZip(archiveName, StatisticsRepository.StatisticsDbFile);
-                //homegenie.Statistics.OpenStatisticsDatabase();
+                Utility.AddFileToZip(archiveName, FilePaths.StatisticsDbFilePath);
             }
 
             // Installed packages
@@ -150,19 +149,19 @@ namespace HomeGenie.Service
         private void RestoreStatisticsDb(string archiveFolder, string selectedPrograms)
         {
             // Statistics db
-            if (File.Exists(Path.Combine(archiveFolder, StatisticsRepository.StatisticsDbFile)))
-            {
-                File.Copy(Path.Combine(archiveFolder, StatisticsRepository.StatisticsDbFile),
-                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, StatisticsRepository.StatisticsDbFile), true);
-                _homegenie.RaiseEvent(
-                    Domains.HomeGenie_System,
-                    Domains.HomeGenie_BackupRestore,
-                    SourceModule.Master,
-                    "HomeGenie Backup Restore",
-                    Properties.InstallProgressMessage,
-                    "= Restored: Statistics Database"
-                );
-            }
+            if (!File.Exists(Path.Combine(archiveFolder, FilePaths.StatisticsDbFileName)))
+                return;
+
+            File.Copy(Path.Combine(archiveFolder, FilePaths.StatisticsDbFileName),
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FilePaths.StatisticsDbFilePath), true);
+            _homegenie.RaiseEvent(
+                Domains.HomeGenie_System,
+                Domains.HomeGenie_BackupRestore,
+                SourceModule.Master,
+                "HomeGenie Backup Restore",
+                Properties.InstallProgressMessage,
+                "= Restored: Statistics Database"
+            );
         }
 
         private void RemoveOldUserPrograms(string archiveFolder, string selectedPrograms)

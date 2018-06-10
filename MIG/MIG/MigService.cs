@@ -476,7 +476,7 @@ namespace MIG
             }
 
             // look for assembly file
-            var filesFound = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "plugins") , assemblyName, SearchOption.AllDirectories);
+            var filesFound = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "../data/") , assemblyName, SearchOption.AllDirectories);
             if (filesFound.Length == 0)
             {
                 filesFound = Directory.GetFiles(Directory.GetCurrentDirectory(), assemblyName, SearchOption.TopDirectoryOnly);

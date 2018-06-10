@@ -78,7 +78,7 @@ namespace HomeGenie.Service
             _statisticsLogger.Start();
 
             // Setup local UPnP device
-            //SetupUpnp();
+            SetupUpnp();
 
             ConfigureUpdater();
 
@@ -89,10 +89,48 @@ namespace HomeGenie.Service
 
         private void EnsureDirectoryStructure()
         {
-            if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), "plugins")))
+            if (!Directory.Exists(FilePaths.DataFolder))
+                Directory.CreateDirectory(FilePaths.DataFolder);
+
+            if(!File.Exists(FilePaths.SystemConfigFilePath))
+                File.Copy(FilePaths.DefaultSystemConfigFilePath, FilePaths.SystemConfigFilePath);
+
+            if(!File.Exists(FilePaths.AutomationProgramsFilePath))
+                File.Copy(FilePaths.DefaultAutomationGroupsConfigFilePath, FilePaths.AutomationProgramsFilePath);
+
+            if(!File.Exists(FilePaths.GroupsFilePath))
+                File.Copy(FilePaths.DefaultGroupsConfigFilePath, FilePaths.GroupsFilePath);
+
+            if(!File.Exists(FilePaths.InstalledPackagesFilePath))
+                File.Copy(FilePaths.DefaultInstalledPackagesConfigFilePath, FilePaths.InstalledPackagesFilePath);
+
+            if(!File.Exists(FilePaths.ModulesFilePath))
+                File.Copy(FilePaths.DefaultModulesConfigFilePath, FilePaths.ModulesFilePath);
+
+            if(!File.Exists(FilePaths.ProgramsFilePath))
+                File.Copy(FilePaths.DefaultProgramsConfigFilePath, FilePaths.ProgramsFilePath);
+
+            if(!File.Exists(FilePaths.SchedulerFilePath))
+                File.Copy(FilePaths.DefaultSchedulerConfigFilePath, FilePaths.SchedulerFilePath);
+
+            if (!Directory.Exists(FilePaths.ProgramsFolder))
             {
-                Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "plugins"));
+                Directory.CreateDirectory(FilePaths.ProgramsFolder);
+                var filesToCopy = Directory.EnumerateFiles(FilePaths.DefaultProgramsFolder);
+                foreach (var file in filesToCopy)
+                {
+                    File.Copy(file, FilePaths.ProgramsFolder + "/" + new FileInfo(file).Name);
+                }
             }
+
+            if (!Directory.Exists(FilePaths.GatewaysFolder))
+                Directory.CreateDirectory(FilePaths.GatewaysFolder);
+
+            if (!Directory.Exists(FilePaths.InterfacesFolder))
+                Directory.CreateDirectory(FilePaths.InterfacesFolder);
+
+            if (!Directory.Exists(FilePaths.WidgetsFolder))
+                Directory.CreateDirectory(FilePaths.WidgetsFolder);
         }
 
         private void ConfigureUpdater()
@@ -138,6 +176,8 @@ namespace HomeGenie.Service
                 );
             };
 
+
+            // TODO remove as the lagacy code
             // this is a fix for upgrading from r522 to any new release as the SchedulerItem object has changed in r523
             // de-serializing new object will only work after HomeGenie.exe update and restart
             if (File.Exists("scheduler_update.xml"))
@@ -224,7 +264,7 @@ namespace HomeGenie.Service
         public void SaveData()
         {
             RaiseEvent(Domains.HomeGenie_System, Domains.HomeGenie_System, SourceModule.Master, "HomeGenie System", Properties.HomeGenieStatus, "SAVING DATA");
-            _systemConfiguration.Update();
+            _systemConfiguration?.Update();
             UpdateModulesDatabase();
             UpdateSchedulerDatabase();
         }
@@ -883,33 +923,32 @@ namespace HomeGenie.Service
             // load modules data
             //
             LoadModules();
-            //
+
             // load last saved groups data into controlGroups list
             try
             {
                 var serializer = new XmlSerializer(typeof(List<Group>));
-                using (var reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "groups.xml")))
+                using (var reader = new StreamReader(FilePaths.GroupsFilePath))
                     _controlGroups = (List<Group>)serializer.Deserialize(reader);
             }
             catch
             {
                 //TODO: log error
             }
-            //
+
             // load last saved automation groups data into automationGroups list
             try
             {
                 var serializer = new XmlSerializer(typeof(List<Group>));
-                using (var reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "automationgroups.xml")))
+                using (var reader = new StreamReader(FilePaths.AutomationProgramsFilePath))
                     _automationGroups = (List<Group>)serializer.Deserialize(reader);
             }
             catch
             {
                 //TODO: log error
             }
-            //
+
             // load last saved programs data into masterControlProgram.Programs list
-            //
             if (_masterControlProgram != null)
             {
                 _masterControlProgram.Enabled = false;
@@ -919,7 +958,7 @@ namespace HomeGenie.Service
             try
             {
                 var serializer = new XmlSerializer(typeof(List<ProgramBlock>));
-                using (var reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "programs.xml")))
+                using (var reader = new StreamReader(FilePaths.ProgramsFilePath))
                 {
                     var programs = (List<ProgramBlock>)serializer.Deserialize(reader);
                     foreach (var program in programs)
@@ -945,13 +984,12 @@ namespace HomeGenie.Service
                     ex.StackTrace
                 );
             }
-            //
+
             // load last saved scheduler items data into masterControlProgram.SchedulerService.Items list
-            //
             try
             {
                 var serializer = new XmlSerializer(typeof(List<SchedulerItem>));
-                using (var reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scheduler.xml")))
+                using (var reader = new StreamReader(FilePaths.SchedulerFilePath))
                 {
                     var schedulerItems = (List<SchedulerItem>)serializer.Deserialize(reader);
                     _masterControlProgram.SchedulerService.Items.AddRange(schedulerItems);
@@ -961,11 +999,11 @@ namespace HomeGenie.Service
             {
                 //TODO: log error
             }
+
             // force re-generation of Modules list
             modules_RefreshAll();
-            //
+
             // enable automation programs engine
-            //
             _masterControlProgram.Enabled = true;
         }
 
@@ -976,7 +1014,11 @@ namespace HomeGenie.Service
             {
                 _masterControlProgram.Enabled = false;
                 _masterControlProgram = null;
-            } catch { }
+            }
+            catch
+            {
+            }
+
             // Uncompress factory settings and restart HG service
             Utility.UncompressZip("homegenie_factory_config.zip", AppDomain.CurrentDomain.BaseDirectory);
             Reload();
@@ -1349,7 +1391,7 @@ namespace HomeGenie.Service
             {
                 // load config
                 var serializer = new XmlSerializer(typeof(SystemConfiguration));
-                using (var reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FilePaths.SystemConfigFilePath)))
+                using (var reader = new StreamReader(FilePaths.SystemConfigFilePath))
                 {
                     _systemConfiguration = (SystemConfiguration)serializer.Deserialize(reader);
                     // setup logging
@@ -1399,7 +1441,7 @@ namespace HomeGenie.Service
             try
             {
                 var serializer = new XmlSerializer(typeof(TsList<Module>));
-                using (var reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "modules.xml")))
+                using (var reader = new StreamReader(FilePaths.ModulesFilePath))
                 {
                     var modules = (TsList<Module>)serializer.Deserialize(reader);
                     foreach (var module in modules)

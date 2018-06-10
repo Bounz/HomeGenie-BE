@@ -189,6 +189,9 @@ namespace HomeGenie.Service
             // rather then add files one by one
             // archive.AddAllFromDirectory(@"C:\source");
 
+            if(!File.Exists(fileToAdd))
+                return;
+
             var tempZipName = zipFilename + "_tmp";
             try
             {

@@ -63,36 +63,32 @@ namespace HomeGenie.Service
                 {
                     var module = homegenie.Modules[m];
                     ModuleParameter parameter = null;
-                    parameter = module.Properties.Find(delegate(ModuleParameter mp) { return mp.Name == Properties.VirtualMeterWatts; });
+                    parameter = module.Properties.Find(mp => mp.Name == Properties.VirtualMeterWatts);
                     if (parameter == null)
-                    {
                         continue;
-                    }
-                    else
+
+                    try
                     {
-                        try
+                        double watts = double.Parse(parameter.Value.Replace(",", "."), System.Globalization.CultureInfo.InvariantCulture);
+                        if (watts > 0)
                         {
-                            double watts = double.Parse(parameter.Value.Replace(",", "."), System.Globalization.CultureInfo.InvariantCulture);
-                            if (watts > 0)
-                            {
-                                parameter = module.Properties.Find(delegate(ModuleParameter mp) { return mp.Name == Properties.StatusLevel; });
-                                double level = double.Parse(parameter.Value.Replace(",", "."), System.Globalization.CultureInfo.InvariantCulture);
-                                double fuzzyness = (new Random().Next(0, 50) - 25) / 100D;
-                                //
-                                homegenie.RaiseEvent(
-                                    Domains.HomeGenie_System, 
-                                    module.Domain,
-                                    module.Address,
-                                    module.Description,
-                                    Properties.MeterWatts,
-                                    level == 0 ? "0.0" : ((watts * level) + fuzzyness).ToString(System.Globalization.CultureInfo.InvariantCulture)
-                                );
-                                //
-                                Thread.Sleep(10);
-                            }
+                            parameter = module.Properties.Find(delegate(ModuleParameter mp) { return mp.Name == Properties.StatusLevel; });
+                            double level = double.Parse(parameter.Value.Replace(",", "."), System.Globalization.CultureInfo.InvariantCulture);
+                            double fuzzyness = (new Random().Next(0, 50) - 25) / 100D;
+                            //
+                            homegenie.RaiseEvent(
+                                Domains.HomeGenie_System,
+                                module.Domain,
+                                module.Address,
+                                module.Description,
+                                Properties.MeterWatts,
+                                level == 0 ? "0.0" : ((watts * level) + fuzzyness).ToString(System.Globalization.CultureInfo.InvariantCulture)
+                            );
+                            //
+                            Thread.Sleep(10);
                         }
-                        catch { }
                     }
+                    catch { }
                 }
                 Thread.Sleep(reportFrequency);
             }

@@ -29,6 +29,23 @@ namespace HomeGenie.Data
         public const string InstalledPackagesFileName = "installed_packages.json";
         public const string InstalledPackagesFilePath = DataFolder + InstalledPackagesFileName;
 
+        public const string StatisticsDbFileName = "homegenie_stats.litedb";
+        public const string StatisticsDbFilePath = DataFolder + StatisticsDbFileName;
+
         public const string ProgramsFolder = DataFolder + "programs";
+        public const string GatewaysFolder = DataFolder + "gateways";
+        public const string InterfacesFolder = DataFolder + "interfaces";
+        public const string WidgetsFolder = DataFolder + "widgets";
+
+        // Factory default files
+        private const string FactoryConfigDataFolder = "factory_config/";
+        public const string DefaultSystemConfigFilePath = FactoryConfigDataFolder + "systemconfig.xml";
+        public const string DefaultAutomationGroupsConfigFilePath = FactoryConfigDataFolder + "automationgroups.xml";
+        public const string DefaultGroupsConfigFilePath = FactoryConfigDataFolder + "groups.xml";
+        public const string DefaultInstalledPackagesConfigFilePath = FactoryConfigDataFolder + "installed_packages.json";
+        public const string DefaultModulesConfigFilePath = FactoryConfigDataFolder + "modules.xml";
+        public const string DefaultProgramsConfigFilePath = FactoryConfigDataFolder + "programs.xml";
+        public const string DefaultSchedulerConfigFilePath = FactoryConfigDataFolder + "scheduler.xml";
+        public const string DefaultProgramsFolder = FactoryConfigDataFolder + "programs";
     }
 }
