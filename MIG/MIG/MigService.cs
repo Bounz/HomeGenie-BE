@@ -1,26 +1,4 @@
-﻿/*
-    This file is part of MIG Project source code.
-
-    MIG is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    MIG is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with MIG.  If not, see <http://www.gnu.org/licenses/>.  
-*/
-
-/*
- *     Author: Generoso Martello <gene@homegenie.it>
- *     Project Homepage: https://github.com/Bounz/HomeGenie-BE
- */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -286,9 +264,10 @@ namespace MIG
             MigInterface migInterface = GetInterface(domain);
             if (migInterface == null)
             {
+                Type type = null;
                 try
                 {
-                    var type = TypeLookup("MIG.Interfaces." + domain, assemblyName);
+                    type = TypeLookup("MIG.Interfaces." + domain, assemblyName);
                     if(type == null){
                         Log.Error("Can't find type for Mig Interface with domain {0} (assemblyName={1})", domain, assemblyName);
                         return null;
@@ -301,7 +280,7 @@ namespace MIG
                 }
                 if (migInterface != null)
                 {
-                    var interfaceVersion = VersionLookup(assemblyName);
+                    var interfaceVersion = VersionLookup(type.Assembly);
                     Log.Debug("Adding Interface {0} Version: {1}", migInterface.GetDomain(), interfaceVersion);
                     Interfaces.Add(migInterface);
                     migInterface.InterfaceModulesChanged += MigService_InterfaceModulesChanged;
@@ -312,8 +291,7 @@ namespace MIG
             var config = configuration.GetInterface(domain);
             if (config == null)
             {
-                config = new Interface();
-                config.Domain = domain;
+                config = new Interface {Domain = domain};
                 if (config.Options == null)
                     config.Options = new List<Option>();
                 configuration.Interfaces.Add(config);
@@ -475,12 +453,11 @@ namespace MIG
                 return type;
             }
 
-
             if (!assemblyName.EndsWith("dll", StringComparison.OrdinalIgnoreCase))
                 assemblyName = assemblyName + ".dll";
 
             // Look in default folder and include subfolders - thus getting plugins when migrated to and providing backwards compatability
-            var filesFound = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "../"), assemblyName, SearchOption.AllDirectories);
+            var filesFound = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "../data/"), assemblyName, SearchOption.AllDirectories);
 
             if (filesFound.Length == 0)
             {
@@ -499,9 +476,8 @@ namespace MIG
             return null;
         }
 
-        public static Version VersionLookup(string assemblyName)
+        private static Version VersionLookup(string assemblyName)
         {
-
             if (string.IsNullOrWhiteSpace(assemblyName)) return null;
 
             Assembly assembly;
@@ -527,6 +503,11 @@ namespace MIG
                     }
                 }
             }
+            return assembly?.GetName().Version;
+        }
+
+        private static Version VersionLookup(Assembly assembly)
+        {
             return assembly?.GetName().Version;
         }
 

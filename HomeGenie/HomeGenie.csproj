@@ -235,6 +235,10 @@
     <Compile Include="Service\Logging\StatGroup.cs" />
     <Compile Include="Service\Logging\StatisticsEntry.cs" />
     <Compile Include="Service\Logging\StatisticsCoreService.cs" />
+    <Compile Include="Service\Packages\PackageInterfaceDefinition.cs" />
+    <Compile Include="Service\Packages\PackageDefinition.cs" />
+    <Compile Include="Service\Packages\PackageManager.cs" />
+    <Compile Include="Service\Packages\PackageProgramDefinition.cs" />
     <Compile Include="Service\RealDateTime.cs" />
     <Compile Include="Service\SerializationExtensions.cs" />
     <Compile Include="Service\SpeechUtils.cs" />
@@ -285,7 +289,6 @@
     <Compile Include="Service\Logging\SystemLogger.cs" />
     <Compile Include="Service\Constants\SourceModule.cs" />
     <Compile Include="Automation\ProgramDynamicApi.cs" />
-    <Compile Include="Service\PackageManager.cs" />
     <Compile Include="Service\BackupManager.cs" />
     <Compile Include="Automation\Scheduler\SchedulerScriptingHost.cs" />
     <Compile Include="Automation\Scheduler\SchedulerScriptingEngine.cs" />
@@ -334,14 +337,6 @@
     <ProjectReference Include="..\BaseFiles\Common\Common.csproj">
       <Project>{0A27EF44-EC80-4FDB-8764-B153C169905D}</Project>
       <Name>Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MIG\MIG.HomeAutomation\MIG.HomeAutomation.csproj">
-      <Project>{8c90aaee-6245-4f6f-9d4a-854300c662f6}</Project>
-      <Name>MIG.HomeAutomation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MIG\MIG.Protocols\MIG.Protocols.csproj">
-      <Project>{c7538c18-d328-4509-b5d7-cda0491f90f5}</Project>
-      <Name>MIG.Protocols</Name>
     </ProjectReference>
     <ProjectReference Include="..\MIG\MIG\MIG.csproj">
       <Project>{005357c9-7f8e-458e-affa-bf84f7d6a6ae}</Project>

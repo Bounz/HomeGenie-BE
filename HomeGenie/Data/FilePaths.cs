@@ -34,7 +34,6 @@ namespace HomeGenie.Data
         public const string StatisticsDbFilePath = DataFolder + StatisticsDbFileName;
 
         public const string ProgramsFolder = DataFolder + "programs";
-        public const string GatewaysFolder = DataFolder + "gateways";
         public const string InterfacesFolder = DataFolder + "interfaces";
         public const string WidgetsFolder = DataFolder + "widgets";
 
@@ -48,5 +47,6 @@ namespace HomeGenie.Data
         public const string DefaultProgramsConfigFilePath = FactoryConfigDataFolder + "programs.xml";
         public const string DefaultSchedulerConfigFilePath = FactoryConfigDataFolder + "scheduler.xml";
         public const string DefaultProgramsFolder = FactoryConfigDataFolder + "programs";
+        public const string DefaultInterfacesFolder = FactoryConfigDataFolder + "interfaces";
     }
 }

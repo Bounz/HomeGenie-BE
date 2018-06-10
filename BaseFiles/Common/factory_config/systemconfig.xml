@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<SystemConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<SystemConfiguration>
   <HomeGenie>
     <Settings>
       <ModuleParameter>
@@ -65,15 +65,15 @@
         </Gateway>
     </Gateways>
     <Interfaces>
-      <Interface Domain="Protocols.UPnP" AssemblyName="MIG.Protocols.dll" IsEnabled="true">
+      <Interface Domain="Protocols.UPnP" AssemblyName="MIG.Interfaces.Protocols.UPnP.dll" IsEnabled="true">
         <Options />
       </Interface>
-      <Interface Domain="HomeAutomation.ZWave" AssemblyName="MIG.HomeAutomation.dll" IsEnabled="false">
+      <Interface Domain="HomeAutomation.ZWave" AssemblyName="MIG.Interfaces.HomeAutomation.ZWave.dll" IsEnabled="false">
         <Options>
           <Option Name="Port" Value="" />
         </Options>
       </Interface>
-      <Interface Domain="HomeAutomation.X10" AssemblyName="MIG.HomeAutomation.dll" IsEnabled="false">
+      <Interface Domain="HomeAutomation.X10" AssemblyName="MIG.Interfaces.HomeAutomation.X10.dll" IsEnabled="false">
         <Options>
           <Option Name="Port" Value="" />
           <Option Name="HouseCodes" Value="A" />

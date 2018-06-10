@@ -13,6 +13,7 @@ using HomeGenie.Service.Constants;
 using HomeGenie.Service.Logging;
 using HomeGenie.Automation.Scheduler;
 using HomeGenie.Database;
+using HomeGenie.Service.Packages;
 using HomeGenie.Service.Updates;
 using MIG;
 using MIG.Gateways;
@@ -116,15 +117,14 @@ namespace HomeGenie.Service
             if (!Directory.Exists(FilePaths.ProgramsFolder))
             {
                 Directory.CreateDirectory(FilePaths.ProgramsFolder);
-                var filesToCopy = Directory.EnumerateFiles(FilePaths.DefaultProgramsFolder);
-                foreach (var file in filesToCopy)
-                {
-                    File.Copy(file, FilePaths.ProgramsFolder + "/" + new FileInfo(file).Name);
-                }
+                Utility.CopyFilesRecursively(new DirectoryInfo(FilePaths.DefaultProgramsFolder), new DirectoryInfo(FilePaths.ProgramsFolder));
             }
 
-            if (!Directory.Exists(FilePaths.GatewaysFolder))
-                Directory.CreateDirectory(FilePaths.GatewaysFolder);
+            if (!Directory.Exists(FilePaths.InterfacesFolder))
+            {
+                Directory.CreateDirectory(FilePaths.InterfacesFolder);
+                Utility.CopyFilesRecursively(new DirectoryInfo(FilePaths.DefaultInterfacesFolder), new DirectoryInfo(FilePaths.InterfacesFolder));
+            }
 
             if (!Directory.Exists(FilePaths.InterfacesFolder))
                 Directory.CreateDirectory(FilePaths.InterfacesFolder);

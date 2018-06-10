@@ -1251,6 +1251,66 @@
     <None Include="factory_config\systemconfig.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="..\..\MIG\MIG.Interfaces.HomeAutomation.ZWave\bin\Debug\MIG.Interfaces.HomeAutomation.ZWave.dll">
+      <Link>factory_config\interfaces\ZWave\MIG.Interfaces.HomeAutomation.ZWave.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\MIG\MIG.Interfaces.HomeAutomation.ZWave\bin\Debug\MIG.Interfaces.HomeAutomation.ZWave.pdb">
+      <Link>factory_config\interfaces\ZWave\MIG.Interfaces.HomeAutomation.ZWave.pdb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\MIG\MIG.Interfaces.HomeAutomation.ZWave\bin\Debug\p1db_custom.xml">
+      <Link>factory_config\interfaces\ZWave\p1db_custom.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\MIG\MIG.Interfaces.HomeAutomation.ZWave\bin\Debug\SerialPortLib.dll">
+      <Link>factory_config\interfaces\ZWave\SerialPortLib.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\MIG\MIG.Interfaces.HomeAutomation.ZWave\bin\Debug\SharpCompress.dll">
+      <Link>factory_config\interfaces\ZWave\SharpCompress.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\MIG\MIG.Interfaces.HomeAutomation.ZWave\bin\Debug\System.Xml.Linq.dll">
+      <Link>factory_config\interfaces\ZWave\System.Xml.Linq.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\MIG\MIG.Interfaces.HomeAutomation.ZWave\bin\Debug\ZWaveLib.dll">
+      <Link>factory_config\interfaces\ZWave\ZWaveLib.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\MIG\MIG.Interfaces.HomeAutomation.X10\bin\Debug\LibUsbDotNet.dll">
+      <Link>factory_config\interfaces\X10\LibUsbDotNet.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\MIG\MIG.Interfaces.HomeAutomation.X10\bin\Debug\MIG.Interfaces.HomeAutomation.X10.dll">
+      <Link>factory_config\interfaces\X10\MIG.Interfaces.HomeAutomation.X10.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\MIG\MIG.Interfaces.HomeAutomation.X10\bin\Debug\MIG.Interfaces.HomeAutomation.X10.pdb">
+      <Link>factory_config\interfaces\X10\MIG.Interfaces.HomeAutomation.X10.pdb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\MIG\MIG.Interfaces.HomeAutomation.X10\bin\Debug\XTenLib.dll">
+      <Link>factory_config\interfaces\X10\XTenLib.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\MIG\MIG.Interfaces.Protocols.UPnP\bin\Debug\MIG.Interfaces.Protocols.UPnP.dll">
+      <Link>factory_config\interfaces\UPnP\MIG.Interfaces.Protocols.UPnP.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\MIG\MIG.Interfaces.Protocols.UPnP\bin\Debug\MIG.Interfaces.Protocols.UPnP.pdb">
+      <Link>factory_config\interfaces\UPnP\MIG.Interfaces.Protocols.UPnP.pdb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\MIG\MIG.Interfaces.Protocols.UPnP\bin\Debug\System.Xml.Linq.dll">
+      <Link>factory_config\interfaces\UPnP\System.Xml.Linq.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\MIG\MIG.Interfaces.Protocols.UPnP\bin\Debug\UPnP.dll">
+      <Link>factory_config\interfaces\UPnP\UPnP.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="html\pages\control\widgets\homegenie\generic\camerainput.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -3145,9 +3205,6 @@
     <None Include="html\README.RestoreP513.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="lib\mig\p1db_custom.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="html\js\api\homegenie.automation.scheduling.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -3319,6 +3376,7 @@
     <Folder Include="html\images\icons\" />
     <Folder Include="html\images\wallpapers\" />
     <Folder Include="lib\ape\" />
+    <Folder Include="lib\mig" />
     <Folder Include="lib\mig\" />
     <Folder Include="lib\shared\" />
     <Folder Include="lib\shared\de\" />

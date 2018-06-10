@@ -57,14 +57,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MIG.HomeAutomation\MIG.HomeAutomation.csproj">
-      <Project>{8c90aaee-6245-4f6f-9d4a-854300c662f6}</Project>
-      <Name>MIG.HomeAutomation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MIG.Protocols\MIG.Protocols.csproj">
-      <Project>{c7538c18-d328-4509-b5d7-cda0491f90f5}</Project>
-      <Name>MIG.Protocols</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MIG\MIG.csproj">
       <Project>{005357c9-7f8e-458e-affa-bf84f7d6a6ae}</Project>
       <Name>MIG</Name>

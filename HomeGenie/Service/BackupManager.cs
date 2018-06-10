@@ -7,7 +7,6 @@ using System.Linq;
 using HomeGenie.Data;
 using HomeGenie.Service.Constants;
 using MIG;
-using HomeGenie.Database;
 using MIG.Config;
 
 namespace HomeGenie.Service
@@ -90,7 +89,7 @@ namespace HomeGenie.Service
 
         public bool RestoreConfiguration(string archiveFolder, string selectedPrograms)
         {
-            return Directory.Exists(Path.Combine(archiveFolder, "gateways"))
+            return Directory.Exists(Path.Combine(archiveFolder, "interfaces"))
                 ? RestoreNewConfiguration(archiveFolder, selectedPrograms)
                 : RestoreOldConfiguration(archiveFolder, selectedPrograms);
         }
@@ -194,11 +193,10 @@ namespace HomeGenie.Service
                 true);
 
             // Restore packages from "installed_packages.json"
-            var installFolder = Path.Combine(archiveFolder, "pkg");
             var pkgList = _homegenie.PackageManager.LoadInstalledPackages();
             foreach (var pkg in pkgList)
             {
-                _homegenie.PackageManager.InstallPackage(pkg.folder_url.ToString(), installFolder); // TODO HGBE-10 - check file paths
+                _homegenie.PackageManager.InstallPackage(pkg.SourceUrl); // TODO HGBE-10 - check file paths
             }
         }
 
@@ -288,60 +286,34 @@ namespace HomeGenie.Service
                     program.Address < ProgramManager.PACKAGE_PROGRAMS_START)
                 {
                     var oldPid = program.Address;
-                    if (currentProgram == null)
-                    {
-                        var newPid = currentProgram != null && currentProgram.Address == program.Address
-                            ? _homegenie.ProgramManager.GeneratePid()
-                            : program.Address;
-                        try
-                        {
-                            File.Copy(Path.Combine(archiveFolder, "programs", program.Address + ".dll"),
-                                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "programs", newPid + ".dll"), true);
-                        }
-                        catch
-                        {
-                        }
-
-                        program.Address = newPid;
-                        _homegenie.ProgramManager.ProgramAdd(program);
-                        _homegenie.RaiseEvent(
-                            Domains.HomeGenie_System,
-                            Domains.HomeGenie_BackupRestore,
-                            SourceModule.Master,
-                            "HomeGenie Backup Restore",
-                            Properties.InstallProgressMessage,
-                            "= Added: Program '" + program.Name + "' (" + program.Address + ")"
-                        );
-                    }
-                    else
-                    {
+                    if (currentProgram != null)
                         _homegenie.ProgramManager.ProgramRemove(currentProgram);
-                        try
-                        {
-                            File.Copy(Path.Combine(archiveFolder, "programs", program.Address + ".dll"),
-                                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "programs", program.Address + ".dll"), true);
-                        }
-                        catch
-                        {
-                        }
 
-                        _homegenie.ProgramManager.ProgramAdd(program);
-                        _homegenie.RaiseEvent(
-                            Domains.HomeGenie_System,
-                            Domains.HomeGenie_BackupRestore,
-                            SourceModule.Master,
-                            "HomeGenie Backup Restore",
-                            Properties.InstallProgressMessage,
-                            "= Replaced: Program '" + program.Name + "' (" + program.Address + ")"
-                        );
+                    try
+                    {
+                        File.Copy(Path.Combine(archiveFolder, "programs", program.Address + ".dll"),
+                            Path.Combine(FilePaths.ProgramsFolder, program.Address + ".dll"), true);
                     }
+                    catch
+                    {
+                    }
+
+                    _homegenie.ProgramManager.ProgramAdd(program);
+                    _homegenie.RaiseEvent(
+                        Domains.HomeGenie_System,
+                        Domains.HomeGenie_BackupRestore,
+                        SourceModule.Master,
+                        "HomeGenie Backup Restore",
+                        Properties.InstallProgressMessage,
+                        "= Added: Program '" + program.Name + "' (" + program.Address + ")"
+                    );
 
                     // Restore Arduino program folder ...
                     // TODO: this is untested yet...
                     if (program.Type.ToLower() == "arduino")
                     {
                         var sourceFolder = Path.Combine(archiveFolder, "programs", "arduino", oldPid.ToString());
-                        var arduinoFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "programs", "arduino", program.Address.ToString());
+                        var arduinoFolder = Path.Combine(FilePaths.ProgramsFolder, "arduino", program.Address.ToString());
                         if (Directory.Exists(arduinoFolder))
                             Directory.Delete(arduinoFolder, true);
                         Directory.CreateDirectory(arduinoFolder);
