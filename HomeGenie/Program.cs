@@ -27,19 +27,19 @@ namespace HomeGenie
             Quit(false);
         }
 
-        internal static void Quit(bool restartService)
+        internal static void Quit(bool restartService, bool saveData = true)
         {
-            ShutDown(restartService);
+            ShutDown(restartService, saveData);
             IsRunning = false;
         }
 
-        private static void ShutDown(bool restart)
+        private static void ShutDown(bool restart, bool saveData = true)
         {
             Console.Write("HomeGenie is now exiting...\n");
 
             if (Homegenie != null)
             {
-                Homegenie.Stop();
+                Homegenie.Stop(saveData);
                 Homegenie = null;
             }
 

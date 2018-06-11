@@ -398,13 +398,14 @@ namespace HomeGenie.Service.Handlers
                 case "System.ConfigurationRestore":
                 {
                     // file uploaded by user
-                    Utility.FolderCleanUp(_tempFolderPath);
-                    var archivename = Path.Combine(_tempFolderPath, "homegenie_restore_config.zip");
+                    var backupTempFolder = _tempFolderPath + "backup";
+                    var archiveName = Path.Combine(backupTempFolder, "homegenie_restore_config.zip");
                     try
                     {
-                        MIG.Gateways.WebServiceUtility.SaveFile(request.RequestData, archivename);
-                        Utility.UncompressZip(archivename, _tempFolderPath);
-                        File.Delete(archivename);
+                        Utility.FolderCleanUp(backupTempFolder);
+                        MIG.Gateways.WebServiceUtility.SaveFile(request.RequestData, archiveName);
+                        Utility.UncompressZip(archiveName, backupTempFolder);
+                        File.Delete(archiveName);
                         request.ResponseData = new ResponseStatus(Status.Ok);
                     }
                     catch
@@ -417,8 +418,9 @@ namespace HomeGenie.Service.Handlers
                 // get the list of custom automation programs in backup
                 case "System.ConfigurationRestoreS1":
                 {
+                    var backupTempFolder = _tempFolderPath + "backup";
                     var serializer = new XmlSerializer(typeof(List<ProgramBlock>));
-                    var reader = new StreamReader(Path.Combine(_tempFolderPath, "programs.xml"));
+                    var reader = new StreamReader(Path.Combine(backupTempFolder, "programs.xml"));
                     var newProgramsData = (List<ProgramBlock>)serializer.Deserialize(reader);
                     reader.Close();
                     var newProgramList = new List<ProgramBlock>();
@@ -449,8 +451,9 @@ namespace HomeGenie.Service.Handlers
                 // restores system configuration with respect to user-selected list of custom automation programs
                 case "System.ConfigurationRestoreS2":
                 {
+                    var backupTempFolder = _tempFolderPath + "backup";
                     var selectedPrograms = migCommand.GetOption(1);
-                    var success = _homegenie.BackupManager.RestoreConfiguration(_tempFolderPath, selectedPrograms);
+                    var success = _homegenie.BackupManager.RestoreConfiguration(backupTempFolder, selectedPrograms);
                     request.ResponseData = new ResponseText(success ? "OK" : "ERROR");
                     break;
                 }
@@ -463,9 +466,10 @@ namespace HomeGenie.Service.Handlers
 
                 case "System.ConfigurationBackup":
                 {
-                    _homegenie.BackupManager.BackupConfiguration("html/homegenie_backup_config.zip");
+                    var backupFileName = $"html/hgbe_backup_{DateTime.Now:yyyy.MM.dd.HH.mm}.zip";
+                    _homegenie.BackupManager.BackupConfiguration(backupFileName);
                     var httpListenerCtx = request.Context.Data as HttpListenerContext;
-                    WriteFile(httpListenerCtx, "html/homegenie_backup_config.zip");
+                    WriteFile(httpListenerCtx, backupFileName);
                     break;
                 }
 

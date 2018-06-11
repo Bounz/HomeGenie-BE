@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
 using MIG.Config;
 using NLog;
 using System.Reflection;
@@ -37,15 +36,9 @@ namespace MIG
 
     public class MigService
     {
-
-        #region Private fields
-
         private MigServiceConfiguration configuration;
         private DynamicApi dynamicApi;
-
-        #endregion
-
-        #region Public events and fields
+        private readonly Dictionary<string, Assembly> _assemblyCache = new Dictionary<string, Assembly>();
 
         public static Logger Log = LogManager.GetCurrentClassLogger();
 
@@ -70,20 +63,26 @@ namespace MIG
         //public event -- ServiceStarted;
         //public event -- ServiceStopped;
 
-        // TODO: use List instead of Dictionary...
         public readonly List<IMigGateway> Gateways;
         public readonly List<MigInterface> Interfaces;
-
-        #endregion
 
         #region Lifecycle
 
         public MigService()
         {
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomainOnAssemblyResolve;
             Interfaces = new List<MigInterface>();
             Gateways = new List<IMigGateway>();
             configuration = new MigServiceConfiguration();
             dynamicApi = new DynamicApi();
+        }
+
+        private Assembly CurrentDomainOnAssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            var assemblyName = args.Name;
+            return !_assemblyCache.ContainsKey(assemblyName) ?
+                null :
+                _assemblyCache[assemblyName];
         }
 
         /// <summary>
@@ -151,6 +150,7 @@ namespace MIG
 
         /// <summary>
         /// Gets or sets the configuration.
+        /// Behind the scenes creates gateways and interfaces.
         /// </summary>
         /// <value>The configuration.</value>
         public MigServiceConfiguration Configuration
@@ -271,7 +271,7 @@ namespace MIG
                     if(type == null){
                         Log.Error("Can't find type for Mig Interface with domain {0} (assemblyName={1})", domain, assemblyName);
                         return null;
-                    }                        
+                    }
                     migInterface = (MigInterface)Activator.CreateInstance(type);
                 }
                 catch (Exception e)
@@ -287,6 +287,7 @@ namespace MIG
                     migInterface.InterfacePropertyChanged += MigService_InterfacePropertyChanged;
                 }
             }
+
             // Try loading interface settings from MIG configuration
             var config = configuration.GetInterface(domain);
             if (config == null)
@@ -445,7 +446,7 @@ namespace MIG
             }
         }
 
-        public static Type TypeLookup(string typeName, string assemblyName)
+        private Type TypeLookup(string typeName, string assemblyName)
         {
             if (string.IsNullOrWhiteSpace(assemblyName))
             {
@@ -467,10 +468,24 @@ namespace MIG
             foreach (var fileName in filesFound)
             {
                 Log.Debug($"Loading {fileName}");
-                var assembly = Assembly.LoadFrom(fileName);
+
+                //var assembly = Assembly.LoadFrom(fileName);
+                var assembly = Assembly.Load(File.ReadAllBytes(fileName));
                 var type = assembly.GetType(typeName);
                 if (type != null)
+                {
+                    var files = Directory.EnumerateFiles(new FileInfo(fileName).DirectoryName, "*.dll", SearchOption.AllDirectories);
+                    foreach (var file in files)
+                    {
+                        if(file == fileName)
+                            continue;
+                        var asm = Assembly.Load(File.ReadAllBytes(file));
+                        if(_assemblyCache.ContainsKey(asm.FullName))
+                            continue;
+                        _assemblyCache.Add(asm.FullName, asm);
+                    }
                     return type;
+                }
             }
 
             return null;

@@ -54,49 +54,44 @@ namespace HomeGenie.Service
                 }
             }
 
-            // Add system config files
-            Utility.AddFileToZip(archiveName, FilePaths.SystemConfigFileName);
-            Utility.AddFileToZip(archiveName, FilePaths.AutomationProgramsFileName);
-            Utility.AddFileToZip(archiveName, FilePaths.ModulesFileName);
-            Utility.AddFileToZip(archiveName, FilePaths.ProgramsFileName);
-            Utility.AddFileToZip(archiveName, FilePaths.SchedulerFileName);
-            Utility.AddFileToZip(archiveName, FilePaths.GroupsFileName);
-            Utility.AddFileToZip(archiveName, FilePaths.ReleaseInfoFileName);
-
-            // Statistics db
-            if (File.Exists(FilePaths.StatisticsDbFilePath))
-            {
-                Utility.AddFileToZip(archiveName, FilePaths.StatisticsDbFilePath);
-            }
-
-            // Installed packages
-            if (File.Exists(FilePaths.InstalledPackagesFilePath))
-                Utility.AddFileToZip(archiveName, FilePaths.InstalledPackagesFileName);
-
-            // Add MIG Interfaces config/data files (lib/mig/*.xml)
-            var migLibFolder = Path.Combine("lib", "mig");
-            if (Directory.Exists(migLibFolder))
-            {
-                foreach (var f in Directory.GetFiles(migLibFolder, "*.xml"))
-                {
-                    // exclude Pepper1 Db from backup (only the p1db_custom.xml file will be included)
-                    // in the future the p1db.xml file should be moved to a different path 
-                    if (Path.GetFileName(f) != "p1db.xml")
-                        Utility.AddFileToZip(archiveName, f);
-                }
-            }
+            Utility.AddFolderToZip(archiveName, FilePaths.DataFolder);
         }
 
         public bool RestoreConfiguration(string archiveFolder, string selectedPrograms)
         {
-            return Directory.Exists(Path.Combine(archiveFolder, "interfaces"))
+            var success = Directory.Exists(Path.Combine(archiveFolder, "interfaces"))
                 ? RestoreNewConfiguration(archiveFolder, selectedPrograms)
                 : RestoreOldConfiguration(archiveFolder, selectedPrograms);
+
+            Directory.Delete(archiveFolder, true);
+            return success;
         }
 
         private bool RestoreNewConfiguration(string archiveFolder, string selectedPrograms)
         {
-            throw new NotImplementedException();
+            var success = true;
+
+            try
+            {
+                Utility.CopyFilesRecursively(new DirectoryInfo(archiveFolder), new DirectoryInfo(FilePaths.DataFolder), true);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                success = false;
+            }
+
+            _homegenie.RaiseEvent(
+                Domains.HomeGenie_System,
+                Domains.HomeGenie_BackupRestore,
+                SourceModule.Master,
+                "HomeGenie Backup Restore",
+                Properties.InstallProgressMessage,
+                "= Status: Backup Restore " + (success ? "Succesful" : "Errors")
+            );
+            Directory.Delete(archiveFolder, true);
+            Program.Quit(true, false);
+            return success;
         }
 
         private bool RestoreOldConfiguration(string archiveFolder, string selectedPrograms)

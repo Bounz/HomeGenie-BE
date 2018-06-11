@@ -215,6 +215,29 @@ namespace HomeGenie.Service
             }
         }
 
+        internal static void AddFolderToZip(string zipFilename, string folderPath)
+        {
+            if(!Directory.Exists(folderPath))
+                return;
+
+            try
+            {
+                if (File.Exists(zipFilename))
+                    File.Delete(zipFilename);
+
+                using (var archive = ZipArchive.Create())
+                {
+                    archive.AddAllFromDirectory(folderPath);
+                    archive.SaveTo(zipFilename, CompressionType.Deflate);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error("Add folder to Zip error: " + e.Message, e);
+                throw;
+            }
+        }
+
         internal static Thread RunAsyncTask(AsyncFunction functionBlock)
         {
             var asyncTask = new Thread(() =>
@@ -254,12 +277,12 @@ namespace HomeGenie.Service
             return ((date.ToLocalTime().Ticks - 621355968000000000L) / 10000D);
         }
 
-        public static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target) {
+        public static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target, bool overwrite = false) {
             foreach (DirectoryInfo dir in source.GetDirectories())
-                CopyFilesRecursively(dir, target.CreateSubdirectory(dir.Name));
+                CopyFilesRecursively(dir, target.CreateSubdirectory(dir.Name), overwrite);
 
             foreach (FileInfo file in source.GetFiles())
-                file.CopyTo(Path.Combine(target.FullName, file.Name));
+                file.CopyTo(Path.Combine(target.FullName, file.Name), overwrite);
         }
     }
 }

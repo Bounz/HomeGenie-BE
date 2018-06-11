@@ -88,7 +88,7 @@ namespace HomeGenie.Service
             Start();
         }
 
-        private void EnsureDirectoryStructure()
+        private static void EnsureDirectoryStructure()
         {
             if (!Directory.Exists(FilePaths.DataFolder))
                 Directory.CreateDirectory(FilePaths.DataFolder);
@@ -214,7 +214,7 @@ namespace HomeGenie.Service
             }
         }
 
-        public void Stop()
+        public void Stop(bool saveData = true)
         {
             RaiseEvent(Domains.HomeGenie_System, Domains.HomeGenie_System, SourceModule.Master, "HomeGenie System", Properties.HomeGenieStatus, "STOPPING");
             // Signal "SystemStopping" event to automation programs
@@ -239,7 +239,8 @@ namespace HomeGenie.Service
             }
 
             // Save system data before quitting
-            SaveData();
+            if (saveData)
+                SaveData();
 
             // Stop HG helper services
             _updateManager.Stop();
@@ -918,9 +919,7 @@ namespace HomeGenie.Service
         {
             LoadSystemConfig();
             _webGateway = (WebServiceGateway) _migService.GetGateway("WebServiceGateway");
-            //
-            // load modules data
-            //
+
             LoadModules();
 
             // load last saved groups data into controlGroups list
@@ -1388,7 +1387,6 @@ namespace HomeGenie.Service
                 _systemConfiguration.OnUpdate -= systemConfiguration_OnUpdate;
             try
             {
-                // load config
                 var serializer = new XmlSerializer(typeof(SystemConfiguration));
                 using (var reader = new StreamReader(FilePaths.SystemConfigFilePath))
                 {
