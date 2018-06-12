@@ -5,6 +5,9 @@ using System.Linq;
 using MIG.Config;
 using NLog;
 using System.Reflection;
+using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 
 namespace MIG
 {
@@ -73,6 +76,32 @@ namespace MIG
             Gateways = new List<IMigGateway>();
             configuration = new MigServiceConfiguration();
             dynamicApi = new DynamicApi();
+        }
+
+        private static void RedirectAssembly(string shortName) {
+            ResolveEventHandler handler = null;
+
+            handler = (sender, args) => {
+                // Use latest strong name & version when trying to load SDK assemblies
+                var requestedAssembly = new AssemblyName(args.Name);
+                if (requestedAssembly.Name != shortName)
+                    return null;
+
+                var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                var assemblyToRedirectTo = assemblies.FirstOrDefault(x => x.GetName().Name == requestedAssembly.Name);
+                if (assemblyToRedirectTo == null)
+                    return null;
+
+                Console.WriteLine("Redirecting assembly load of " + args.Name
+                                                                  + ",\tloaded by " + (args.RequestingAssembly == null
+                                                                      ? "(unknown)"
+                                                                      : args.RequestingAssembly.FullName));
+
+                AppDomain.CurrentDomain.AssemblyResolve -= handler;
+                return assemblyToRedirectTo;
+            };
+
+            AppDomain.CurrentDomain.AssemblyResolve += handler;
         }
 
         /// <summary>
@@ -455,14 +484,41 @@ namespace MIG
                 throw new FileNotFoundException($"Couldn't load assembly for interface/type {typeName}", assemblyName);
             }
 
+            XNamespace ns = "urn:schemas-microsoft-com:asm.v1";
+            var namespaceManager = new XmlNamespaceManager(new NameTable());
+            namespaceManager.AddNamespace("asmv1", ns.NamespaceName);
+
             foreach (var fileName in filesFound)
             {
                 Log.Debug($"Loading {fileName}");
-
-                var assembly = Assembly.LoadFrom(fileName);
+                var assemblyFile = Path.GetFullPath(fileName);
+                var assembly = Assembly.LoadFrom(assemblyFile);
                 var type = assembly.GetType(typeName);
-                if (type != null)
+                if (type == null)
+                    continue;
+
+                var files = Directory.EnumerateFiles(new FileInfo(assemblyFile).DirectoryName, "*.dll", SearchOption.AllDirectories);
+                foreach (var file in files)
+                {
+                    if(Path.GetFullPath(file) == assemblyFile)
+                        continue;
+                    Assembly.LoadFrom(Path.GetFullPath(file));
+                }
+
+                var configFile = $"{assemblyFile}.config";
+                if (!File.Exists(configFile))
                     return type;
+
+                var config = XElement.Load(File.OpenText(configFile));
+                var dependentAssemblyElements = config.XPathSelectElements("//asmv1:dependentAssembly", namespaceManager).ToList();
+                foreach (var dependentAssemblyElement in dependentAssemblyElements)
+                {
+                    var d = dependentAssemblyElement.Element(ns + "assemblyIdentity");
+                    var assemblyToRedirect = d?.Attribute("name")?.Value;
+                    if (assemblyToRedirect != null)
+                        RedirectAssembly(assemblyToRedirect);
+                }
+                return type;
             }
 
             return null;
@@ -475,9 +531,9 @@ namespace MIG
 
         public static string GetAssemblyDirectory(Assembly assembly)
         {
-            string codeBase = assembly.CodeBase;
-            UriBuilder uri = new UriBuilder(codeBase);
-            string path = Uri.UnescapeDataString(uri.Path);
+            var codeBase = assembly.CodeBase;
+            var uri = new UriBuilder(codeBase);
+            var path = Uri.UnescapeDataString(uri.Path);
             return Path.GetDirectoryName(path);
         }
 
