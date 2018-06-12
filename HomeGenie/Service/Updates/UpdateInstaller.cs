@@ -427,7 +427,7 @@ namespace HomeGenie.Service.Updates
                 //
                 if (configChanged)
                 {
-                    _homegenieService.UpdateGroupsDatabase("");
+                    _homegenieService.UpdateGroupsDatabase();
                 }
             }
             catch
@@ -468,7 +468,7 @@ namespace HomeGenie.Service.Updates
                 //
                 if (configChanged)
                 {
-                    _homegenieService.UpdateGroupsDatabase("Automation");
+                    _homegenieService.UpdateAutomationGroupsDatabase();
                 }
             }
             catch

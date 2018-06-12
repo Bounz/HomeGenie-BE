@@ -1,30 +1,7 @@
-﻿/*
-    This file is part of MIG Project source code.
-
-    MIG is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    MIG is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with MIG.  If not, see <http://www.gnu.org/licenses/>.  
-*/
-
-/*
- *     Author: Generoso Martello <gene@homegenie.it>
- *     Project Homepage: https://github.com/Bounz/HomeGenie-BE
- */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
 using MIG.Config;
 using NLog;
 using System.Reflection;
@@ -59,15 +36,9 @@ namespace MIG
 
     public class MigService
     {
-
-        #region Private fields
-
         private MigServiceConfiguration configuration;
         private DynamicApi dynamicApi;
-
-        #endregion
-
-        #region Public events and fields
+        private readonly Dictionary<string, Assembly> _assemblyCache = new Dictionary<string, Assembly>();
 
         public static Logger Log = LogManager.GetCurrentClassLogger();
 
@@ -92,20 +63,26 @@ namespace MIG
         //public event -- ServiceStarted;
         //public event -- ServiceStopped;
 
-        // TODO: use List instead of Dictionary...
         public readonly List<IMigGateway> Gateways;
         public readonly List<MigInterface> Interfaces;
-
-        #endregion
 
         #region Lifecycle
 
         public MigService()
         {
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomainOnAssemblyResolve;
             Interfaces = new List<MigInterface>();
             Gateways = new List<IMigGateway>();
             configuration = new MigServiceConfiguration();
             dynamicApi = new DynamicApi();
+        }
+
+        private Assembly CurrentDomainOnAssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            var assemblyName = args.Name;
+            return !_assemblyCache.ContainsKey(assemblyName) ?
+                null :
+                _assemblyCache[assemblyName];
         }
 
         /// <summary>
@@ -173,6 +150,7 @@ namespace MIG
 
         /// <summary>
         /// Gets or sets the configuration.
+        /// Behind the scenes creates gateways and interfaces.
         /// </summary>
         /// <value>The configuration.</value>
         public MigServiceConfiguration Configuration
@@ -286,13 +264,14 @@ namespace MIG
             MigInterface migInterface = GetInterface(domain);
             if (migInterface == null)
             {
+                Type type = null;
                 try
                 {
-                    var type = TypeLookup("MIG.Interfaces." + domain, assemblyName);
+                    type = TypeLookup("MIG.Interfaces." + domain, assemblyName);
                     if(type == null){
                         Log.Error("Can't find type for Mig Interface with domain {0} (assemblyName={1})", domain, assemblyName);
                         return null;
-                    }                        
+                    }
                     migInterface = (MigInterface)Activator.CreateInstance(type);
                 }
                 catch (Exception e)
@@ -301,19 +280,19 @@ namespace MIG
                 }
                 if (migInterface != null)
                 {
-                    var interfaceVersion = VersionLookup(assemblyName);
+                    var interfaceVersion = VersionLookup(type.Assembly);
                     Log.Debug("Adding Interface {0} Version: {1}", migInterface.GetDomain(), interfaceVersion);
                     Interfaces.Add(migInterface);
                     migInterface.InterfaceModulesChanged += MigService_InterfaceModulesChanged;
                     migInterface.InterfacePropertyChanged += MigService_InterfacePropertyChanged;
                 }
             }
+
             // Try loading interface settings from MIG configuration
             var config = configuration.GetInterface(domain);
             if (config == null)
             {
-                config = new Interface();
-                config.Domain = domain;
+                config = new Interface {Domain = domain};
                 if (config.Options == null)
                     config.Options = new List<Option>();
                 configuration.Interfaces.Add(config);
@@ -467,7 +446,7 @@ namespace MIG
             }
         }
 
-        public static Type TypeLookup(string typeName, string assemblyName)
+        private Type TypeLookup(string typeName, string assemblyName)
         {
             if (string.IsNullOrWhiteSpace(assemblyName))
             {
@@ -475,15 +454,12 @@ namespace MIG
                 return type;
             }
 
-
-            if (! assemblyName.EndsWith("DLL", StringComparison.OrdinalIgnoreCase))
-            {
+            if (!assemblyName.EndsWith("dll", StringComparison.OrdinalIgnoreCase))
                 assemblyName = assemblyName + ".dll";
-            }
-            
+
             // Look in default folder and include subfolders - thus getting plugins when migrated to and providing backwards compatability
-            var filesFound = Directory.GetFiles(Directory.GetCurrentDirectory(), assemblyName, SearchOption.AllDirectories);
-            
+            var filesFound = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "../data/"), assemblyName, SearchOption.AllDirectories);
+
             if (filesFound.Length == 0)
             {
                 throw new FileNotFoundException($"Couldn't load assembly for interface/type {typeName}", assemblyName);
@@ -492,18 +468,31 @@ namespace MIG
             foreach (var fileName in filesFound)
             {
                 Log.Debug($"Loading {fileName}");
-                var assembly = Assembly.LoadFrom(fileName);
+
+                //var assembly = Assembly.LoadFrom(fileName);
+                var assembly = Assembly.Load(File.ReadAllBytes(fileName));
                 var type = assembly.GetType(typeName);
                 if (type != null)
+                {
+                    var files = Directory.EnumerateFiles(new FileInfo(fileName).DirectoryName, "*.dll", SearchOption.AllDirectories);
+                    foreach (var file in files)
+                    {
+                        if(file == fileName)
+                            continue;
+                        var asm = Assembly.Load(File.ReadAllBytes(file));
+                        if(_assemblyCache.ContainsKey(asm.FullName))
+                            continue;
+                        _assemblyCache.Add(asm.FullName, asm);
+                    }
                     return type;
+                }
             }
 
             return null;
         }
 
-        public static Version VersionLookup(string assemblyName)
+        private static Version VersionLookup(string assemblyName)
         {
-
             if (string.IsNullOrWhiteSpace(assemblyName)) return null;
 
             Assembly assembly;
@@ -529,6 +518,11 @@ namespace MIG
                     }
                 }
             }
+            return assembly?.GetName().Version;
+        }
+
+        private static Version VersionLookup(Assembly assembly)
+        {
             return assembly?.GetName().Version;
         }
 

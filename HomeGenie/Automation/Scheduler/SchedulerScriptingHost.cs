@@ -163,7 +163,7 @@ namespace HomeGenie.Automation.Scheduler
             }
             try
             {
-                Utility.Say(sentence, locale, goAsync);
+                SpeechUtils.Say(sentence, locale, goAsync);
             }
             catch (Exception e) 
             {

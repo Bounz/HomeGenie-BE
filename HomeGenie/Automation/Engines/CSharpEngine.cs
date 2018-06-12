@@ -28,6 +28,7 @@ using System.IO;
 using System.Collections.Generic;
 using HomeGenie.Automation.Scripting;
 using System.Diagnostics;
+using HomeGenie.Data;
 
 namespace HomeGenie.Automation.Engines
 {
@@ -103,17 +104,16 @@ namespace HomeGenie.Automation.Engines
             try
             {
                 // If the file to be deleted does not exist, no exception is thrown.
-                File.Delete(this.AssemblyFile);
-                File.Delete(this.AssemblyFile + ".mdb");
-                File.Delete(this.AssemblyFile.Replace(".dll", ".mdb"));
-                File.Delete(this.AssemblyFile + ".pdb");
-                File.Delete(this.AssemblyFile.Replace(".dll", ".pdb"));
+                File.Delete(AssemblyFile);
+                File.Delete(AssemblyFile + ".mdb");
+                File.Delete(AssemblyFile.Replace(".dll", ".mdb"));
+                File.Delete(AssemblyFile + ".pdb");
+                File.Delete(AssemblyFile.Replace(".dll", ".pdb"));
             }
             catch (Exception ex)
             {
                 HomeGenieService.LogError(ex);
             }
-
 
             // DO NOT CHANGE THE FOLLOWING LINES OF CODE
             // it is a lil' trick for mono compatibility
@@ -170,22 +170,22 @@ namespace HomeGenie.Automation.Engines
             try
             {
                 //string tmpfile = new Uri(value.CodeBase).LocalPath;
-                File.Move(tmpfile, this.AssemblyFile);
+                File.Move(tmpfile, AssemblyFile);
                 if (File.Exists(tmpfile + ".mdb"))
                 {
-                    File.Move(tmpfile + ".mdb", this.AssemblyFile + ".mdb");
+                    File.Move(tmpfile + ".mdb", AssemblyFile + ".mdb");
                 }
                 if (File.Exists(tmpfile.Replace(".dll", ".mdb")))
                 {
-                    File.Move(tmpfile.Replace(".dll", ".mdb"), this.AssemblyFile.Replace(".dll", ".mdb"));
+                    File.Move(tmpfile.Replace(".dll", ".mdb"), AssemblyFile.Replace(".dll", ".mdb"));
                 }
                 if (File.Exists(tmpfile + ".pdb"))
                 {
-                    File.Move(tmpfile + ".pdb", this.AssemblyFile + ".pdb");
+                    File.Move(tmpfile + ".pdb", AssemblyFile + ".pdb");
                 }
                 if (File.Exists(tmpfile.Replace(".dll", ".pdb")))
                 {
-                    File.Move(tmpfile.Replace(".dll", ".pdb"), this.AssemblyFile.Replace(".dll", ".pdb"));
+                    File.Move(tmpfile.Replace(".dll", ".pdb"), AssemblyFile.Replace(".dll", ".pdb"));
                 }
             }
             catch (Exception ee)
@@ -225,7 +225,6 @@ namespace HomeGenie.Automation.Engines
             }
         }
 
-
         public ProgramError GetFormattedError(Exception e, bool isTriggerBlock)
         {
             var error = new ProgramError() {
@@ -249,33 +248,32 @@ namespace HomeGenie.Automation.Engines
             return error;
         }
 
-
-        internal string AssemblyFile
+        private string AssemblyFile
         {
             get
             {
-                var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "programs");
+                var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FilePaths.ProgramsFolder);
                 file = Path.Combine(file, ProgramBlock.Address + ".dll");
                 return file;
             }
         }
 
-        internal bool LoadAssembly()
+        private bool LoadAssembly()
         {
             if (ProgramBlock.Type.ToLower() != "csharp")
                 return false;
 
             try
             {
-                var assemblyData = File.ReadAllBytes(this.AssemblyFile);
+                var assemblyData = File.ReadAllBytes(AssemblyFile);
                 byte[] debugData = null;
-                if (File.Exists(this.AssemblyFile + ".mdb"))
+                if (File.Exists(AssemblyFile + ".mdb"))
                 {
-                    debugData = File.ReadAllBytes(this.AssemblyFile + ".mdb");
+                    debugData = File.ReadAllBytes(AssemblyFile + ".mdb");
                 }
-                else if (File.Exists(this.AssemblyFile + ".pdb"))
+                else if (File.Exists(AssemblyFile + ".pdb"))
                 {
-                    debugData = File.ReadAllBytes(this.AssemblyFile + ".pdb");
+                    debugData = File.ReadAllBytes(AssemblyFile + ".pdb");
                 }
                 _scriptAssembly = debugData != null
                     ? Assembly.Load(assemblyData, debugData)
@@ -330,8 +328,5 @@ namespace HomeGenie.Automation.Engines
             }
             return success;
         }
-
-
     }
 }
-

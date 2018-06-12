@@ -1,44 +1,16 @@
-/*
-    This file is part of HomeGenie Project source code.
-
-    HomeGenie is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    HomeGenie is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with HomeGenie.  If not, see <http://www.gnu.org/licenses/>.  
-*/
-
-/*
-*     Author: Generoso Martello <gene@homegenie.it>
-*     Project Homepage: http://github.com/Bounz/HomeGenie-BE
-*/
-
 using System;
-using System.Collections.Generic;
-
+using System.Text;
 using System.IO;
 using System.Xml.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-
-using MIG;
 using MIG.Config;
-
 using HomeGenie.Service;
-using System.Text;
 
 namespace HomeGenie.Data
 {
-    [Serializable()]
+    [Serializable]
     public class SystemConfiguration
     {
-        private string passphrase = "";
+        private string _passPhrase = "";
 
         // TODO: change this to use standard event delegates model
         public event Action<bool> OnUpdate;
@@ -49,42 +21,56 @@ namespace HomeGenie.Data
 
         public SystemConfiguration()
         {
-            HomeGenie = new HomeGenieConfiguration();
-            HomeGenie.SystemName = "HAL";
-            HomeGenie.Location = "";
-            HomeGenie.EnableLogFile = "false";
+            HomeGenie = new HomeGenieConfiguration
+            {
+                SystemName = "HAL",
+                Location = "",
+                EnableLogFile = "false"
+            };
             MigService = new MigServiceConfiguration();
         }
 
         public bool Update()
         {
-            bool success = false;
+            var fileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FilePaths.SystemConfigFilePath);
+            return UpdateInternal(fileName);
+        }
+
+        public bool Update(string fileName)
+        {
+            return UpdateInternal(fileName);
+        }
+
+        private bool UpdateInternal(string fileName)
+        {
+            var success = false;
             try
             {
                 var syscopy = this.DeepClone();
-                foreach (ModuleParameter p in syscopy.HomeGenie.Settings)
+                foreach (var p in syscopy.HomeGenie.Settings)
                 {
                     try
                     {
-                        if (!String.IsNullOrEmpty(p.Value))
+                        if (!string.IsNullOrEmpty(p.Value))
                             p.Value = StringCipher.Encrypt(p.Value, GetPassPhrase());
                     }
                     catch
                     {
                     }
                 }
-                string fname = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "systemconfig.xml");
-                if (File.Exists(fname))
+
+                if (File.Exists(fileName))
+                    File.Delete(fileName);
+
+                var xmlWriterSettings = new System.Xml.XmlWriterSettings
                 {
-                    File.Delete(fname);
-                }
-                System.Xml.XmlWriterSettings ws = new System.Xml.XmlWriterSettings();
-                ws.Indent = true;
-                ws.Encoding = Encoding.UTF8;
-                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(syscopy.GetType());
-                using (var wri = System.Xml.XmlWriter.Create(fname, ws))
+                    Indent = true,
+                    Encoding = Encoding.UTF8
+                };
+                var xmlSerializer = new XmlSerializer(syscopy.GetType());
+                using (var xmlWriter = System.Xml.XmlWriter.Create(fileName, xmlWriterSettings))
                 {
-                    x.Serialize(wri, syscopy);
+                    xmlSerializer.Serialize(xmlWriter, syscopy);
                 }
                 success = true;
             }
@@ -92,88 +78,20 @@ namespace HomeGenie.Data
             {
                 MIG.MigService.Log.Error(e);
             }
-            //
-            if (OnUpdate != null)
-            {
-                OnUpdate(success);
-            }
-            //
+
+            OnUpdate?.Invoke(success);
+
             return success;
         }
 
         public void SetPassPhrase(string pass)
         {
-            passphrase = pass;
+            _passPhrase = pass;
         }
 
         public string GetPassPhrase()
         {
-            return passphrase;
+            return _passPhrase;
         }
     }
-
-    [Serializable()]
-    public class HomeGenieConfiguration
-    {
-        public string GUID { get; set; }
-        public string SystemName { get; set; }
-        public string Location { get; set; }
-
-        public List<ModuleParameter> Settings = new List<ModuleParameter>();
-        public StatisticsConfiguration Statistics = new StatisticsConfiguration();
-
-        public string EnableLogFile { get; set; }
-
-        [Serializable()]
-        public class StatisticsConfiguration
-        {
-
-            [XmlAttribute]
-            [Obsolete("This property is not used anymore")]
-            public int MaxDatabaseSizeMBytes { get; set; }
-
-            [XmlAttribute]
-            public int StatisticsTimeResolutionSeconds { get; set; }
-
-            [XmlAttribute]
-            public int StatisticsUIRefreshSeconds { get; set; }
-
-            public StatisticsConfiguration()
-            {
-
-                MaxDatabaseSizeMBytes = 5; // 5MB default.
-                StatisticsTimeResolutionSeconds = 5 * 60; // 5 minute default.
-                StatisticsUIRefreshSeconds = 2 * 60; // 2 minute default.
-            }
-
-            /// <summary>
-            /// Set constraints to protect the system. These are absolute constraints to protect the user experience (locked browser/server), but are not 
-            /// RECOMMENDED constraints. For example, StatisticsTimeResolutionSeconds less than 5*60 starts to make the graph 
-            /// look messy, but we still allow anything above 30 seconds in case advanced user wants it. Might want to keep 
-            /// recommended values reference later.
-            /// 
-            /// Should later throw error so UI can notify user?
-            /// </summary>
-            public void Validate()
-            {
-                // 
-                if (MaxDatabaseSizeMBytes < 1)
-                {
-                    MaxDatabaseSizeMBytes = 1;
-                }
-                // Current design would make < 30 seconds a poor setting. In full day view, if this is anything less than a few minutes, day detail line is smashed.
-                if (StatisticsTimeResolutionSeconds < 30)
-                {
-                    StatisticsTimeResolutionSeconds = 30;
-                }
-                if (StatisticsUIRefreshSeconds < 5)
-                {
-                    StatisticsUIRefreshSeconds = 5;
-                }
-
-            }
-
-        }
-    }
-
 }

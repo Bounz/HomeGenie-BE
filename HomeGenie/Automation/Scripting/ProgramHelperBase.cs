@@ -48,7 +48,7 @@ namespace HomeGenie
             }
             try
             {
-                Utility.Say(sentence, locale, goAsync);
+                SpeechUtils.Say(sentence, locale, goAsync);
             }
             catch (Exception e) 
             {
@@ -91,7 +91,7 @@ namespace HomeGenie
                     webClient.Dispose();
                 }
 
-                Utility.Play(file);
+                SpeechUtils.Play(file);
             }
             catch (Exception e) 
             {

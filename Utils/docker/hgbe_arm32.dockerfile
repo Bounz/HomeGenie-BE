@@ -25,6 +25,7 @@ RUN chmod -R 777 /usr/local/bin/homegenie
 #CMD ["usr/local/bin/homegenie/startup.sh", "/usr/local/bin/homegenie"]
 CMD ["/usr/bin/mono" , "/usr/local/bin/homegenie/bin/HomeGenie.exe"] 
 
+ENV HGBE_DOCKER 1
 EXPOSE 80
 VOLUME /usr/local/bin/homegenie/data
 VOLUME /usr/local/bin/homegenie/logs

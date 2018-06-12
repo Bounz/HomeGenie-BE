@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2006
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeGenie", "..\HomeGenie\HomeGenie.csproj", "{BFD3C868-1F62-43FF-8771-CF21825F0C0A}"
 EndProject
 Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Packager", "Packager\Packager.mdproj", "{03C1F6B3-8842-4B2C-AD01-76C153412B52}"
@@ -8,6 +10,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BaseFiles", "BaseFiles", "{3AB8E316-F318-4950-AFA9-DF6D05E44436}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "..\BaseFiles\Common\Common.csproj", "{0A27EF44-EC80-4FDB-8764-B153C169905D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8BD5A548-A5B5-447D-8517-B89A9AF8C0C9} = {8BD5A548-A5B5-447D-8517-B89A9AF8C0C9}
+		{000B28F6-9165-4F93-A65B-C7E869CD1210} = {000B28F6-9165-4F93-A65B-C7E869CD1210}
+		{E64CF8F8-8833-431D-B56C-496635B3D3C6} = {E64CF8F8-8833-431D-B56C-496635B3D3C6}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Linux", "..\BaseFiles\Linux\Linux.csproj", "{32CA9FE5-EE29-4931-B7FC-666715B41C6D}"
 EndProject
@@ -21,23 +28,31 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MIG", "MIG", "{B79CECC3-16B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MIG", "..\MIG\MIG\MIG.csproj", "{005357C9-7F8E-458E-AFFA-BF84F7D6A6AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MIG.HomeAutomation", "..\MIG\MIG.HomeAutomation\MIG.HomeAutomation.csproj", "{8C90AAEE-6245-4F6F-9D4A-854300C662F6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MIG.Protocols", "..\MIG\MIG.Protocols\MIG.Protocols.csproj", "{C7538C18-D328-4509-B5D7-CDA0491F90F5}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.WebService", "..\MIG\Tests.WebService\Tests.WebService.csproj", "{E4CB8D80-39EC-4347-8FA1-292904B13AD0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utils", "Utils", "{B6627FB9-CC64-426B-AF2E-82F4D6667D8C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StatsGenerator", "..\Utils\StatsGenerator\StatsGenerator.csproj", "{2861AEA2-E0E9-4050-8927-DC5DFBB4FFD0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MIG.Interfaces.HomeAutomation.ZWave", "..\MIG\MIG.Interfaces.HomeAutomation.ZWave\MIG.Interfaces.HomeAutomation.ZWave.csproj", "{E64CF8F8-8833-431D-B56C-496635B3D3C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MIG.Interfaces.HomeAutomation.X10", "..\MIG\MIG.Interfaces.HomeAutomation.X10\MIG.Interfaces.HomeAutomation.X10.csproj", "{000B28F6-9165-4F93-A65B-C7E869CD1210}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MIG.Interfaces.Protocols.UPnP", "..\MIG\MIG.Interfaces.Protocols.UPnP\MIG.Interfaces.Protocols.UPnP.csproj", "{8BD5A548-A5B5-447D-8517-B89A9AF8C0C9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
 		Default|Any CPU = Default|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BFD3C868-1F62-43FF-8771-CF21825F0C0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFD3C868-1F62-43FF-8771-CF21825F0C0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFD3C868-1F62-43FF-8771-CF21825F0C0A}.Default|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFD3C868-1F62-43FF-8771-CF21825F0C0A}.Default|Any CPU.Build.0 = Debug|Any CPU
+		{BFD3C868-1F62-43FF-8771-CF21825F0C0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFD3C868-1F62-43FF-8771-CF21825F0C0A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{03C1F6B3-8842-4B2C-AD01-76C153412B52}.Debug|Any CPU.ActiveCfg = Default|Any CPU
 		{03C1F6B3-8842-4B2C-AD01-76C153412B52}.Default|Any CPU.ActiveCfg = Default|Any CPU
 		{03C1F6B3-8842-4B2C-AD01-76C153412B52}.Release|Any CPU.ActiveCfg = Default|Any CPU
@@ -47,74 +62,81 @@ Global
 		{0A27EF44-EC80-4FDB-8764-B153C169905D}.Default|Any CPU.Build.0 = Debug|Any CPU
 		{0A27EF44-EC80-4FDB-8764-B153C169905D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A27EF44-EC80-4FDB-8764-B153C169905D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{318D2523-3C8B-4273-B1EA-DE339868403C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{318D2523-3C8B-4273-B1EA-DE339868403C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{318D2523-3C8B-4273-B1EA-DE339868403C}.Default|Any CPU.ActiveCfg = Debug|Any CPU
-		{318D2523-3C8B-4273-B1EA-DE339868403C}.Default|Any CPU.Build.0 = Debug|Any CPU
-		{318D2523-3C8B-4273-B1EA-DE339868403C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{318D2523-3C8B-4273-B1EA-DE339868403C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{32CA9FE5-EE29-4931-B7FC-666715B41C6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{32CA9FE5-EE29-4931-B7FC-666715B41C6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32CA9FE5-EE29-4931-B7FC-666715B41C6D}.Default|Any CPU.ActiveCfg = Debug|Any CPU
 		{32CA9FE5-EE29-4931-B7FC-666715B41C6D}.Default|Any CPU.Build.0 = Debug|Any CPU
 		{32CA9FE5-EE29-4931-B7FC-666715B41C6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32CA9FE5-EE29-4931-B7FC-666715B41C6D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BFD3C868-1F62-43FF-8771-CF21825F0C0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BFD3C868-1F62-43FF-8771-CF21825F0C0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BFD3C868-1F62-43FF-8771-CF21825F0C0A}.Default|Any CPU.ActiveCfg = Debug|Any CPU
-		{BFD3C868-1F62-43FF-8771-CF21825F0C0A}.Default|Any CPU.Build.0 = Debug|Any CPU
-		{BFD3C868-1F62-43FF-8771-CF21825F0C0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BFD3C868-1F62-43FF-8771-CF21825F0C0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{318D2523-3C8B-4273-B1EA-DE339868403C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{318D2523-3C8B-4273-B1EA-DE339868403C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{318D2523-3C8B-4273-B1EA-DE339868403C}.Default|Any CPU.ActiveCfg = Debug|Any CPU
+		{318D2523-3C8B-4273-B1EA-DE339868403C}.Default|Any CPU.Build.0 = Debug|Any CPU
+		{318D2523-3C8B-4273-B1EA-DE339868403C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{318D2523-3C8B-4273-B1EA-DE339868403C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E6F52AFC-FE7F-4E8F-86E4-498B9F58F774}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E6F52AFC-FE7F-4E8F-86E4-498B9F58F774}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6F52AFC-FE7F-4E8F-86E4-498B9F58F774}.Default|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6F52AFC-FE7F-4E8F-86E4-498B9F58F774}.Default|Any CPU.Build.0 = Debug|Any CPU
 		{E6F52AFC-FE7F-4E8F-86E4-498B9F58F774}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6F52AFC-FE7F-4E8F-86E4-498B9F58F774}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E6F52AFC-FE7F-4E8F-86E4-498B9F58F774}.Default|Any CPU.ActiveCfg = Default|Any CPU
-		{E6F52AFC-FE7F-4E8F-86E4-498B9F58F774}.Default|Any CPU.Build.0 = Default|Any CPU
 		{005357C9-7F8E-458E-AFFA-BF84F7D6A6AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{005357C9-7F8E-458E-AFFA-BF84F7D6A6AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{005357C9-7F8E-458E-AFFA-BF84F7D6A6AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{005357C9-7F8E-458E-AFFA-BF84F7D6A6AE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{005357C9-7F8E-458E-AFFA-BF84F7D6A6AE}.Default|Any CPU.ActiveCfg = Debug|Any CPU
 		{005357C9-7F8E-458E-AFFA-BF84F7D6A6AE}.Default|Any CPU.Build.0 = Debug|Any CPU
-		{8C90AAEE-6245-4F6F-9D4A-854300C662F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C90AAEE-6245-4F6F-9D4A-854300C662F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8C90AAEE-6245-4F6F-9D4A-854300C662F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8C90AAEE-6245-4F6F-9D4A-854300C662F6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8C90AAEE-6245-4F6F-9D4A-854300C662F6}.Default|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C90AAEE-6245-4F6F-9D4A-854300C662F6}.Default|Any CPU.Build.0 = Debug|Any CPU
-		{C7538C18-D328-4509-B5D7-CDA0491F90F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C7538C18-D328-4509-B5D7-CDA0491F90F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C7538C18-D328-4509-B5D7-CDA0491F90F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C7538C18-D328-4509-B5D7-CDA0491F90F5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C7538C18-D328-4509-B5D7-CDA0491F90F5}.Default|Any CPU.ActiveCfg = Debug|Any CPU
-		{C7538C18-D328-4509-B5D7-CDA0491F90F5}.Default|Any CPU.Build.0 = Debug|Any CPU
+		{005357C9-7F8E-458E-AFFA-BF84F7D6A6AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{005357C9-7F8E-458E-AFFA-BF84F7D6A6AE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E4CB8D80-39EC-4347-8FA1-292904B13AD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E4CB8D80-39EC-4347-8FA1-292904B13AD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E4CB8D80-39EC-4347-8FA1-292904B13AD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E4CB8D80-39EC-4347-8FA1-292904B13AD0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E4CB8D80-39EC-4347-8FA1-292904B13AD0}.Default|Any CPU.ActiveCfg = Debug|Any CPU
 		{E4CB8D80-39EC-4347-8FA1-292904B13AD0}.Default|Any CPU.Build.0 = Debug|Any CPU
+		{E4CB8D80-39EC-4347-8FA1-292904B13AD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4CB8D80-39EC-4347-8FA1-292904B13AD0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2861AEA2-E0E9-4050-8927-DC5DFBB4FFD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2861AEA2-E0E9-4050-8927-DC5DFBB4FFD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2861AEA2-E0E9-4050-8927-DC5DFBB4FFD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2861AEA2-E0E9-4050-8927-DC5DFBB4FFD0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2861AEA2-E0E9-4050-8927-DC5DFBB4FFD0}.Default|Any CPU.ActiveCfg = Debug|Any CPU
 		{2861AEA2-E0E9-4050-8927-DC5DFBB4FFD0}.Default|Any CPU.Build.0 = Debug|Any CPU
+		{2861AEA2-E0E9-4050-8927-DC5DFBB4FFD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2861AEA2-E0E9-4050-8927-DC5DFBB4FFD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E64CF8F8-8833-431D-B56C-496635B3D3C6}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{E64CF8F8-8833-431D-B56C-496635B3D3C6}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{E64CF8F8-8833-431D-B56C-496635B3D3C6}.Default|Any CPU.ActiveCfg = Debug|Any CPU
+		{E64CF8F8-8833-431D-B56C-496635B3D3C6}.Default|Any CPU.Build.0 = Debug|Any CPU
+		{E64CF8F8-8833-431D-B56C-496635B3D3C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E64CF8F8-8833-431D-B56C-496635B3D3C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{000B28F6-9165-4F93-A65B-C7E869CD1210}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{000B28F6-9165-4F93-A65B-C7E869CD1210}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{000B28F6-9165-4F93-A65B-C7E869CD1210}.Default|Any CPU.ActiveCfg = Debug|Any CPU
+		{000B28F6-9165-4F93-A65B-C7E869CD1210}.Default|Any CPU.Build.0 = Debug|Any CPU
+		{000B28F6-9165-4F93-A65B-C7E869CD1210}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{000B28F6-9165-4F93-A65B-C7E869CD1210}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BD5A548-A5B5-447D-8517-B89A9AF8C0C9}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{8BD5A548-A5B5-447D-8517-B89A9AF8C0C9}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{8BD5A548-A5B5-447D-8517-B89A9AF8C0C9}.Default|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BD5A548-A5B5-447D-8517-B89A9AF8C0C9}.Default|Any CPU.Build.0 = Debug|Any CPU
+		{8BD5A548-A5B5-447D-8517-B89A9AF8C0C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BD5A548-A5B5-447D-8517-B89A9AF8C0C9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0A27EF44-EC80-4FDB-8764-B153C169905D} = {3AB8E316-F318-4950-AFA9-DF6D05E44436}
 		{32CA9FE5-EE29-4931-B7FC-666715B41C6D} = {3AB8E316-F318-4950-AFA9-DF6D05E44436}
 		{318D2523-3C8B-4273-B1EA-DE339868403C} = {63A13BEF-B17E-43DE-A96C-D6A1433402DA}
 		{005357C9-7F8E-458E-AFFA-BF84F7D6A6AE} = {B79CECC3-16B4-434D-A3F9-15B81C0792FA}
-		{8C90AAEE-6245-4F6F-9D4A-854300C662F6} = {B79CECC3-16B4-434D-A3F9-15B81C0792FA}
-		{C7538C18-D328-4509-B5D7-CDA0491F90F5} = {B79CECC3-16B4-434D-A3F9-15B81C0792FA}
 		{E4CB8D80-39EC-4347-8FA1-292904B13AD0} = {B79CECC3-16B4-434D-A3F9-15B81C0792FA}
 		{2861AEA2-E0E9-4050-8927-DC5DFBB4FFD0} = {B6627FB9-CC64-426B-AF2E-82F4D6667D8C}
+		{E64CF8F8-8833-431D-B56C-496635B3D3C6} = {B79CECC3-16B4-434D-A3F9-15B81C0792FA}
+		{000B28F6-9165-4F93-A65B-C7E869CD1210} = {B79CECC3-16B4-434D-A3F9-15B81C0792FA}
+		{8BD5A548-A5B5-447D-8517-B89A9AF8C0C9} = {B79CECC3-16B4-434D-A3F9-15B81C0792FA}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {72154B95-D42F-447E-B034-35A6034571DA}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
-		$0.TextStylePolicy = $1
+		$0.TextStylePolicy = $19
 		$1.FileWidth = 240
 		$1.EolMarker = Unix
 		$1.inheritsSet = VisualStudio
@@ -160,56 +182,41 @@ Global
 		$0.DotNetNamingPolicy = $3
 		$3.DirectoryNamespaceAssociation = None
 		$3.ResourceNamePolicy = FileFormatDefault
-		$0.TextStylePolicy = $4
 		$4.FileWidth = 240
 		$4.EolMarker = Unix
 		$4.inheritsSet = VisualStudio
 		$4.inheritsScope = text/plain
 		$4.scope = text/plain
-		$0.TextStylePolicy = $5
 		$5.inheritsSet = null
 		$5.scope = application/xml
-		$0.XmlFormattingPolicy = $6
+		$0.XmlFormattingPolicy = $18
 		$6.inheritsSet = Mono
 		$6.inheritsScope = application/xml
 		$6.scope = application/xml
-		$0.TextStylePolicy = $7
 		$7.inheritsSet = null
 		$7.scope = application/json
-		$0.TextStylePolicy = $8
 		$8.inheritsSet = null
 		$8.scope = application/config+xml
-		$0.XmlFormattingPolicy = $9
 		$9.inheritsSet = null
 		$9.scope = application/config+xml
-		$0.TextStylePolicy = $10
 		$10.inheritsSet = null
 		$10.scope = text/cache-manifest
-		$0.TextStylePolicy = $11
 		$11.inheritsSet = null
 		$11.scope = application/x-sh
-		$0.TextStylePolicy = $12
 		$12.inheritsSet = null
 		$12.scope = text/html
-		$0.TextStylePolicy = $13
 		$13.inheritsSet = null
 		$13.scope = text/css
-		$0.TextStylePolicy = $14
 		$14.inheritsSet = null
 		$14.scope = application/javascript
-		$0.TextStylePolicy = $15
 		$15.inheritsSet = null
 		$15.scope = text/x-authors
-		$0.TextStylePolicy = $16
 		$16.inheritsSet = null
 		$16.scope = text/x-markdown
-		$0.TextStylePolicy = $17
 		$17.inheritsSet = null
 		$17.scope = image/svg+xml
-		$0.XmlFormattingPolicy = $18
 		$18.inheritsSet = null
 		$18.scope = image/svg+xml
-		$0.TextStylePolicy = $19
 		$19.inheritsSet = null
 		$19.scope = application/x-sharedlib
 		$0.StandardHeader = $20
@@ -217,21 +224,19 @@ Global
 		$20.IncludeInNewFiles = False
 		$0.NameConventionPolicy = $21
 		$21.Rules = $22
-		$22.NamingRule = $23
+		$22.NamingRule = $42
 		$23.Name = Namespaces
 		$23.AffectedEntity = Namespace
 		$23.VisibilityMask = VisibilityMask
 		$23.NamingStyle = PascalCase
 		$23.IncludeInstanceMembers = True
 		$23.IncludeStaticEntities = True
-		$22.NamingRule = $24
 		$24.Name = Types
 		$24.AffectedEntity = Class, Struct, Enum, Delegate
 		$24.VisibilityMask = Public
 		$24.NamingStyle = PascalCase
 		$24.IncludeInstanceMembers = True
 		$24.IncludeStaticEntities = True
-		$22.NamingRule = $25
 		$25.Name = Interfaces
 		$25.RequiredPrefixes = $26
 		$26.String = I
@@ -240,7 +245,6 @@ Global
 		$25.NamingStyle = PascalCase
 		$25.IncludeInstanceMembers = True
 		$25.IncludeStaticEntities = True
-		$22.NamingRule = $27
 		$27.Name = Attributes
 		$27.RequiredSuffixes = $28
 		$28.String = Attribute
@@ -249,7 +253,6 @@ Global
 		$27.NamingStyle = PascalCase
 		$27.IncludeInstanceMembers = True
 		$27.IncludeStaticEntities = True
-		$22.NamingRule = $29
 		$29.Name = Event Arguments
 		$29.RequiredSuffixes = $30
 		$30.String = EventArgs
@@ -258,7 +261,6 @@ Global
 		$29.NamingStyle = PascalCase
 		$29.IncludeInstanceMembers = True
 		$29.IncludeStaticEntities = True
-		$22.NamingRule = $31
 		$31.Name = Exceptions
 		$31.RequiredSuffixes = $32
 		$32.String = Exception
@@ -267,70 +269,60 @@ Global
 		$31.NamingStyle = PascalCase
 		$31.IncludeInstanceMembers = True
 		$31.IncludeStaticEntities = True
-		$22.NamingRule = $33
 		$33.Name = Methods
 		$33.AffectedEntity = Methods
 		$33.VisibilityMask = Protected, Public
 		$33.NamingStyle = PascalCase
 		$33.IncludeInstanceMembers = True
 		$33.IncludeStaticEntities = True
-		$22.NamingRule = $34
 		$34.Name = Static Readonly Fields
 		$34.AffectedEntity = ReadonlyField
 		$34.VisibilityMask = Protected, Public
 		$34.NamingStyle = PascalCase
 		$34.IncludeInstanceMembers = False
 		$34.IncludeStaticEntities = True
-		$22.NamingRule = $35
 		$35.Name = Fields
 		$35.AffectedEntity = Field
 		$35.VisibilityMask = Protected, Public
 		$35.NamingStyle = PascalCase
 		$35.IncludeInstanceMembers = True
 		$35.IncludeStaticEntities = True
-		$22.NamingRule = $36
 		$36.Name = ReadOnly Fields
 		$36.AffectedEntity = ReadonlyField
 		$36.VisibilityMask = Protected, Public
 		$36.NamingStyle = PascalCase
 		$36.IncludeInstanceMembers = True
 		$36.IncludeStaticEntities = False
-		$22.NamingRule = $37
 		$37.Name = Constant Fields
 		$37.AffectedEntity = ConstantField
 		$37.VisibilityMask = Protected, Public
 		$37.NamingStyle = PascalCase
 		$37.IncludeInstanceMembers = True
 		$37.IncludeStaticEntities = True
-		$22.NamingRule = $38
 		$38.Name = Properties
 		$38.AffectedEntity = Property
 		$38.VisibilityMask = Protected, Public
 		$38.NamingStyle = PascalCase
 		$38.IncludeInstanceMembers = True
 		$38.IncludeStaticEntities = True
-		$22.NamingRule = $39
 		$39.Name = Events
 		$39.AffectedEntity = Event
 		$39.VisibilityMask = Protected, Public
 		$39.NamingStyle = PascalCase
 		$39.IncludeInstanceMembers = True
 		$39.IncludeStaticEntities = True
-		$22.NamingRule = $40
 		$40.Name = Enum Members
 		$40.AffectedEntity = EnumMember
 		$40.VisibilityMask = VisibilityMask
 		$40.NamingStyle = PascalCase
 		$40.IncludeInstanceMembers = True
 		$40.IncludeStaticEntities = True
-		$22.NamingRule = $41
 		$41.Name = Parameters
 		$41.AffectedEntity = Parameter
 		$41.VisibilityMask = VisibilityMask
 		$41.NamingStyle = CamelCase
 		$41.IncludeInstanceMembers = True
 		$41.IncludeStaticEntities = True
-		$22.NamingRule = $42
 		$42.Name = Type Parameters
 		$42.RequiredPrefixes = $43
 		$43.String = T
@@ -340,8 +332,5 @@ Global
 		$42.IncludeInstanceMembers = True
 		$42.IncludeStaticEntities = True
 		version = 1.1
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
