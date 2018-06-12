@@ -81,14 +81,7 @@ namespace HomeGenie.Service
                 success = false;
             }
 
-            _homegenie.RaiseEvent(
-                Domains.HomeGenie_System,
-                Domains.HomeGenie_BackupRestore,
-                SourceModule.Master,
-                "HomeGenie Backup Restore",
-                Properties.InstallProgressMessage,
-                "= Status: Backup Restore " + (success ? "Succesful" : "Errors")
-            );
+            RaiseEvent($"= Status: Backup Restore {(success ? "Succesful" : "Errors")}");
             Directory.Delete(archiveFolder, true);
             Program.Quit(true, false);
             return success;
@@ -127,14 +120,7 @@ namespace HomeGenie.Service
                 }
             }
 
-            _homegenie.RaiseEvent(
-                Domains.HomeGenie_System,
-                Domains.HomeGenie_BackupRestore,
-                SourceModule.Master,
-                "HomeGenie Backup Restore",
-                Properties.InstallProgressMessage,
-                "= Status: Backup Restore " + (success ? "Succesful" : "Errors")
-            );
+            RaiseEvent($"= Status: Backup Restore {(success ? "Succesful" : "Errors")}");
             _homegenie.SaveData();
 
             return success;
@@ -148,14 +134,7 @@ namespace HomeGenie.Service
 
             File.Copy(Path.Combine(archiveFolder, FilePaths.StatisticsDbFileName),
                 Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FilePaths.StatisticsDbFilePath), true);
-            _homegenie.RaiseEvent(
-                Domains.HomeGenie_System,
-                Domains.HomeGenie_BackupRestore,
-                SourceModule.Master,
-                "HomeGenie Backup Restore",
-                Properties.InstallProgressMessage,
-                "= Restored: Statistics Database"
-            );
+            RaiseEvent("= Restored: Statistics Database");
         }
 
         private void RemoveOldUserPrograms(string archiveFolder, string selectedPrograms)
@@ -165,14 +144,7 @@ namespace HomeGenie.Service
             foreach (var program in programsToRemove)
             {
                 _homegenie.ProgramManager.ProgramRemove(program);
-                _homegenie.RaiseEvent(
-                    Domains.HomeGenie_System,
-                    Domains.HomeGenie_BackupRestore,
-                    SourceModule.Master,
-                    "HomeGenie Backup Restore",
-                    Properties.InstallProgressMessage,
-                    "= Removed: Program '" + program.Name + "' (" + program.Address + ")"
-                );
+                RaiseEvent($"= Removed: Program \'{program.Name}\' ({program.Address})");
             }
         }
 
@@ -191,7 +163,7 @@ namespace HomeGenie.Service
             var pkgList = _homegenie.PackageManager.LoadInstalledPackages();
             foreach (var pkg in pkgList)
             {
-                _homegenie.PackageManager.InstallPackage(pkg.SourceUrl); // TODO HGBE-10 - check file paths
+                _homegenie.PackageManager.InstallPackage(pkg.SourceUrl);
             }
         }
 
@@ -210,52 +182,36 @@ namespace HomeGenie.Service
                 foreach (var f in Directory.GetFiles(migLibFolder, "*.xml"))
                 {
                     File.Delete(f);
-                    _homegenie.RaiseEvent(
-                        Domains.HomeGenie_System,
-                        Domains.HomeGenie_BackupRestore,
-                        SourceModule.Master,
-                        "HomeGenie Backup Restore",
-                        Properties.InstallProgressMessage,
-                        "= Removed: MIG Data File '" + f + "'"
-                    );
+                    RaiseEvent($"= Removed: MIG Data File \'{f}\'");
                 }
             }
         }
 
         private void RestoreMigConfiguration(string archiveFolder, string selectedPrograms)
         {
-            // TODO HGBE-10 Move all known interfaces configs and binaries to the appropriate folders
-            /*if (iface.Domain == "HomeAutomation.ZWave")
-                            iface.AssemblyName = "MIG.HomeAutomation.dll";
-                        if (iface.Domain == "HomeAutomation.Insteon")
-                            iface.AssemblyName = "MIG.HomeAutomation.dll";
-                        if (iface.Domain == "HomeAutomation.X10")
-                            iface.AssemblyName = "MIG.HomeAutomation.dll";
-                        if (iface.Domain == "HomeAutomation.W800RF")
-                            iface.AssemblyName = "MIG.HomeAutomation.dll";
-                        if (iface.Domain == "Controllers.LircRemote")
-                            iface.AssemblyName = "MIG.Controllers.dll";
-                        if (iface.Domain == "Media.CameraInput")
-                            iface.AssemblyName = "MIG.Media.dll";
-                        if (iface.Domain == "Protocols.UPnP")
-                            iface.AssemblyName = "MIG.Protocols.dll";*/
-
-            // Restore MIG configuration/data files if present (from backup folder lib/mig/*.xml)
-            var migLibFolder = Path.Combine(archiveFolder, "lib", "mig");
-            if (Directory.Exists(migLibFolder))
+            // Move all known interfaces configs from the old backup to the appropriate folders
+            var knownConfigurationFiles = new Dictionary<string, string[]>
             {
-                foreach (var f in Directory.GetFiles(migLibFolder, "*.xml"))
-                {
-                    File.Copy(f, Path.Combine("lib", "mig", Path.GetFileName(f)), true);
-                    _homegenie.RaiseEvent(
-                        Domains.HomeGenie_System,
-                        Domains.HomeGenie_BackupRestore,
-                        SourceModule.Master,
-                        "HomeGenie Backup Restore",
-                        Properties.InstallProgressMessage,
-                        "= Restored: '" + Path.Combine("lib", "mig", Path.GetFileName(f)) + "'"
-                    );
-                }
+                {"ZWave", new[] {"p1db_custom.xml", "zwavenodes.xml"}},
+                {"Controllers.LircRemote", new[] {"lircconfig.xml", "lircremotes.xml"}}
+            };
+
+            var migLibFolder = Path.Combine(archiveFolder, "lib", "mig");
+            if (!Directory.Exists(migLibFolder))
+                return;
+
+            foreach (var f in Directory.GetFiles(migLibFolder, "*.xml"))
+            {
+                var fileName = Path.GetFileName(f);
+                var iface = knownConfigurationFiles.FirstOrDefault(x => x.Value.Contains(fileName));
+                if(iface.Key == null)
+                    continue;
+
+                if(!Directory.Exists(Path.Combine(FilePaths.InterfacesFolder, iface.Key)))
+                    continue;
+
+                File.Copy(f, Path.Combine(FilePaths.InterfacesFolder, iface.Key, fileName), true);
+                RaiseEvent($"= Restored: \'{Path.Combine("lib", "mig", Path.GetFileName(f))}\'");
             }
         }
 
@@ -291,17 +247,11 @@ namespace HomeGenie.Service
                     }
                     catch
                     {
+                        RaiseEvent($"= Error copying program: {program.Address}");
                     }
 
                     _homegenie.ProgramManager.ProgramAdd(program);
-                    _homegenie.RaiseEvent(
-                        Domains.HomeGenie_System,
-                        Domains.HomeGenie_BackupRestore,
-                        SourceModule.Master,
-                        "HomeGenie Backup Restore",
-                        Properties.InstallProgressMessage,
-                        "= Added: Program '" + program.Name + "' (" + program.Address + ")"
-                    );
+                    RaiseEvent($"= Added: Program \'{program.Name}\' ({program.Address})");
 
                     // Restore Arduino program folder ...
                     // TODO: this is untested yet...
@@ -328,7 +278,6 @@ namespace HomeGenie.Service
             _homegenie.UpdateProgramsDatabase();
         }
 
-
         private void ImportAutomationGroups(string archiveFolder, string selectedPrograms)
         {
             // Import automation groups
@@ -341,14 +290,7 @@ namespace HomeGenie.Service
                 if (_homegenie.AutomationGroups.Find(g => g.Name == automationGroup.Name) == null)
                 {
                     _homegenie.AutomationGroups.Add(automationGroup);
-                    _homegenie.RaiseEvent(
-                        Domains.HomeGenie_System,
-                        Domains.HomeGenie_BackupRestore,
-                        SourceModule.Master,
-                        "HomeGenie Backup Restore",
-                        Properties.InstallProgressMessage,
-                        "= Added: Automation Group '" + automationGroup.Name + "'"
-                    );
+                    RaiseEvent($"= Added: Automation Group \'{automationGroup.Name}\'");
                 }
             }
 
@@ -359,32 +301,13 @@ namespace HomeGenie.Service
         {
             // Copy system configuration files
             File.Copy(Path.Combine(archiveFolder, FilePaths.GroupsFileName), Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FilePaths.GroupsFilePath), true);
-            _homegenie.RaiseEvent(
-                Domains.HomeGenie_System,
-                Domains.HomeGenie_BackupRestore,
-                SourceModule.Master,
-                "HomeGenie Backup Restore",
-                Properties.InstallProgressMessage,
-                "= Restored: Control Groups"
-            );
+            RaiseEvent("= Restored: Control Groups");
+
             File.Copy(Path.Combine(archiveFolder, FilePaths.ModulesFileName), Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FilePaths.ModulesFilePath), true);
-            _homegenie.RaiseEvent(
-                Domains.HomeGenie_System,
-                Domains.HomeGenie_BackupRestore,
-                SourceModule.Master,
-                "HomeGenie Backup Restore",
-                Properties.InstallProgressMessage,
-                "= Restored: Modules"
-            );
+            RaiseEvent("= Restored: Modules");
+
             File.Copy(Path.Combine(archiveFolder, FilePaths.SchedulerFileName), Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FilePaths.SchedulerFilePath), true);
-            _homegenie.RaiseEvent(
-                Domains.HomeGenie_System,
-                Domains.HomeGenie_BackupRestore,
-                SourceModule.Master,
-                "HomeGenie Backup Restore",
-                Properties.InstallProgressMessage,
-                "= Restored: Scheduler Events"
-            );
+            RaiseEvent("= Restored: Scheduler Events");
         }
 
         private void UpdateSystemConfig(string archiveFolder, string selectedPrograms)
@@ -417,6 +340,18 @@ namespace HomeGenie.Service
             else
                 portOption.Value = "80";
             systemConfiguration.Update(oldConfigFile);
+        }
+
+        private void RaiseEvent(string message)
+        {
+            _homegenie.RaiseEvent(
+                Domains.HomeGenie_System,
+                Domains.HomeGenie_BackupRestore,
+                SourceModule.Master,
+                "HomeGenie Backup Restore",
+                Properties.InstallProgressMessage,
+                message
+            );
         }
     }
 }
