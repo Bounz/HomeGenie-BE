@@ -138,7 +138,10 @@ namespace MIG.Interfaces.HomeAutomation
 
         private static string GetDbFullPath(string file)
         {
+            Console.WriteLine("BLAH");
+            Console.WriteLine(JsonConvert.SerializeObject(typeof(Pepper1Db).Assembly, Formatting.Indented));
             var assemblyFolder = Path.GetDirectoryName(typeof(Pepper1Db).Assembly.Location);
+
             var path = Path.Combine(assemblyFolder, file);
             return path;
         }

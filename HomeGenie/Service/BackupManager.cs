@@ -14,6 +14,7 @@ namespace HomeGenie.Service
     public class BackupManager
     {
         private readonly HomeGenieService _homegenie;
+        public const string RestoreTempFolder = "_tmp_backup";
 
         public BackupManager(HomeGenieService hg)
         {
@@ -69,22 +70,10 @@ namespace HomeGenie.Service
 
         private bool RestoreNewConfiguration(string archiveFolder, string selectedPrograms)
         {
-            var success = true;
-
-            try
-            {
-                Utility.CopyFilesRecursively(new DirectoryInfo(archiveFolder), new DirectoryInfo(FilePaths.DataFolder), true);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                success = false;
-            }
-
-            RaiseEvent($"= Status: Backup Restore {(success ? "Succesful" : "Errors")}");
-            Directory.Delete(archiveFolder, true);
+            var oldConfigFile = Path.Combine(archiveFolder, FilePaths.SystemConfigFileName);
+            EnsureSystemConfigIsSafeForDocker(oldConfigFile);
             Program.Quit(true, false);
-            return success;
+            return true;
         }
 
         private bool RestoreOldConfiguration(string archiveFolder, string selectedPrograms)
@@ -312,9 +301,11 @@ namespace HomeGenie.Service
 
         private void UpdateSystemConfig(string archiveFolder, string selectedPrograms)
         {
-            var configFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FilePaths.SystemConfigFilePath);
-            EnsureSystemConfigIsSafeForDocker(configFile);
-            File.Copy(Path.Combine(archiveFolder, FilePaths.SystemConfigFileName), configFile, true);
+            var oldConfigFile = Path.Combine(archiveFolder, FilePaths.SystemConfigFileName);
+            var newConfigFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FilePaths.SystemConfigFilePath);
+            EnsureSystemConfigIsSafeForDocker(oldConfigFile);
+            FixOldInterfaceAssembliesNames(oldConfigFile);
+            File.Copy(oldConfigFile, newConfigFile, true);
         }
 
         private void EnsureSystemConfigIsSafeForDocker(string oldConfigFile)
@@ -339,6 +330,37 @@ namespace HomeGenie.Service
                 webServiceGateway.Options.Add(new Option {Name = "Port", Value = "80"});
             else
                 portOption.Value = "80";
+
+            systemConfiguration.Update(oldConfigFile);
+        }
+
+        private void FixOldInterfaceAssembliesNames(string oldConfigFile)
+        {
+            SystemConfiguration systemConfiguration;
+            var serializer = new XmlSerializer(typeof(SystemConfiguration));
+            using (var reader = new StreamReader(oldConfigFile))
+            {
+                systemConfiguration = (SystemConfiguration) serializer.Deserialize(reader);
+            }
+
+            var zWaveInterface = systemConfiguration.MigService.Interfaces.FirstOrDefault(x => x.Domain == "HomeAutomation.ZWave");
+            if (zWaveInterface != null)
+            {
+                zWaveInterface.AssemblyName = "MIG.Interfaces.HomeAutomation.ZWave.dll";
+            }
+
+            var x10Interface = systemConfiguration.MigService.Interfaces.FirstOrDefault(x => x.Domain == "HomeAutomation.X10");
+            if (x10Interface != null)
+            {
+                x10Interface.AssemblyName = "MIG.Interfaces.HomeAutomation.X10.dll";
+            }
+
+            var upnpInterface = systemConfiguration.MigService.Interfaces.FirstOrDefault(x => x.Domain == "Protocols.UPnP");
+            if (upnpInterface != null)
+            {
+                upnpInterface.AssemblyName = "MIG.Interfaces.Protocols.UPnP.dll";
+            }
+
             systemConfiguration.Update(oldConfigFile);
         }
 

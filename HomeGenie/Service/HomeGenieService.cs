@@ -67,6 +67,7 @@ namespace HomeGenie.Service
         {
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
             EnsureDirectoryStructure();
+            FinalizeRestoreProcess();
             EnableOutputRedirect();
 
             InitializeSystem();
@@ -131,6 +132,27 @@ namespace HomeGenie.Service
 
             if (!Directory.Exists(FilePaths.WidgetsFolder))
                 Directory.CreateDirectory(FilePaths.WidgetsFolder);
+        }
+
+        private void FinalizeRestoreProcess()
+        {
+            if(!Directory.Exists(BackupManager.RestoreTempFolder))
+                return;
+
+            var success = true;
+
+            try
+            {
+                Utility.CopyFilesRecursively(new DirectoryInfo(BackupManager.RestoreTempFolder), new DirectoryInfo(FilePaths.DataFolder), true);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                success = false;
+            }
+
+            Directory.Delete(BackupManager.RestoreTempFolder, true);
+            Console.WriteLine($"= Status: Backup Restore {(success ? "Succesful" : "Errors")}");
         }
 
         private void ConfigureUpdater()

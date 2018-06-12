@@ -38,7 +38,6 @@ namespace MIG
     {
         private MigServiceConfiguration configuration;
         private DynamicApi dynamicApi;
-        private readonly Dictionary<string, Assembly> _assemblyCache = new Dictionary<string, Assembly>();
 
         public static Logger Log = LogManager.GetCurrentClassLogger();
 
@@ -70,19 +69,10 @@ namespace MIG
 
         public MigService()
         {
-            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomainOnAssemblyResolve;
             Interfaces = new List<MigInterface>();
             Gateways = new List<IMigGateway>();
             configuration = new MigServiceConfiguration();
             dynamicApi = new DynamicApi();
-        }
-
-        private Assembly CurrentDomainOnAssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            var assemblyName = args.Name;
-            return !_assemblyCache.ContainsKey(assemblyName) ?
-                null :
-                _assemblyCache[assemblyName];
         }
 
         /// <summary>
@@ -469,56 +459,13 @@ namespace MIG
             {
                 Log.Debug($"Loading {fileName}");
 
-                //var assembly = Assembly.LoadFrom(fileName);
-                var assembly = Assembly.Load(File.ReadAllBytes(fileName));
+                var assembly = Assembly.LoadFrom(fileName);
                 var type = assembly.GetType(typeName);
                 if (type != null)
-                {
-                    var files = Directory.EnumerateFiles(new FileInfo(fileName).DirectoryName, "*.dll", SearchOption.AllDirectories);
-                    foreach (var file in files)
-                    {
-                        if(file == fileName)
-                            continue;
-                        var asm = Assembly.Load(File.ReadAllBytes(file));
-                        if(_assemblyCache.ContainsKey(asm.FullName))
-                            continue;
-                        _assemblyCache.Add(asm.FullName, asm);
-                    }
                     return type;
-                }
             }
 
             return null;
-        }
-
-        private static Version VersionLookup(string assemblyName)
-        {
-            if (string.IsNullOrWhiteSpace(assemblyName)) return null;
-
-            Assembly assembly;
-            try
-            {
-                assembly = AppDomain.CurrentDomain.Load(Path.GetFileNameWithoutExtension(assemblyName));
-            }
-            catch
-            {
-                try
-                {
-                    assembly = Assembly.LoadFrom(Path.Combine("lib", "mig", assemblyName));
-                }
-                catch
-                {
-                    try
-                    {
-                        assembly = Assembly.LoadFrom(Path.Combine("lib", assemblyName));
-                    }
-                    catch
-                    {
-                        assembly = Assembly.LoadFrom(Path.Combine(assemblyName));
-                    }
-                }
-            }
-            return assembly?.GetName().Version;
         }
 
         private static Version VersionLookup(Assembly assembly)
