@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
 using Jint.Parser;
@@ -282,26 +281,17 @@ namespace HomeGenie.Service.Handlers
 
                 case "SystemLogging.DownloadCsv":
                 {
-                    var csvlog = "";
-                    var logpath = Path.Combine("log", "homegenie.log");
-                    if (migCommand.GetOption(1) == "1")
-                    {
-                        logpath = Path.Combine("log", "homegenie.log.bak");
-                    }
-                    else if (SystemLogger.Instance != null)
-                    {
+                    var logpath = migCommand.GetOption(1) == "1"
+                        ? Path.Combine(FilePaths.LogsFolder, "homegenie.log.bak")
+                        : Path.Combine(FilePaths.LogsFolder, "homegenie.log");
+                    if (SystemLogger.Instance != null)
                         SystemLogger.Instance.FlushLog();
-                    }
+
                     if (File.Exists(logpath))
                     {
-                        using (var fs = new FileStream(logpath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                        using (var sr = new StreamReader(fs, Encoding.Default))
-                        {
-                            csvlog = sr.ReadToEnd();
-                        }
+                        var httpListenerCtx = request.Context.Data as HttpListenerContext;
+                        WriteFile(httpListenerCtx, logpath);
                     }
-                    (request.Context.Data as HttpListenerContext).Response.AddHeader("Content-Disposition", "attachment;filename=homegenie_log_" + migCommand.GetOption(1) + ".csv");
-                    request.ResponseData = csvlog;
                     break;
                 }
 
@@ -398,7 +388,7 @@ namespace HomeGenie.Service.Handlers
                 case "System.ConfigurationRestore":
                 {
                     // file uploaded by user
-                    var backupTempFolder = _tempFolderPath + "backup";
+                    var backupTempFolder = BackupManager.RestoreTempFolder;
                     var archiveName = Path.Combine(backupTempFolder, "homegenie_restore_config.zip");
                     try
                     {
@@ -418,7 +408,7 @@ namespace HomeGenie.Service.Handlers
                 // get the list of custom automation programs in backup
                 case "System.ConfigurationRestoreS1":
                 {
-                    var backupTempFolder = _tempFolderPath + "backup";
+                    var backupTempFolder = BackupManager.RestoreTempFolder;
                     var serializer = new XmlSerializer(typeof(List<ProgramBlock>));
                     var reader = new StreamReader(Path.Combine(backupTempFolder, "programs.xml"));
                     var newProgramsData = (List<ProgramBlock>)serializer.Deserialize(reader);
@@ -451,7 +441,7 @@ namespace HomeGenie.Service.Handlers
                 // restores system configuration with respect to user-selected list of custom automation programs
                 case "System.ConfigurationRestoreS2":
                 {
-                    var backupTempFolder = _tempFolderPath + "backup";
+                    var backupTempFolder = BackupManager.RestoreTempFolder;
                     var selectedPrograms = migCommand.GetOption(1);
                     var success = _homegenie.BackupManager.RestoreConfiguration(backupTempFolder, selectedPrograms);
                     request.ResponseData = new ResponseText(success ? "OK" : "ERROR");
@@ -1399,7 +1389,7 @@ namespace HomeGenie.Service.Handlers
         void WriteFile(HttpListenerContext ctx, string path)
         {
             var response = ctx.Response;
-            using (var fs = File.OpenRead(path))
+            using (var fs = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 var filename = Path.GetFileName(path);
                 //response is HttpListenerContext.Response...

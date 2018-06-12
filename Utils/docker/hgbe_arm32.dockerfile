@@ -12,21 +12,14 @@ RUN apt-get update && apt-get install -y \
   arduino-mk empty-expect \
   sudo
 
-#Add HomeGenie 
-#ADD https://github.com/Bounz/HomeGenie/releases/download/v1.1-beta.526.1.bounz/homegenie-beta_1.1.r526.1_all.zip /tmp/
-#RUN unzip /tmp/homegenie-beta_1.1.r526.1_all.zip -d /usr/local/bin
-
 COPY ./hg_compiled /usr/local/bin/homegenie/bin/
 
 # cleanup 
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN chmod -R 777 /usr/local/bin/homegenie
-#RUN chmod +x /usr/local/bin/homegenie/startup.sh
-#CMD ["usr/local/bin/homegenie/startup.sh", "/usr/local/bin/homegenie"]
 CMD ["/usr/bin/mono" , "/usr/local/bin/homegenie/bin/HomeGenie.exe"] 
 
 ENV HGBE_DOCKER 1
 EXPOSE 80
 VOLUME /usr/local/bin/homegenie/data
 VOLUME /usr/local/bin/homegenie/logs
-VOLUME /usr/local/bin/homegenie/plugins
