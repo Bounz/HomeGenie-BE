@@ -265,8 +265,8 @@ namespace HomeGenie.Service
                 SaveData();
 
             // Stop HG helper services
-            _updateManager.Stop();
-            _statisticsLogger.Stop();
+            _updateManager?.Stop();
+            _statisticsLogger?.Stop();
 
             RaiseEvent(Domains.HomeGenie_System, Domains.HomeGenie_System, SourceModule.Master, "HomeGenie System", Properties.HomeGenieStatus, "VirtualMeter STOPPING");
             if (_virtualMeter != null) _virtualMeter.Stop();
