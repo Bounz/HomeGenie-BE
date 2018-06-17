@@ -2,6 +2,7 @@
 using HomeGenie.Service;
 using HomeGenie.Service.Constants;
 using MIG;
+using NLog;
 
 namespace HomeGenie
 {
@@ -9,6 +10,8 @@ namespace HomeGenie
     {
         private static HomeGenieService Homegenie;
         private static bool IsRunning = true;
+
+        private static Logger _log = LogManager.GetCurrentClassLogger();
 
         static void Main(string[] args)
         {
@@ -23,7 +26,8 @@ namespace HomeGenie
 
         private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
         {
-            Console.WriteLine("\n\nProgram interrupted!\n");
+            _log.Info("Program interrupted!");
+            _log.Info($"Got signal {(e.SpecialKey == ConsoleSpecialKey.ControlC ? "Ctrl+C" : "Ctrl+Break")}");
             Quit(false);
         }
 
@@ -35,7 +39,7 @@ namespace HomeGenie
 
         private static void ShutDown(bool restart, bool saveData = true)
         {
-            Console.Write("HomeGenie is now exiting...\n");
+            _log.Info("HomeGenie is now exiting...");
 
             if (Homegenie != null)
             {
@@ -45,12 +49,12 @@ namespace HomeGenie
 
             if (restart)
             {
-                Console.Write("\n\n...RESTART!\n\n");
+                _log.Info("...RESTART!");
                 Environment.Exit(1);
             }
             else
             {
-                Console.Write("\n\n...QUIT!\n\n");
+                _log.Info("...QUIT!");
                 Environment.Exit(0);
             }
         }
@@ -63,7 +67,6 @@ namespace HomeGenie
                 Console.WriteLine(ex.Message);
                 Console.WriteLine(ex.StackTrace);
             }
-
 
             var logEntry = new MigEvent(
                 Domains.HomeAutomation_HomeGenie,
@@ -82,9 +85,5 @@ namespace HomeGenie
                 HomeGenieService.LogError(logEntry);
             }
         }
-
     }
-
 }
-
-
