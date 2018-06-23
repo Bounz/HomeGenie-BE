@@ -1,33 +1,44 @@
 ﻿using System;
 using HomeGenie.Service;
 using HomeGenie.Service.Constants;
+using HomeGenie.Utils;
 using MIG;
 using NLog;
 
 namespace HomeGenie
 {
-    public class Program
+    public static class Program
     {
         private static HomeGenieService Homegenie;
         private static bool IsRunning = true;
 
-        private static Logger _log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
-        static void Main(string[] args)
+        static void Main()
         {
             AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionTrapper;
             AppDomain.CurrentDomain.SetupInformation.ShadowCopyFiles = "true";
 
-            Console.CancelKeyPress += Console_CancelKeyPress;
+            if (SignalWaiter.Instance.CanWaitExitSignal())
+                SignalWaiter.Instance.WaitExitSignal(TerminateOnUnixSignal);
+            else
+                Console.CancelKeyPress += TerminateOnCancelKeyPress;
 
             Homegenie = new HomeGenieService();
             do { System.Threading.Thread.Sleep(2000); } while (IsRunning);
         }
 
-        private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
+        private static void TerminateOnUnixSignal()
         {
-            _log.Info("Program interrupted!");
-            _log.Info($"Got signal {(e.SpecialKey == ConsoleSpecialKey.ControlC ? "Ctrl+C" : "Ctrl+Break")}");
+            Log.Info("Got UNIX signal");
+            Log.Info("Program interrupted!");
+            Quit(false);
+        }
+
+        private static void TerminateOnCancelKeyPress(object sender, ConsoleCancelEventArgs e)
+        {
+            Log.Info($"Got signal {(e.SpecialKey == ConsoleSpecialKey.ControlC ? "Ctrl+C" : "Ctrl+Break")}");
+            Log.Info("Program interrupted!");
             Quit(false);
         }
 
@@ -39,7 +50,7 @@ namespace HomeGenie
 
         private static void ShutDown(bool restart, bool saveData = true)
         {
-            _log.Info("HomeGenie is now exiting...");
+            Log.Info("HomeGenie is now exiting...");
 
             if (Homegenie != null)
             {
@@ -49,12 +60,12 @@ namespace HomeGenie
 
             if (restart)
             {
-                _log.Info("...RESTART!");
+                Log.Info("...RESTART!");
                 Environment.Exit(1);
             }
             else
             {
-                _log.Info("...QUIT!");
+                Log.Info("...QUIT!");
                 Environment.Exit(0);
             }
         }

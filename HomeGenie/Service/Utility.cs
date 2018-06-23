@@ -7,11 +7,6 @@ using Common.Logging;
 using Newtonsoft.Json;
 using HomeGenie.Data;
 using HomeGenie.Service.Constants;
-using SharpCompress.Archives;
-using SharpCompress.Archives.Zip;
-using SharpCompress.Common;
-using SharpCompress.Readers;
-using SharpCompress.Writers.Zip;
 using LogManager = Common.Logging.LogManager;
 
 namespace HomeGenie.Service
@@ -115,126 +110,9 @@ namespace HomeGenie.Service
                 }
                 Directory.CreateDirectory(path);
             }
-            catch
+            catch (Exception ex)
             {
-                // TODO: report exception
-            }
-        }
-
-
-
-        internal static List<string> UncompressTgz(string archiveName, string destinationFolder)
-        {
-            var extractedFiles = new List<string>();
-            try
-            {
-                using (Stream stream = File.OpenRead(archiveName))
-                using (var reader = ReaderFactory.Open(stream))
-                {
-                    while (reader.MoveToNextEntry())
-                    {
-                        if (reader.Entry.IsDirectory)
-                            continue;
-
-                        extractedFiles.Add(reader.Entry.Key);
-                        reader.WriteEntryToDirectory(destinationFolder, new ExtractionOptions
-                        {
-                            ExtractFullPath = true,
-                            Overwrite = true
-                        });
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Error("UnTar error: " + e.Message, e);
-            }
-
-            return extractedFiles;
-        }
-
-        internal static List<string> UncompressZip(string archiveName, string destinationFolder)
-        {
-            var extractedFiles = new List<string>();
-            try
-            {
-                using (Stream stream = File.OpenRead(archiveName))
-                using (var reader = ReaderFactory.Open(stream))
-                {
-                    while (reader.MoveToNextEntry())
-                    {
-                        if (reader.Entry.IsDirectory)
-                            continue;
-
-                        extractedFiles.Add(reader.Entry.Key);
-                        reader.WriteEntryToDirectory(destinationFolder, new ExtractionOptions
-                        {
-                            ExtractFullPath = true,
-                            Overwrite = true
-                        });
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Error("UnZip error: " + e.Message, e);
-            }
-
-            return extractedFiles;
-        }
-
-        internal static void AddFileToZip(string zipFilename, string fileToAdd, string storeAsName = null)
-        {
-            // TODO it may be useful to prepare temp directory and use AddAllFromDirectory method
-            // rather then add files one by one
-            // archive.AddAllFromDirectory(@"C:\source");
-
-            if(!File.Exists(fileToAdd))
-                return;
-
-            var tempZipName = zipFilename + "_tmp";
-            try
-            {
-                if (!File.Exists(zipFilename))
-                {
-                    ZipArchive.Create().SaveTo(zipFilename, new ZipWriterOptions(CompressionType.Deflate));
-                }
-
-                using (var archive = ZipArchive.Open(zipFilename))
-                {
-                    archive.AddEntry(string.IsNullOrWhiteSpace(storeAsName) ? fileToAdd : storeAsName, fileToAdd);
-                    archive.SaveTo(tempZipName, CompressionType.Deflate);
-                }
-                File.Delete(zipFilename);
-                File.Move(tempZipName, zipFilename);
-            }
-            catch (Exception e)
-            {
-                Log.Error("Add file to Zip error: " + e.Message, e);
-                throw;
-            }
-        }
-
-        internal static void AddFolderToZip(string zipFilename, string folderPath)
-        {
-            if(!Directory.Exists(folderPath))
-                return;
-
-            try
-            {
-                if (File.Exists(zipFilename))
-                    File.Delete(zipFilename);
-
-                using (var archive = ZipArchive.Create())
-                {
-                    archive.AddAllFromDirectory(folderPath);
-                    archive.SaveTo(zipFilename, CompressionType.Deflate);
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Error("Add folder to Zip error: " + e.Message, e);
-                throw;
+                Log.Error(ex);
             }
         }
 
