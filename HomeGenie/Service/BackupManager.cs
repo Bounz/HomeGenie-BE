@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HomeGenie.Data;
 using HomeGenie.Service.Constants;
+using HomeGenie.Utils;
 using MIG;
 using MIG.Config;
 
@@ -40,7 +41,7 @@ namespace HomeGenie.Service
                     var relFile = Path.Combine(FilePaths.ProgramsFolder, program.Address + ".dll");
                     if (File.Exists(relFile))
                     {
-                        Utility.AddFileToZip(archiveName, relFile);
+                        ArchiveHelper.AddFileToZip(archiveName, relFile);
                     }
 
                     if (program.Type.ToLower() == "arduino")
@@ -49,13 +50,13 @@ namespace HomeGenie.Service
                         var filePaths = Directory.GetFiles(arduinoFolder);
                         foreach (var f in filePaths)
                         {
-                            Utility.AddFileToZip(archiveName, Path.Combine(arduinoFolder, Path.GetFileName(f)));
+                            ArchiveHelper.AddFileToZip(archiveName, Path.Combine(arduinoFolder, Path.GetFileName(f)));
                         }
                     }
                 }
             }
 
-            Utility.AddFolderToZip(archiveName, FilePaths.DataFolder);
+            ArchiveHelper.AddFolderToZip(archiveName, FilePaths.DataFolder);
         }
 
         public bool RestoreConfiguration(string archiveFolder, string selectedPrograms)

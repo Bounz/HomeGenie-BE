@@ -15,6 +15,7 @@ using HomeGenie.Automation.Scheduler;
 using HomeGenie.Database;
 using HomeGenie.Service.Packages;
 using HomeGenie.Service.Updates;
+using HomeGenie.Utils;
 using MIG;
 using MIG.Gateways;
 using NLog;
@@ -1040,7 +1041,7 @@ namespace HomeGenie.Service
             }
 
             // Uncompress factory settings and restart HG service
-            Utility.UncompressZip("homegenie_factory_config.zip", AppDomain.CurrentDomain.BaseDirectory);
+            ArchiveHelper.UncompressZip("homegenie_factory_config.zip", AppDomain.CurrentDomain.BaseDirectory);
             Reload();
             SaveData();
         }

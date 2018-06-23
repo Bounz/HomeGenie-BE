@@ -257,7 +257,6 @@
     <Compile Include="Service\Updates\UpdateProgressEventArgs.cs" />
     <Compile Include="Service\Updates\UpdateProgressStatus.cs" />
     <Compile Include="Service\Updates\UpdatesHelper.cs" />
-    <Compile Include="Service\Utility.cs" />
     <Compile Include="Data\Group.cs" />
     <Compile Include="Data\ModuleReference.cs" />
     <Compile Include="Data\Module.cs" />
@@ -267,6 +266,7 @@
     <Compile Include="Automation\ProgramBlock.cs" />
     <Compile Include="Automation\ProgramCommand.cs" />
     <Compile Include="Automation\ProgramCondition.cs" />
+    <Compile Include="Service\Utility.cs" />
     <Compile Include="Service\VirtualMeter.cs" />
     <Compile Include="Data\SystemConfiguration.cs" />
     <Compile Include="Automation\Scripting\SettingsHelper.cs" />
@@ -294,6 +294,8 @@
     <Compile Include="Automation\Scheduler\SchedulerScriptingHost.cs" />
     <Compile Include="Automation\Scheduler\SchedulerScriptingEngine.cs" />
     <Compile Include="Automation\Scripting\ProgramHelperBase.cs" />
+    <Compile Include="Utils\ArchiveHelper.cs" />
+    <Compile Include="Utils\SignalWaiter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\LICENCE.TXT">

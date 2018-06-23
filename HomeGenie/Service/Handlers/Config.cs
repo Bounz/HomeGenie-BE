@@ -15,6 +15,7 @@ using System.Xml.Serialization;
 using Jint.Parser;
 using HomeGenie.Automation.Scripting;
 using HomeGenie.Service.Updates;
+using HomeGenie.Utils;
 using Innovative.SolarCalculator;
 
 namespace HomeGenie.Service.Handlers
@@ -146,7 +147,7 @@ namespace HomeGenie.Service.Handlers
                     try
                     {
                         MIG.Gateways.WebServiceUtility.SaveFile(request.RequestData, archivename);
-                        var files = Utility.UncompressTgz(archivename, _tempFolderPath);
+                        var files = ArchiveHelper.UncompressTgz(archivename, _tempFolderPath);
                         File.Delete(archivename);
                         var relInfo = Path.Combine(_tempFolderPath, "homegenie", "release_info.xml");
                         if (File.Exists(relInfo))
@@ -394,7 +395,7 @@ namespace HomeGenie.Service.Handlers
                     {
                         Utility.FolderCleanUp(backupTempFolder);
                         MIG.Gateways.WebServiceUtility.SaveFile(request.RequestData, archiveName);
-                        Utility.UncompressZip(archiveName, backupTempFolder);
+                        ArchiveHelper.UncompressZip(archiveName, backupTempFolder);
                         File.Delete(archiveName);
                         request.ResponseData = new ResponseStatus(Status.Ok);
                     }
@@ -645,9 +646,9 @@ namespace HomeGenie.Service.Handlers
                     var outputPath = Path.Combine(widgetParts[0], widgetParts[1]);
                     var infoFilePath = Path.Combine(inputPath, "widget.info");
                     File.WriteAllText(infoFilePath, "HomeGenie exported widget.");
-                    Utility.AddFileToZip(widgetBundle, infoFilePath, "widget.info");
-                    Utility.AddFileToZip(widgetBundle, Path.Combine(inputPath, widgetParts[2] + ".html"), Path.Combine(outputPath, widgetParts[2] + ".html"));
-                    Utility.AddFileToZip(widgetBundle, Path.Combine(inputPath, widgetParts[2] + ".js"), Path.Combine(outputPath, widgetParts[2] + ".js"));
+                    ArchiveHelper.AddFileToZip(widgetBundle, infoFilePath, "widget.info");
+                    ArchiveHelper.AddFileToZip(widgetBundle, Path.Combine(inputPath, widgetParts[2] + ".html"), Path.Combine(outputPath, widgetParts[2] + ".html"));
+                    ArchiveHelper.AddFileToZip(widgetBundle, Path.Combine(inputPath, widgetParts[2] + ".js"), Path.Combine(outputPath, widgetParts[2] + ".js"));
 
                     var bundleData = File.ReadAllBytes(widgetBundle);
                     (request.Context.Data as HttpListenerContext).Response.AddHeader("Content-Disposition", "attachment; filename=\"" + widgetPath.Replace('/', '_') + ".zip\"");
@@ -1349,7 +1350,7 @@ namespace HomeGenie.Service.Handlers
                         if (!Directory.Exists(outputFolder))
                             Directory.CreateDirectory(outputFolder);
 
-                        Utility.UncompressZip(ifaceFileName, outputFolder);
+                        ArchiveHelper.UncompressZip(ifaceFileName, outputFolder);
                         File.Delete(ifaceFileName);
 
                         var migInt = _homegenie.PackageManager.GetInterfaceConfig(Path.Combine(outputFolder, "configuration.xml"));
