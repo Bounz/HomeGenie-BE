@@ -147,7 +147,7 @@ namespace HomeGenie.Service.Handlers
                     try
                     {
                         MIG.Gateways.WebServiceUtility.SaveFile(request.RequestData, archivename);
-                        var files = ArchiveHelper.UncompressTgz(archivename, _tempFolderPath);
+                        var files = ArchiveHelper.Unarchive(archivename, _tempFolderPath);
                         File.Delete(archivename);
                         var relInfo = Path.Combine(_tempFolderPath, "homegenie", "release_info.xml");
                         if (File.Exists(relInfo))
@@ -395,7 +395,7 @@ namespace HomeGenie.Service.Handlers
                     {
                         Utility.FolderCleanUp(backupTempFolder);
                         MIG.Gateways.WebServiceUtility.SaveFile(request.RequestData, archiveName);
-                        ArchiveHelper.UncompressZip(archiveName, backupTempFolder);
+                        ArchiveHelper.Unarchive(archiveName, backupTempFolder);
                         File.Delete(archiveName);
                         request.ResponseData = new ResponseStatus(Status.Ok);
                     }
@@ -1350,7 +1350,7 @@ namespace HomeGenie.Service.Handlers
                         if (!Directory.Exists(outputFolder))
                             Directory.CreateDirectory(outputFolder);
 
-                        ArchiveHelper.UncompressZip(ifaceFileName, outputFolder);
+                        ArchiveHelper.Unarchive(ifaceFileName, outputFolder);
                         File.Delete(ifaceFileName);
 
                         var migInt = _homegenie.PackageManager.GetInterfaceConfig(Path.Combine(outputFolder, "configuration.xml"));

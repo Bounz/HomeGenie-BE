@@ -266,7 +266,7 @@ namespace HomeGenie.Service.Updates
             ArchiveDownloadUpdate?.Invoke(this, new ArchiveDownloadEventArgs(releaseInfo, ArchiveDownloadStatus.Decompressing));
 
             var errorOccurred = false;
-            var files = ArchiveHelper.UncompressTgz(archiveName, destinationFolder);
+            var files = ArchiveHelper.Unarchive(archiveName, destinationFolder);
             errorOccurred = files.Count == 0;
 
             ArchiveDownloadUpdate?.Invoke(this,

@@ -1041,7 +1041,7 @@ namespace HomeGenie.Service
             }
 
             // Uncompress factory settings and restart HG service
-            ArchiveHelper.UncompressZip("homegenie_factory_config.zip", AppDomain.CurrentDomain.BaseDirectory);
+            ArchiveHelper.Unarchive("homegenie_factory_config.zip", AppDomain.CurrentDomain.BaseDirectory);
             Reload();
             SaveData();
         }
