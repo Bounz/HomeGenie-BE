@@ -14,7 +14,7 @@ namespace HomeGenie.Utils
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(ArchiveHelper));
 
-        internal static List<string> UncompressTgz(string archiveName, string destinationFolder)
+        internal static List<string> Unarchive(string archiveName, string destinationFolder)
         {
             var extractedFiles = new List<string>();
             try
@@ -38,37 +38,7 @@ namespace HomeGenie.Utils
             }
             catch (Exception e)
             {
-                Log.Error("UnTar error: " + e.Message, e);
-            }
-
-            return extractedFiles;
-        }
-
-        internal static List<string> UncompressZip(string archiveName, string destinationFolder)
-        {
-            var extractedFiles = new List<string>();
-            try
-            {
-                using (Stream stream = File.OpenRead(archiveName))
-                using (var reader = ReaderFactory.Open(stream))
-                {
-                    while (reader.MoveToNextEntry())
-                    {
-                        if (reader.Entry.IsDirectory)
-                            continue;
-
-                        extractedFiles.Add(reader.Entry.Key);
-                        reader.WriteEntryToDirectory(destinationFolder, new ExtractionOptions
-                        {
-                            ExtractFullPath = true,
-                            Overwrite = true
-                        });
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Error("UnZip error: " + e.Message, e);
+                Log.Error("Unarchive error: " + e.Message, e);
             }
 
             return extractedFiles;

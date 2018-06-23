@@ -307,7 +307,7 @@ namespace HomeGenie.Service.Packages
                 try
                 {
                     client.DownloadFile(packageSourceUrl + "/" + @interface.File, migInterfaceFile);
-                    ArchiveHelper.UncompressZip(migInterfaceFile, tempFolder);
+                    ArchiveHelper.Unarchive(migInterfaceFile, tempFolder);
                     File.Delete(migInterfaceFile);
                     success = true;
                 }
@@ -432,7 +432,7 @@ namespace HomeGenie.Service.Packages
         {
             const string widgetInfoFile = "widget.info";
             var success = false;
-            var extractedFiles = ArchiveHelper.UncompressZip(archiveFile, importPath);
+            var extractedFiles = ArchiveHelper.Unarchive(archiveFile, importPath);
             if (File.Exists(Path.Combine(importPath, widgetInfoFile)))
             {
                 // Read "widget.info" and, if a mapping is present, add it to "html/pages/control/widgets/configuration.json"
@@ -474,7 +474,7 @@ namespace HomeGenie.Service.Packages
                 var destFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Utility.GetTmpFolder(), "import");
                 if (Directory.Exists(destFolder))
                     Directory.Delete(destFolder, true);
-                ArchiveHelper.UncompressZip(zipFileName, destFolder);
+                ArchiveHelper.Unarchive(zipFileName, destFolder);
                 var bundleFolder = Path.Combine(FilePaths.ProgramsFolder, "arduino", newPid.ToString());
                 if (Directory.Exists(bundleFolder))
                     Directory.Delete(bundleFolder, true);

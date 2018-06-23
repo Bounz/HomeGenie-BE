@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using HomeGenie.Service;
 using HomeGenie.Service.Constants;
 using HomeGenie.Utils;
@@ -20,12 +21,12 @@ namespace HomeGenie
             AppDomain.CurrentDomain.SetupInformation.ShadowCopyFiles = "true";
 
             if (SignalWaiter.Instance.CanWaitExitSignal())
-                SignalWaiter.Instance.WaitExitSignal(TerminateOnUnixSignal);
+                new Thread(() => SignalWaiter.Instance.WaitExitSignal(TerminateOnUnixSignal)).Start();
             else
                 Console.CancelKeyPress += TerminateOnCancelKeyPress;
 
             Homegenie = new HomeGenieService();
-            do { System.Threading.Thread.Sleep(2000); } while (IsRunning);
+            do { Thread.Sleep(2000); } while (IsRunning);
         }
 
         private static void TerminateOnUnixSignal()
