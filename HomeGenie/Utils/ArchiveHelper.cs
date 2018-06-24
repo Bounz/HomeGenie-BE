@@ -84,7 +84,7 @@ namespace HomeGenie.Utils
 
                 using (var archive = ZipArchive.Create())
                 {
-                    archive.AddAllFromDirectory(folderPath);
+                    archive.SafeAddAllFromDirectory(folderPath);
                     archive.SaveTo(zipFilename, CompressionType.Deflate);
                 }
             }
@@ -92,6 +92,26 @@ namespace HomeGenie.Utils
             {
                 Log.Error("Add folder to Zip error: " + e.Message, e);
                 throw;
+            }
+        }
+
+        private static void SafeAddAllFromDirectory(
+            this IWritableArchive writableArchive,
+            string filePath, string searchPattern = "*.*", SearchOption searchOption = SearchOption.AllDirectories)
+        {
+            foreach (var path in Directory.EnumerateFiles(filePath, searchPattern, searchOption))
+            {
+                // On Unix we can get FileNotFoundException when getting FileInfo on symlink
+                try
+                {
+                    var fileInfo = new FileInfo(path);
+                    writableArchive.AddEntry(path.Substring(filePath.Length), fileInfo.OpenRead(), true, fileInfo.Length,
+                        fileInfo.LastWriteTime);
+                }
+                catch (Exception e)
+                {
+                    Log.Warn("Can't access file at " + path, e);
+                }
             }
         }
     }
