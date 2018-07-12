@@ -56,8 +56,11 @@ HG.WebApp.AutomationGroupsList = HG.WebApp.AutomationGroupsList || new function(
         for (; i < HG.WebApp.Data.AutomationGroups.length; i++) {
             var groupName = HG.WebApp.Data.AutomationGroups[i].Name;
             var itemVisibility = '';
+
+            // TODO: show these groups and programs, but do not allow compile them on Windows
             // hide non valid entries for the running configuration
-            if ((groupName == 'Raspberry Pi' || groupName == 'CubieTruck') && HOST_SYSTEM.substring(0, 3) == 'Win') itemVisibility = hiddenGroup;
+            if ((groupName == 'Raspberry Pi' || groupName == 'CubieTruck') && HOST_SYSTEM.substring(0, 3) == 'Win')
+                itemVisibility = hiddenGroup;
             else if (groupName == 'X10' && ifaceX10 == null && ifaceInsteon == null && ifaceW800rf == null) itemVisibility = hiddenGroup;
             else if (groupName == 'Z-Wave' && ifaceZwave == null) itemVisibility = hiddenGroup;
             // count modules

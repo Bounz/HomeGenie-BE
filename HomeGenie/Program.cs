@@ -1,56 +1,72 @@
 ﻿using System;
+using System.Threading;
 using HomeGenie.Service;
 using HomeGenie.Service.Constants;
+using HomeGenie.Utils;
 using MIG;
+using NLog;
 
 namespace HomeGenie
 {
-    public class Program
+    public static class Program
     {
         private static HomeGenieService Homegenie;
         private static bool IsRunning = true;
 
-        static void Main(string[] args)
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
+
+        static void Main()
         {
             AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionTrapper;
             AppDomain.CurrentDomain.SetupInformation.ShadowCopyFiles = "true";
 
-            Console.CancelKeyPress += Console_CancelKeyPress;
+            if (SignalWaiter.Instance.CanWaitExitSignal())
+                new Thread(() => SignalWaiter.Instance.WaitExitSignal(TerminateOnUnixSignal)).Start();
+            else
+                Console.CancelKeyPress += TerminateOnCancelKeyPress;
 
             Homegenie = new HomeGenieService();
-            do { System.Threading.Thread.Sleep(2000); } while (IsRunning);
+            do { Thread.Sleep(2000); } while (IsRunning);
         }
 
-        private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
+        private static void TerminateOnUnixSignal()
         {
-            Console.WriteLine("\n\nProgram interrupted!\n");
+            Log.Info("Got UNIX signal");
+            Log.Info("Program interrupted!");
             Quit(false);
         }
 
-        internal static void Quit(bool restartService)
+        private static void TerminateOnCancelKeyPress(object sender, ConsoleCancelEventArgs e)
         {
-            ShutDown(restartService);
+            Log.Info($"Got signal {(e.SpecialKey == ConsoleSpecialKey.ControlC ? "Ctrl+C" : "Ctrl+Break")}");
+            Log.Info("Program interrupted!");
+            Quit(false);
+        }
+
+        internal static void Quit(bool restartService, bool saveData = true)
+        {
+            ShutDown(restartService, saveData);
             IsRunning = false;
         }
 
-        private static void ShutDown(bool restart)
+        private static void ShutDown(bool restart, bool saveData = true)
         {
-            Console.Write("HomeGenie is now exiting...\n");
+            Log.Info("HomeGenie is now exiting...");
 
             if (Homegenie != null)
             {
-                Homegenie.Stop();
+                Homegenie.Stop(saveData);
                 Homegenie = null;
             }
 
             if (restart)
             {
-                Console.Write("\n\n...RESTART!\n\n");
+                Log.Info("...RESTART!");
                 Environment.Exit(1);
             }
             else
             {
-                Console.Write("\n\n...QUIT!\n\n");
+                Log.Info("...QUIT!");
                 Environment.Exit(0);
             }
         }
@@ -63,7 +79,6 @@ namespace HomeGenie
                 Console.WriteLine(ex.Message);
                 Console.WriteLine(ex.StackTrace);
             }
-
 
             var logEntry = new MigEvent(
                 Domains.HomeAutomation_HomeGenie,
@@ -82,9 +97,5 @@ namespace HomeGenie
                 HomeGenieService.LogError(logEntry);
             }
         }
-
     }
-
 }
-
-

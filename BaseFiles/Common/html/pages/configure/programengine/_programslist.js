@@ -409,7 +409,8 @@ HG.WebApp.ProgramsList = HG.WebApp.ProgramsList || new function () { var $$ = th
         HG.Automation.Programs.List(function () {
             $$.RefreshPrograms();
             $.mobile.loading('hide');
-            if (callback) callback();
+            if (callback)
+                callback();
         });
     };
 
@@ -422,13 +423,15 @@ HG.WebApp.ProgramsList = HG.WebApp.ProgramsList || new function () { var $$ = th
         for (i = 0; i < HG.WebApp.Data.Programs.length; i++) {
             var progrm = HG.WebApp.Data.Programs[i];
             var pgroup = progrm.Group;
-            if (pgroup == null || pgroup == 'undefined') pgroup = '';
-            if (pgroup != HG.WebApp.AutomationGroupsList._CurrentGroup) continue;
-            //
+            if (!pgroup || pgroup === 'undefined')
+                pgroup = '';
+            if (pgroup !== HG.WebApp.AutomationGroupsList._CurrentGroup)
+                continue;
+
             var pname = HG.WebApp.Locales.GetProgramLocaleString(progrm.Address, 'Title', progrm.Name);
             var item = '<li data-icon="' + (progrm.IsEnabled ? 'check' : 'alert') + '">';
             item += '<a href="#" class="programitem" data-program-domain="' + progrm.Domain + '"  data-program-address="' + progrm.Address + '" data-program-index="' + i + '">';
-            //
+
             var status = $$.GetProgramStatusColor(progrm);
             var triggertime = '';
             if (progrm.TriggerTime != null) {

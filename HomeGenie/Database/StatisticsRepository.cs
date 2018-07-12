@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using HomeGenie.Data;
 using HomeGenie.Service.Logging;
 
 namespace HomeGenie.Database
 {
     public class StatisticsRepository : GenericRepository<StatisticsDbEntry>, IStatisticsRepository
     {
-        public const string StatisticsDbFile = "homegenie_stats.litedb";
-
         public StatisticsRepository()
-            : base(StatisticsDbFile)
+            : base(FilePaths.StatisticsDbFilePath)
         {
             Execute(collection =>
             {

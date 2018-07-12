@@ -1,33 +1,13 @@
-﻿/*
-    This file is part of MIG Project source code.
-
-    MIG is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    MIG is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with MIG.  If not, see <http://www.gnu.org/licenses/>.  
-*/
-
-/*
- *     Author: Generoso Martello <gene@homegenie.it>
- *     Project Homepage: https://github.com/Bounz/HomeGenie-BE
- */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
 using MIG.Config;
 using NLog;
 using System.Reflection;
+using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 
 namespace MIG
 {
@@ -59,15 +39,8 @@ namespace MIG
 
     public class MigService
     {
-
-        #region Private fields
-
         private MigServiceConfiguration configuration;
         private DynamicApi dynamicApi;
-
-        #endregion
-
-        #region Public events and fields
 
         public static Logger Log = LogManager.GetCurrentClassLogger();
 
@@ -92,11 +65,8 @@ namespace MIG
         //public event -- ServiceStarted;
         //public event -- ServiceStopped;
 
-        // TODO: use List instead of Dictionary...
         public readonly List<IMigGateway> Gateways;
         public readonly List<MigInterface> Interfaces;
-
-        #endregion
 
         #region Lifecycle
 
@@ -106,6 +76,32 @@ namespace MIG
             Gateways = new List<IMigGateway>();
             configuration = new MigServiceConfiguration();
             dynamicApi = new DynamicApi();
+        }
+
+        private static void RedirectAssembly(string shortName) {
+            ResolveEventHandler handler = null;
+
+            handler = (sender, args) => {
+                // Use latest strong name & version when trying to load SDK assemblies
+                var requestedAssembly = new AssemblyName(args.Name);
+                if (requestedAssembly.Name != shortName)
+                    return null;
+
+                var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                var assemblyToRedirectTo = assemblies.FirstOrDefault(x => x.GetName().Name == requestedAssembly.Name);
+                if (assemblyToRedirectTo == null)
+                    return null;
+
+                Console.WriteLine("Redirecting assembly load of " + args.Name
+                                                                  + ",\tloaded by " + (args.RequestingAssembly == null
+                                                                      ? "(unknown)"
+                                                                      : args.RequestingAssembly.FullName));
+
+                AppDomain.CurrentDomain.AssemblyResolve -= handler;
+                return assemblyToRedirectTo;
+            };
+
+            AppDomain.CurrentDomain.AssemblyResolve += handler;
         }
 
         /// <summary>
@@ -173,6 +169,7 @@ namespace MIG
 
         /// <summary>
         /// Gets or sets the configuration.
+        /// Behind the scenes creates gateways and interfaces.
         /// </summary>
         /// <value>The configuration.</value>
         public MigServiceConfiguration Configuration
@@ -286,13 +283,14 @@ namespace MIG
             MigInterface migInterface = GetInterface(domain);
             if (migInterface == null)
             {
+                Type type = null;
                 try
                 {
-                    var type = TypeLookup("MIG.Interfaces." + domain, assemblyName);
+                    type = TypeLookup("MIG.Interfaces." + domain, assemblyName);
                     if(type == null){
                         Log.Error("Can't find type for Mig Interface with domain {0} (assemblyName={1})", domain, assemblyName);
                         return null;
-                    }                        
+                    }
                     migInterface = (MigInterface)Activator.CreateInstance(type);
                 }
                 catch (Exception e)
@@ -301,19 +299,19 @@ namespace MIG
                 }
                 if (migInterface != null)
                 {
-                    var interfaceVersion = VersionLookup(assemblyName);
+                    var interfaceVersion = VersionLookup(type.Assembly);
                     Log.Debug("Adding Interface {0} Version: {1}", migInterface.GetDomain(), interfaceVersion);
                     Interfaces.Add(migInterface);
                     migInterface.InterfaceModulesChanged += MigService_InterfaceModulesChanged;
                     migInterface.InterfacePropertyChanged += MigService_InterfacePropertyChanged;
                 }
             }
+
             // Try loading interface settings from MIG configuration
             var config = configuration.GetInterface(domain);
             if (config == null)
             {
-                config = new Interface();
-                config.Domain = domain;
+                config = new Interface {Domain = domain};
                 if (config.Options == null)
                     config.Options = new List<Option>();
                 configuration.Interfaces.Add(config);
@@ -467,7 +465,7 @@ namespace MIG
             }
         }
 
-        public static Type TypeLookup(string typeName, string assemblyName)
+        private Type TypeLookup(string typeName, string assemblyName)
         {
             if (string.IsNullOrWhiteSpace(assemblyName))
             {
@@ -475,64 +473,67 @@ namespace MIG
                 return type;
             }
 
-            // look for assembly file
-            var filesFound = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "plugins") , assemblyName, SearchOption.AllDirectories);
-            if (filesFound.Length == 0)
-            {
-                filesFound = Directory.GetFiles(Directory.GetCurrentDirectory(), assemblyName, SearchOption.TopDirectoryOnly);
-            }
+            if (!assemblyName.EndsWith("dll", StringComparison.OrdinalIgnoreCase))
+                assemblyName = assemblyName + ".dll";
+
+            // Look in default folder and include subfolders - thus getting plugins when migrated to and providing backwards compatability
+            var filesFound = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "../data/"), assemblyName, SearchOption.AllDirectories);
+
             if (filesFound.Length == 0)
             {
                 throw new FileNotFoundException($"Couldn't load assembly for interface/type {typeName}", assemblyName);
             }
 
+            XNamespace ns = "urn:schemas-microsoft-com:asm.v1";
+            var namespaceManager = new XmlNamespaceManager(new NameTable());
+            namespaceManager.AddNamespace("asmv1", ns.NamespaceName);
+
             foreach (var fileName in filesFound)
             {
-                var assembly = Assembly.LoadFrom(fileName);
+                Log.Debug($"Loading {fileName}");
+                var assemblyFile = Path.GetFullPath(fileName);
+                var assembly = Assembly.LoadFrom(assemblyFile);
                 var type = assembly.GetType(typeName);
-                if (type != null)
+                if (type == null)
+                    continue;
+
+                var files = Directory.EnumerateFiles(new FileInfo(assemblyFile).DirectoryName, "*.dll", SearchOption.AllDirectories);
+                foreach (var file in files)
+                {
+                    if(Path.GetFullPath(file) == assemblyFile)
+                        continue;
+                    Assembly.LoadFrom(Path.GetFullPath(file));
+                }
+
+                var configFile = $"{assemblyFile}.config";
+                if (!File.Exists(configFile))
                     return type;
+
+                var config = XElement.Load(File.OpenText(configFile));
+                var dependentAssemblyElements = config.XPathSelectElements("//asmv1:dependentAssembly", namespaceManager).ToList();
+                foreach (var dependentAssemblyElement in dependentAssemblyElements)
+                {
+                    var d = dependentAssemblyElement.Element(ns + "assemblyIdentity");
+                    var assemblyToRedirect = d?.Attribute("name")?.Value;
+                    if (assemblyToRedirect != null)
+                        RedirectAssembly(assemblyToRedirect);
+                }
+                return type;
             }
 
             return null;
         }
 
-        public static Version VersionLookup(string assemblyName)
+        private static Version VersionLookup(Assembly assembly)
         {
-
-            if (string.IsNullOrWhiteSpace(assemblyName)) return null;
-
-            Assembly assembly;
-            try
-            {
-                assembly = AppDomain.CurrentDomain.Load(Path.GetFileNameWithoutExtension(assemblyName));
-            }
-            catch
-            {
-                try
-                {
-                    assembly = Assembly.LoadFrom(Path.Combine("lib", "mig", assemblyName));
-                }
-                catch
-                {
-                    try
-                    {
-                        assembly = Assembly.LoadFrom(Path.Combine("lib", assemblyName));
-                    }
-                    catch
-                    {
-                        assembly = Assembly.LoadFrom(Path.Combine(assemblyName));
-                    }
-                }
-            }
             return assembly?.GetName().Version;
         }
 
         public static string GetAssemblyDirectory(Assembly assembly)
         {
-            string codeBase = assembly.CodeBase;
-            UriBuilder uri = new UriBuilder(codeBase);
-            string path = Uri.UnescapeDataString(uri.Path);
+            var codeBase = assembly.CodeBase;
+            var uri = new UriBuilder(codeBase);
+            var path = Uri.UnescapeDataString(uri.Path);
             return Path.GetDirectoryName(path);
         }
 

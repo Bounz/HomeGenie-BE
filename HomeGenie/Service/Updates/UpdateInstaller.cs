@@ -8,6 +8,7 @@ using System.Xml.Serialization;
 using HomeGenie.Automation;
 using HomeGenie.Automation.Scheduler;
 using HomeGenie.Data;
+using HomeGenie.Utils;
 using Newtonsoft.Json;
 
 namespace HomeGenie.Service.Updates
@@ -265,7 +266,7 @@ namespace HomeGenie.Service.Updates
             ArchiveDownloadUpdate?.Invoke(this, new ArchiveDownloadEventArgs(releaseInfo, ArchiveDownloadStatus.Decompressing));
 
             var errorOccurred = false;
-            var files = Utility.UncompressTgz(archiveName, destinationFolder);
+            var files = ArchiveHelper.Unarchive(archiveName, destinationFolder);
             errorOccurred = files.Count == 0;
 
             ArchiveDownloadUpdate?.Invoke(this,
@@ -427,7 +428,7 @@ namespace HomeGenie.Service.Updates
                 //
                 if (configChanged)
                 {
-                    _homegenieService.UpdateGroupsDatabase("");
+                    _homegenieService.UpdateGroupsDatabase();
                 }
             }
             catch
@@ -468,7 +469,7 @@ namespace HomeGenie.Service.Updates
                 //
                 if (configChanged)
                 {
-                    _homegenieService.UpdateGroupsDatabase("Automation");
+                    _homegenieService.UpdateAutomationGroupsDatabase();
                 }
             }
             catch

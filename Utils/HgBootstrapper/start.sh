@@ -13,6 +13,8 @@ fi
 # При определенном коде завершения - 1 - перезапустить контейнер
 # При определенном коде завершения - 5 - удалить контейнер, скачать новый образ, запустить контейнер
 exit_code=1
+host_ip=`ip route get 1 | awk '{print $NF;exit}'`
+echo "Host IP: $host_ip"
 
 while [ "${exit_code}" -ne 0 ]
 do
@@ -33,7 +35,9 @@ do
       docker run -d --privileged \
         --name ${cont_name} \
         -p ${http_port}:80 \
-        -v /usr/local/bin/hgdata:/usr/local/bin/homegenie/data \
+        -e HGBE_HOST_IP=${host_ip}
+        -v /usr/local/bin/hgbe/data:/usr/local/bin/homegenie/data \
+        -v /usr/local/bin/hgbe/logs:/usr/local/bin/homegenie/logs \
         ${image_and_tag}
     fi
   fi
