@@ -111,8 +111,11 @@ case $DISTR in
         exit 1 
 esac
 
+mono_bin=$(which mono)
+
 #HomeGenie
-echo "\nEnter installation path for HomeGenie [${default_install_directory}]: "
+echo ""
+echo "Enter installation path for HomeGenie [${default_install_directory}]: "
 read install_directory </dev/tty
 install_directory=${install_directory:-${default_install_directory}}
 echo "Installing HomeGenie (Bounz Edition) into $install_directory"
@@ -125,15 +128,15 @@ $sh_c "mkdir -p $install_directory/service"
 archive_url=$(curl -s https://api.github.com/repos/Bounz/HomeGenie-BE/releases/latest | grep 'browser_.*.zip' | cut -d\" -f4)
 archive_name=$(echo $archive_url | cut -d/ -f9)
 echo "Archive URL: $archive_url"
-echo "Archive naem: $archive_name"
 $sh_c "wget -q $archive_url"
-$sh_c "unzip $archive_name -d $install_directory/bin"
+$sh_c "unzip -o $archive_name -d $install_directory/bin"
 
 #Setting up service
 downloadSource=https://raw.githubusercontent.com/Bounz/HomeGenie-BE/master/Utils/HgBootstrapper/direct
 $sh_c "wget -qO /etc/systemd/system/hgbe.service ${downloadSource}/hgbe.svc"
 
 $sh_c "sed -i \"s#__install_directory__#${install_directory}#g\" /etc/systemd/system/hgbe.service"
+$sh_c "sed -i \"s#__mono_bin__#${mono_bin}#g\" /etc/systemd/system/hgbe.service"
 
 $sh_c "systemctl enable hgbe"
 $sh_c "systemctl start hgbe"

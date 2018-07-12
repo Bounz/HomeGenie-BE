@@ -12,7 +12,7 @@ KillMode=mixed
 
 User=root
 
-ExecStart=mono __install_directory__/bin/HomeGenie.exe
+ExecStart=__mono_bin__ __install_directory__/bin/HomeGenie.exe
 WorkingDirectory=__install_directory__/bin
 TimeoutSec=300
 
