@@ -29,6 +29,7 @@ read install_directory </dev/tty
 install_directory=${install_directory:-${default_install_directory}}
 
 # installing utils
+$sh_c "apt update"
 if ! command_exists shtool; then
     echo "Installing shtool..."
     $sh_c "apt install -y shtool"
@@ -37,88 +38,80 @@ if ! command_exists unzip; then
     echo "Installing unzip..."
     $sh_c "apt install -y unzip"
 fi
+if ! command_exists mono; then
+    # installing mono
+    DISTR=$(shtool platform --format %{sp})
+    echo "Installing mono on $DISTR"
 
-# installing mono
-DISTR=$(shtool platform --format %{sp})
-echo "Installing mono on $DISTR"
+    case $DISTR in
+        Ubuntu\ 18\.04)
+            $sh_c "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
+            echo "deb https://download.mono-project.com/repo/ubuntu stable-bionic main" | $sh_c "tee" /etc/apt/sources.list.d/mono-official-stable.list
+            $sh_c "apt update"
+            ;;
+        
+        Ubuntu\ 16\.04)
+            $sh_c "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
+            $sh_c "apt install apt-transport-https"
+            echo "deb https://download.mono-project.com/repo/ubuntu stable-xenial main" | $sh_c "tee" /etc/apt/sources.list.d/mono-official-stable.list
+            $sh_c "apt update"
+            ;;
+        
+        Ubuntu\ 14\.04)
+            $sh_c "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
+            $sh_c "apt install apt-transport-https"
+            echo "deb https://download.mono-project.com/repo/ubuntu stable-trusty main" | $sh_c "tee" /etc/apt/sources.list.d/mono-official-stable.list
+            $sh_c "apt update"
+            ;;
 
-case $DISTR in
-    Ubuntu\ 18\.04)
-        $sh_c "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
-        echo "deb https://download.mono-project.com/repo/ubuntu stable-bionic main" | $sh_c "tee" /etc/apt/sources.list.d/mono-official-stable.list
-        $sh_c "apt update"
-        ;;
-      
-    Ubuntu\ 16\.04)
-        $sh_c "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
-        $sh_c "apt install apt-transport-https"
-        echo "deb https://download.mono-project.com/repo/ubuntu stable-xenial main" | $sh_c "tee" /etc/apt/sources.list.d/mono-official-stable.list
-        $sh_c "apt update"
-        ;;
-      
-    Ubuntu\ 14\.04)
-        $sh_c "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
-        $sh_c "apt install apt-transport-https"
-        echo "deb https://download.mono-project.com/repo/ubuntu stable-trusty main" | $sh_c "tee" /etc/apt/sources.list.d/mono-official-stable.list
-        $sh_c "apt update"
-        ;;
+        Debian\ 9*)
+            $sh_c "apt install apt-transport-https dirmngr"
+            $sh_c "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
+            echo "deb https://download.mono-project.com/repo/debian stable-stretch main" | $sh_c "tee" /etc/apt/sources.list.d/mono-official-stable.list
+            $sh_c "apt update"
+            ;;
 
-    Debian\ 9)
-        $sh_c "apt install apt-transport-https dirmngr"
-        $sh_c "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
-        echo "deb https://download.mono-project.com/repo/debian stable-stretch main" | $sh_c "tee" /etc/apt/sources.list.d/mono-official-stable.list
-        $sh_c "apt update"
-        ;;
+        Debian\ 8*)
+            $sh_c "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
+            $sh_c "apt install apt-transport-https"
+            echo "deb https://download.mono-project.com/repo/debian stable-jessie main" | $sh_c "tee" /etc/apt/sources.list.d/mono-official-stable.list
+            $sh_c "apt update"
+            ;;
 
-    Debian\ 8)
-        $sh_c "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
-        $sh_c "apt install apt-transport-https"
-        echo "deb https://download.mono-project.com/repo/debian stable-jessie main" | $sh_c "tee" /etc/apt/sources.list.d/mono-official-stable.list
-        $sh_c "apt update"
-        ;;
+        Raspbian\ 9)
+            $sh_c "apt install apt-transport-https dirmngr"
+            $sh_c "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
+            echo "deb https://download.mono-project.com/repo/debian stable-raspbianstretch main" | $sh_c "tee" /etc/apt/sources.list.d/mono-official-stable.list
+            $sh_c "apt update"
+            ;;
 
-    Raspbian\ 9)
-        $sh_c "apt install apt-transport-https dirmngr"
-        $sh_c "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
-        echo "deb https://download.mono-project.com/repo/debian stable-raspbianstretch main" | $sh_c "tee" /etc/apt/sources.list.d/mono-official-stable.list
-        $sh_c "apt update"
-        ;;
+        Raspbian\ 8)
+            $sh_c "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
+            $sh_c "apt install apt-transport-https"
+            echo "deb https://download.mono-project.com/repo/debian stable-raspbianjessie main" | $sh_c "tee" /etc/apt/sources.list.d/mono-official-stable.list
+            $sh_c "apt update"
+            ;;
+        
+        *)
+            echo "Unknown OS $DISTR"
+            exit 1 
+    esac
 
-    Raspbian\ 8)
-        $sh_c "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
-        $sh_c "apt install apt-transport-https"
-        echo "deb https://download.mono-project.com/repo/debian stable-raspbianjessie main" | $sh_c "tee" /etc/apt/sources.list.d/mono-official-stable.list
-        $sh_c "apt update"
-        ;;
-    
-    # CentOS\ 7)
-    #     rpm --import "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
-    #     su -c 'curl https://download.mono-project.com/repo/centos7-stable.repo | tee /etc/yum.repos.d/mono-centos7-stable.repo'
-    #     ;;
-      
-    # CentOS\ 6)
-    #     srpm --import "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
-    #     su -c 'curl https://download.mono-project.com/repo/centos6-stable.repo | tee /etc/yum.repos.d/mono-centos6-stable.repo'
-    #     ;;
-      
-    *)
-        echo "Unknown OS $DISTR"
-        exit 1 
-esac
+    case $DISTR in
+        Ubuntu*|Debian*|Raspbian*)
+            $sh_c "apt install -y mono-complete"
+            ;;
+        
+        # CentOS*)
+        #     yum install -y mono-devel
+        #     ;;
+        
+        *)
+            echo "Unknown OS $DISTR"
+            exit 1 
+    esac
+fi
 
-case $DISTR in
-    Ubuntu*|Debian*|Raspbian*)
-        $sh_c "apt install -y mono-complete"
-        ;;
-    
-    # CentOS*)
-    #     yum install -y mono-devel
-    #     ;;
-      
-    *)
-        echo "Unknown OS $DISTR"
-        exit 1 
-esac
 
 mono_bin=$(which mono)
 
