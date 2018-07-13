@@ -46,14 +46,14 @@ if ! command_exists mono; then
     case $DISTR in
         Ubuntu\ 18\.04*)
             $sh_c "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
-            echo "deb https://download.mono-project.com/repo/ubuntu stable-bionic main" | $sh_c "tee" /etc/apt/sources.list.d/mono-official-stable.list
+            echo "deb https://download.mono-project.com/repo/ubuntu stable-bionic main" | $sh_c "tee /etc/apt/sources.list.d/mono-official-stable.list"
             $sh_c "apt update"
             ;;
         
         Ubuntu\ 16\.04*)
             $sh_c "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
             $sh_c "apt install -y apt-transport-https"
-            echo "deb https://download.mono-project.com/repo/ubuntu stable-xenial main" | $sh_c "tee" /etc/apt/sources.list.d/mono-official-stable.list
+            echo "deb https://download.mono-project.com/repo/ubuntu stable-xenial main" | $sh_c "tee /etc/apt/sources.list.d/mono-official-stable.list"
             $sh_c "apt update"
             ;;
 
@@ -62,7 +62,7 @@ if ! command_exists mono; then
             echo "Installing on Raspbian 9"
             $sh_c "apt install -y apt-transport-https dirmngr"
             $sh_c "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
-            echo "deb https://download.mono-project.com/repo/debian stable-raspbianstretch main" | $sh_c "tee" /etc/apt/sources.list.d/mono-official-stable.list
+            echo "deb https://download.mono-project.com/repo/debian stable-raspbianstretch main" | $sh_c "tee /etc/apt/sources.list.d/mono-official-stable.list"
             $sh_c "apt update"
             ;;
         #Raspbian 8
@@ -70,21 +70,21 @@ if ! command_exists mono; then
             echo "Installing on Raspbian 8"
             $sh_c "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
             $sh_c "apt install -y apt-transport-https"
-            echo "deb https://download.mono-project.com/repo/debian stable-raspbianjessie main" | $sh_c "tee" /etc/apt/sources.list.d/mono-official-stable.list
+            echo "deb https://download.mono-project.com/repo/debian stable-raspbianjessie main" | $sh_c "tee /etc/apt/sources.list.d/mono-official-stable.list"
             $sh_c "apt update"
             ;;
 
         Debian\ 9*)
             $sh_c "apt install -y apt-transport-https dirmngr"
             $sh_c "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
-            echo "deb https://download.mono-project.com/repo/debian stable-stretch main" | $sh_c "tee" /etc/apt/sources.list.d/mono-official-stable.list
+            echo "deb https://download.mono-project.com/repo/debian stable-stretch main" | $sh_c "tee /etc/apt/sources.list.d/mono-official-stable.list"
             $sh_c "apt update"
             ;;
 
         Debian\ 8*)
             $sh_c "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
             $sh_c "apt install -y apt-transport-https"
-            echo "deb https://download.mono-project.com/repo/debian stable-jessie main" | $sh_c "tee" /etc/apt/sources.list.d/mono-official-stable.list
+            echo "deb https://download.mono-project.com/repo/debian stable-jessie main" | $sh_c "tee /etc/apt/sources.list.d/mono-official-stable.list"
             $sh_c "apt update"
             ;;
         
