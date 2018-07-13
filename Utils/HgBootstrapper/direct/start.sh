@@ -2,6 +2,10 @@
 
 MONO=__mono_bin__
 
+command_exists() {
+    command -v "$@" > /dev/null 2>&1
+}
+
 sh_c='sh -c'
 if [ "$user" != 'root' ]; then
 	if command_exists sudo; then
