@@ -38,6 +38,10 @@ if ! command_exists unzip; then
     echo "Installing unzip..."
     $sh_c "apt install -y unzip"
 fi
+if ! command_exists curl; then
+    echo "Installing curl..."
+    $sh_c "apt install -y curl"
+fi
 if ! command_exists mono; then
     # installing mono
     DISTR=$(shtool platform)
