@@ -33,8 +33,11 @@ echo "_  _ ____ _  _ ____ ____ ____ _  _ _ ____    ___  ____ _  _ _  _ ___     _
 echo "|__| |  | |\/| |___ | __ |___ |\ | | |___    |__] |  | |  | |\ |   /     |___ |  \ |  |  | |  | |\ | ";
 echo "|  | |__| |  | |___ |__] |___ | \| | |___    |__] |__| |__| | \|  /__    |___ |__/ |  |  | |__| | \| ";
 echo "                                                                                                     ";
+echo "Enter installation path [${default_install_directory}]: "
+read install_directory </dev/tty
+install_directory=${install_directory:-${default_install_directory}}
 
-#Docker
+# Docker
 if [ -x "$(command -v docker)" ]; then
     echo -e "${LG}Docker is already installed${NC}"
 else
@@ -43,10 +46,7 @@ else
     echo -e "${LG}Docker intallation complete${NC}\n"
 fi
 
-#HomeGenie
-echo "Enter installation path [${default_install_directory}]: "
-read install_directory </dev/tty
-install_directory=${install_directory:-${default_install_directory}}
+# HomeGenie
 echo "Installing HomeGenie (Bounz Edition) into $install_directory"
 
 $sh_c "mkdir -p $install_directory"

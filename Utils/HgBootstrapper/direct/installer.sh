@@ -19,6 +19,15 @@ if [ "$user" != 'root' ]; then
 	fi
 fi
 
+echo "_  _ ____ _  _ ____ ____ ____ _  _ _ ____    ___  ____ _  _ _  _ ___     ____ ___  _ ___ _ ____ _  _ ";
+echo "|__| |  | |\/| |___ | __ |___ |\ | | |___    |__] |  | |  | |\ |   /     |___ |  \ |  |  | |  | |\ | ";
+echo "|  | |__| |  | |___ |__] |___ | \| | |___    |__] |__| |__| | \|  /__    |___ |__/ |  |  | |__| | \| ";
+echo "                                                                                                     ";
+
+echo "Enter installation path for HomeGenie [${default_install_directory}]: "
+read install_directory </dev/tty
+install_directory=${install_directory:-${default_install_directory}}
+
 # installing utils
 if ! command_exists shtool; then
     echo "Installing shtool..."
@@ -113,25 +122,22 @@ esac
 
 mono_bin=$(which mono)
 
-#HomeGenie
+# HomeGenie
 echo ""
-echo "Enter installation path for HomeGenie [${default_install_directory}]: "
-read install_directory </dev/tty
-install_directory=${install_directory:-${default_install_directory}}
 echo "Installing HomeGenie (Bounz Edition) into $install_directory"
 
 $sh_c "mkdir -p $install_directory"
 $sh_c "mkdir -p $install_directory/bin"
 $sh_c "mkdir -p $install_directory/service"
 
-#Downloading and unpacking the latest stable release
+# downloading and unpacking the latest stable release
 archive_url=$(curl -s https://api.github.com/repos/Bounz/HomeGenie-BE/releases/latest | grep 'browser_.*.zip' | cut -d\" -f4)
 archive_name=$(echo $archive_url | cut -d/ -f9)
-echo "Archive URL: $archive_url"
+echo "Downloading archive from $archive_url"
 $sh_c "wget -q $archive_url"
 $sh_c "unzip -o $archive_name -d $install_directory/bin"
 
-#Setting up service
+# setting up service
 downloadSource=https://raw.githubusercontent.com/Bounz/HomeGenie-BE/master/Utils/HgBootstrapper/direct
 $sh_c "wget -qO /etc/systemd/system/hgbe.service ${downloadSource}/hgbe.svc"
 
