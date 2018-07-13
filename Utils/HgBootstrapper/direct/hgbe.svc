@@ -6,13 +6,14 @@ After=network.target
 StandardOutput=inherit
 StandardError=inherit
 KillMode=mixed
+
 #Restart=always
 #RestartForceExitStatus=1
 #RestartPreventExitStatus=0
 
 User=root
 
-ExecStart=__mono_bin__ __install_directory__/bin/HomeGenie.exe
+ExecStart=/bin/bash __install_directory__/service/start.sh
 WorkingDirectory=__install_directory__/bin
 TimeoutSec=300
 
