@@ -34,7 +34,7 @@ echo "|__| |  | |\/| |___ | __ |___ |\ | | |___    |__] |  | |  | |\ |   /     |
 echo "|  | |__| |  | |___ |__] |___ | \| | |___    |__] |__| |__| | \|  /__    |___ |__/ |  |  | |__| | \| ";
 echo "                                                                                                     ";
 echo "Enter installation path [${default_install_directory}]: "
-read install_directory </dev/tty
+read -r install_directory </dev/tty
 install_directory=${install_directory:-${default_install_directory}}
 
 # Docker

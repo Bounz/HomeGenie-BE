@@ -132,11 +132,10 @@ $sh_c "unzip -o $archive_name -d $install_directory/bin"
 
 # setting up service
 downloadSource=https://raw.githubusercontent.com/Bounz/HomeGenie-BE/master/Utils/HgBootstrapper/direct
-$sh_c "wget -qO $install_directory/service/start.sh ${downloadSource}/start.sh"
 $sh_c "wget -qO /etc/systemd/system/hgbe.service ${downloadSource}/hgbe.svc"
 
 $sh_c "sed -i \"s#__install_directory__#${install_directory}#g\" /etc/systemd/system/hgbe.service"
-$sh_c "sed -i \"s#__mono_bin__#${mono_bin}#g\" $install_directory/service/start.sh"
+$sh_c "sed -i \"s#__mono_bin__#${mono_bin}#g\" /etc/systemd/system/hgbe.service"
 
 $sh_c "systemctl enable hgbe"
 $sh_c "systemctl start hgbe"
