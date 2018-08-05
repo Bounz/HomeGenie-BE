@@ -194,10 +194,10 @@ namespace HomeGenie.Service
             {
                 var fileName = Path.GetFileName(f);
                 var iface = knownConfigurationFiles.FirstOrDefault(x => x.Value.Contains(fileName));
-                if(iface.Key == null)
+                if (iface.Key == null)
                     continue;
 
-                if(!Directory.Exists(Path.Combine(FilePaths.InterfacesFolder, iface.Key)))
+                if (!Directory.Exists(Path.Combine(FilePaths.InterfacesFolder, iface.Key)))
                     continue;
 
                 File.Copy(f, Path.Combine(FilePaths.InterfacesFolder, iface.Key, fileName), true);
@@ -230,14 +230,15 @@ namespace HomeGenie.Service
                     if (currentProgram != null)
                         _homegenie.ProgramManager.ProgramRemove(currentProgram);
 
+                    var targetFile = Path.Combine(FilePaths.ProgramsFolder, program.Address + ".dll");
                     try
                     {
-                        File.Copy(Path.Combine(archiveFolder, "programs", program.Address + ".dll"),
-                            Path.Combine(FilePaths.ProgramsFolder, program.Address + ".dll"), true);
+                        File.Copy(Path.Combine(archiveFolder, "programs", program.Address + ".dll"), targetFile, true);
                     }
-                    catch
+                    catch (Exception e)
                     {
-                        RaiseEvent($"= Error copying program: {program.Address}");
+                        var errorMessage = e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine + "Target file: " + targetFile;
+                        RaiseEvent($"= Error copying program: {program.Address}. Details: " + errorMessage);
                     }
 
                     _homegenie.ProgramManager.ProgramAdd(program);
