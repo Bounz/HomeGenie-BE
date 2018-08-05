@@ -4,37 +4,45 @@
 //  Author:
 //       http://stackoverflow.com/questions/10168240/encrypting-decrypting-a-string-in-c-sharp
 // 
+
 using System;
 using System.Text;
 using System.Security.Cryptography;
 using System.IO;
+using System.Linq;
+using NLog;
 
 namespace HomeGenie.Service
 {
     public static class StringCipher
     {
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
+
         // This constant string is used as a "salt" value for the PasswordDeriveBytes function calls.
         // This size of the IV (in bytes) must = (keysize / 8).  Default keysize is 256, so the IV must be
         // 32 bytes long.  Using a 16 character string here gives us 32 bytes when converted to a byte array.
-        private const string initVector = "h7g3e4m3t5st5zjw";
+        private const string InitVector = "h7g3e4m3t5st5zjw";
 
         // This constant is used to determine the keysize of the encryption algorithm.
-        private const int keysize = 256;
+        private const int KeySize = 256;
 
         public static string Encrypt(string plainText, string passPhrase)
         {
-            byte[] initVectorBytes = Encoding.UTF8.GetBytes(initVector);
-            byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+            var initVectorBytes = Encoding.UTF8.GetBytes(InitVector);
+            var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
             var password = new PasswordDeriveBytes(passPhrase, null);
-            byte[] keyBytes = password.GetBytes(keysize / 8);
-            var symmetricKey = new RijndaelManaged();
-            symmetricKey.Mode = CipherMode.CBC;
+            var keyBytes = password.GetBytes(KeySize / 8);
+            var symmetricKey = new RijndaelManaged
+            {
+                Mode = CipherMode.CBC,
+                Padding = PaddingMode.Zeros
+            };
             var encryptor = symmetricKey.CreateEncryptor(keyBytes, initVectorBytes);
             var memoryStream = new MemoryStream();
             var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write);
             cryptoStream.Write(plainTextBytes, 0, plainTextBytes.Length);
             cryptoStream.FlushFinalBlock();
-            byte[] cipherTextBytes = memoryStream.ToArray();
+            var cipherTextBytes = memoryStream.ToArray();
             memoryStream.Close();
             cryptoStream.Close();
             return Convert.ToBase64String(cipherTextBytes);
@@ -42,21 +50,60 @@ namespace HomeGenie.Service
 
         public static string Decrypt(string cipherText, string passPhrase)
         {
-            byte[] initVectorBytes = Encoding.ASCII.GetBytes(initVector);
-            byte[] cipherTextBytes = Convert.FromBase64String(cipherText);
+            try
+            {
+                return Decrypt(cipherText, passPhrase, PaddingMode.PKCS7);
+            }
+            catch (CryptographicException e)
+            {
+                Log.Warn($"Error decrypting string \"{cipherText}\" with padding mode PKCS7, will try other paddings...");
+                Log.Warn(e);
+            }
+            catch (Exception)
+            {
+                Log.Warn($"Error decrypting string \"{cipherText}\"");
+                throw;
+            }
+
+            var otherPaddingModes = Enum.GetValues(typeof(PaddingMode)).Cast<PaddingMode>();
+            foreach (var paddingMode in otherPaddingModes)
+            {
+                try
+                {
+                    return Decrypt(cipherText, passPhrase, paddingMode);
+                }
+                catch (Exception e)
+                {
+                    Log.Warn($"Error decrypting string \"{cipherText}\" with padding mode {paddingMode}");
+                    Log.Warn(e);
+                }
+            }
+
+            throw new InvalidOperationException($"Can't decrypt string \"{cipherText}\"");
+        }
+
+        private static string Decrypt(string cipherText, string passPhrase, PaddingMode paddingMode)
+        {
+            var initVectorBytes = Encoding.ASCII.GetBytes(InitVector);
+            var cipherTextBytes = Convert.FromBase64String(cipherText);
             var password = new PasswordDeriveBytes(passPhrase, null);
-            byte[] keyBytes = password.GetBytes(keysize / 8);
-            var symmetricKey = new RijndaelManaged();
-            symmetricKey.Mode = CipherMode.CBC;
+            var keyBytes = password.GetBytes(KeySize / 8);
+            var symmetricKey = new RijndaelManaged
+            {
+                Mode = CipherMode.CBC,
+                Padding = paddingMode
+            };
             var decryptor = symmetricKey.CreateDecryptor(keyBytes, initVectorBytes);
             var memoryStream = new MemoryStream(cipherTextBytes);
             var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read);
-            byte[] plainTextBytes = new byte[cipherTextBytes.Length];
-            int decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
+            var plainTextBytes = new byte[cipherTextBytes.Length];
+            cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
             memoryStream.Close();
             cryptoStream.Close();
-            return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
+
+            var plainTextBytesList = plainTextBytes.ToList();
+            plainTextBytesList.RemoveAll(x => x == 0);
+            return Encoding.UTF8.GetString(plainTextBytesList.ToArray());
         }
     }
 }
-

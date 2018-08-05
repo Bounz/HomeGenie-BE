@@ -1,0 +1,21 @@
+[Unit]
+Description=HomeGenie (Bounz Edition)
+After=network.target
+
+[Service]
+StandardOutput=inherit
+StandardError=inherit
+KillMode=mixed
+
+Restart=always
+RestartForceExitStatus=1
+RestartPreventExitStatus=0
+
+User=root
+
+ExecStart=__mono_bin__ __install_directory__/bin/HomeGenie.exe
+WorkingDirectory=__install_directory__/bin
+TimeoutSec=300
+
+[Install]
+WantedBy=multi-user.target 
