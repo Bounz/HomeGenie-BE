@@ -179,7 +179,7 @@ namespace HomeGenie.Automation.Scripting
             var type = Type.GetType("Mono.Runtime");
             if (type != null)
             {
-                MethodInfo displayName = type.GetMethod("GetDisplayName", BindingFlags.NonPublic | BindingFlags.Static);
+                var displayName = type.GetMethod("GetDisplayName", BindingFlags.NonPublic | BindingFlags.Static);
                 if (displayName != null)
                 {
                     int major;

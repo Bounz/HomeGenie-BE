@@ -35,6 +35,7 @@ using Microsoft.Scripting.Hosting;
 using Microsoft.Scripting;
 using CronExpressionDescriptor;
 using HomeGenie.Automation.Engines;
+using HomeGenie.Data;
 using HomeGenie.Utils;
 using Innovative.SolarCalculator;
 
@@ -281,7 +282,7 @@ namespace HomeGenie.Service.Handlers
                             builder.ToString()
                         );
                         ArchiveHelper.AddFileToZip(arduinoBundle, mainProgramFile, "program.hgx");
-                        sketchFolder = Path.Combine("programs", "arduino", currentProgram.Address.ToString());
+                        sketchFolder = Path.Combine(FilePaths.ProgramsFolder, "arduino", currentProgram.Address.ToString());
                         foreach (string f in Directory.GetFiles(sketchFolder))
                         {
                             if (!Path.GetFileName(f).StartsWith("sketch_"))
