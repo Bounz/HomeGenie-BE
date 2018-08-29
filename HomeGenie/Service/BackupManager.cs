@@ -72,7 +72,7 @@ namespace HomeGenie.Service
         private bool RestoreNewConfiguration(string archiveFolder, string selectedPrograms)
         {
             var oldConfigFile = Path.Combine(archiveFolder, FilePaths.SystemConfigFileName);
-            EnsureSystemConfigIsSafeForDocker(oldConfigFile);
+            //EnsureSystemConfigIsSafeForDocker(oldConfigFile);
             Program.Quit(true, false);
             return true;
         }
@@ -305,7 +305,7 @@ namespace HomeGenie.Service
         {
             var oldConfigFile = Path.Combine(archiveFolder, FilePaths.SystemConfigFileName);
             var newConfigFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FilePaths.SystemConfigFilePath);
-            EnsureSystemConfigIsSafeForDocker(oldConfigFile);
+            //EnsureSystemConfigIsSafeForDocker(oldConfigFile);
             FixOldInterfaceAssembliesNames(oldConfigFile);
             File.Copy(oldConfigFile, newConfigFile, true);
         }

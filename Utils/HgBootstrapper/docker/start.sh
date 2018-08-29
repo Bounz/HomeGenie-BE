@@ -32,7 +32,7 @@ do
       echo "No existing container ${cont_name}, running it..."
       docker run -d --privileged \
         --name ${cont_name} \
-        -p ${http_port}:80 \
+        --network="host" \
         -v /usr/local/bin/hgdata:/usr/local/bin/homegenie/data \
         ${image_and_tag}
     fi
