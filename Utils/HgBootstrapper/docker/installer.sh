@@ -58,6 +58,7 @@ $sh_c "wget -qO $install_directory/service/stop.sh ${downloadSource}/stop.sh"
 $sh_c "wget -qO /etc/systemd/system/hgbe.service ${downloadSource}/hgbe.svc"
 
 $sh_c "sed -i \"s#__install_directory__#${install_directory}#g\" /etc/systemd/system/hgbe.service"
+$sh_c "sed -i \"s#__install_directory__#${install_directory}#g\" $install_directory/service/start.sh"
 
 $sh_c "systemctl enable hgbe"
 $sh_c "systemctl start hgbe"
