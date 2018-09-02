@@ -1,18 +1,21 @@
 #!/bin/bash
-http_port=8090
 cont_name="homegenie_be"
 image_and_tag="bounz/homegenie:latest"
+install_directory="__install_directory__"
 
 # Проверить и при необходимости создать папки для HG
-if [ ! -d /usr/local/bin/hgdata ]; then
-  mkdir -p /usr/local/bin/hgdata
-  mkdir -p /usr/local/bin/hgdata/data
-  mkdir -p /usr/local/bin/hgdata/logs
+if [ ! -d ${install_directory}/data ]; then
+  mkdir -p ${install_directory}/data
+fi
+if [ ! -d ${install_directory}/logs ]; then
+  mkdir -p ${install_directory}/logs
 fi
 
 # При определенном коде завершения - 1 - перезапустить контейнер
 # При определенном коде завершения - 5 - удалить контейнер, скачать новый образ, запустить контейнер
 exit_code=1
+host_ip=`ip route get 1 | awk '{print $NF;exit}'`
+echo "Host IP: $host_ip"
 
 while [ "${exit_code}" -ne 0 ]
 do
@@ -33,7 +36,8 @@ do
       docker run -d --privileged \
         --name ${cont_name} \
         --network="host" \
-        -v /usr/local/bin/hgdata:/usr/local/bin/homegenie/data \
+        -v ${install_directory}/data:/usr/local/bin/homegenie/data \
+        -v ${install_directory}/logs:/usr/local/bin/homegenie/logs \
         ${image_and_tag}
     fi
   fi
