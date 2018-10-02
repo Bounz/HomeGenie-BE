@@ -36,6 +36,7 @@ do
       docker run -d --privileged \
         --name ${cont_name} \
         --network="host" \
+        -v /etc/localtime:/etc/localtime:ro \
         -v ${install_directory}/data:/usr/local/bin/homegenie/data \
         -v ${install_directory}/logs:/usr/local/bin/homegenie/logs \
         ${image_and_tag}

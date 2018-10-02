@@ -101,85 +101,7 @@ namespace HomeGenie.Service.Handlers
             }
             else if (migCommand.Command.StartsWith("Scheduling."))
             {
-                switch (migCommand.Command)
-                {
-                case "Scheduling.Add":
-                case "Scheduling.Update":
-                    var newSchedule = JsonConvert.DeserializeObject<SchedulerItem>(request.RequestText);
-                    var item = homegenie.ProgramManager.SchedulerService.AddOrUpdate(
-                        newSchedule.Name,
-                        newSchedule.CronExpression,
-                        newSchedule.Data,
-                        newSchedule.Description,
-                        newSchedule.Script
-                    );
-                    if (newSchedule.BoundDevices != null)
-                        item.BoundDevices = newSchedule.BoundDevices;
-                    if (newSchedule.BoundModules != null)
-                        item.BoundModules = newSchedule.BoundModules;
-                    homegenie.UpdateSchedulerDatabase();
-                    break;
-                case "Scheduling.Delete":
-                    homegenie.ProgramManager.SchedulerService.Remove(migCommand.GetOption(0));
-                    homegenie.UpdateSchedulerDatabase();
-                    break;
-                case "Scheduling.Enable":
-                    homegenie.ProgramManager.SchedulerService.Enable(migCommand.GetOption(0));
-                    homegenie.UpdateSchedulerDatabase();
-                    break;
-                case "Scheduling.Disable":
-                    homegenie.ProgramManager.SchedulerService.Disable(migCommand.GetOption(0));
-                    homegenie.UpdateSchedulerDatabase();
-                    break;
-                case "Scheduling.Get":
-                    request.ResponseData = homegenie.ProgramManager.SchedulerService.Get(migCommand.GetOption(0));
-                    break;
-                case "Scheduling.ListOccurrences":
-                    int hours = 24;
-                    int.TryParse(migCommand.GetOption(0), out hours);
-                    DateTime dateStart = DateTime.Today.ToUniversalTime();
-                    string startFrom = migCommand.GetOption(1);
-                    if (!String.IsNullOrWhiteSpace(startFrom))
-                        dateStart = Utility.JavascriptToDate(long.Parse(startFrom)); 
-                    List<dynamic> nextList = new List<dynamic>();
-                    foreach (var ce in homegenie.ProgramManager.SchedulerService.Items)
-                    {
-                        if (!ce.IsEnabled)
-                            continue;
-                        var evt = new { Name = ce.Name, Description = ce.Description, RunScript = !String.IsNullOrWhiteSpace(ce.Script), Occurrences = new List<double>() };
-                        var d = dateStart;
-                        var dateEnd = dateStart.AddHours(hours);
-                        var occurs = homegenie.ProgramManager.SchedulerService.GetScheduling(dateStart, dateEnd, ce.CronExpression);
-                        occurs.Sort();
-                        foreach (var dt in occurs)
-                        {
-                            evt.Occurrences.Add(Utility.DateToJavascript(dt.ToUniversalTime()));
-                        }
-                        if (evt.Occurrences.Count > 0)
-                            nextList.Add(evt);
-                    }
-                    request.ResponseData = nextList;
-                    break;
-                case "Scheduling.List":
-                    homegenie.ProgramManager.SchedulerService.Items.Sort((SchedulerItem s1, SchedulerItem s2) =>
-                    {
-                        return s1.Name.CompareTo(s2.Name);
-                    });
-                    request.ResponseData = homegenie.ProgramManager.SchedulerService.Items;
-                    break;
-                case "Scheduling.Describe":
-                    var cronDescription = "";
-                    try { 
-                        cronDescription = ExpressionDescriptor.GetDescription(migCommand.GetOption(0).Trim()); 
-                        cronDescription = Char.ToLowerInvariant(cronDescription[0]) + cronDescription.Substring(1);
-                    } catch { }
-                    request.ResponseData = new ResponseText(cronDescription);
-                    break;
-                case "Scheduling.SolarTimes":
-                    var solarTimes = new SolarTimes(DateTime.Now, homegenie.ProgramManager.SchedulerService.Location["latitude"].Value, homegenie.ProgramManager.SchedulerService.Location["longitude"].Value);
-                    request.ResponseData = solarTimes;
-                    break;
-                }
+                HandleScheduling(migCommand, request);
             }
             else if (migCommand.Command.StartsWith("Programs."))
             {
@@ -551,6 +473,103 @@ namespace HomeGenie.Service.Handlers
                     break;
                 }
 
+            }
+        }
+
+        private void HandleScheduling(MigInterfaceCommand migCommand, MigClientRequest request)
+        {
+            switch (migCommand.Command)
+            {
+                case "Scheduling.Add":
+                case "Scheduling.Update":
+                    var newSchedule = JsonConvert.DeserializeObject<SchedulerItem>(request.RequestText);
+                    var item = homegenie.ProgramManager.SchedulerService.AddOrUpdate(
+                        newSchedule.Name,
+                        newSchedule.CronExpression,
+                        newSchedule.Data,
+                        newSchedule.Description,
+                        newSchedule.Script
+                    );
+                    if (newSchedule.BoundDevices != null)
+                        item.BoundDevices = newSchedule.BoundDevices;
+                    if (newSchedule.BoundModules != null)
+                        item.BoundModules = newSchedule.BoundModules;
+                    homegenie.UpdateSchedulerDatabase();
+                    break;
+                case "Scheduling.Delete":
+                    homegenie.ProgramManager.SchedulerService.Remove(migCommand.GetOption(0));
+                    homegenie.UpdateSchedulerDatabase();
+                    break;
+                case "Scheduling.Enable":
+                    homegenie.ProgramManager.SchedulerService.Enable(migCommand.GetOption(0));
+                    homegenie.UpdateSchedulerDatabase();
+                    break;
+                case "Scheduling.Disable":
+                    homegenie.ProgramManager.SchedulerService.Disable(migCommand.GetOption(0));
+                    homegenie.UpdateSchedulerDatabase();
+                    break;
+                case "Scheduling.Get":
+                    request.ResponseData = homegenie.ProgramManager.SchedulerService.Get(migCommand.GetOption(0));
+                    break;
+                case "Scheduling.ListOccurrences":
+                    var hours = 24;
+                    int.TryParse(migCommand.GetOption(0), out hours);
+                    var dateStart = DateTime.Today.ToUniversalTime();
+                    var startFrom = migCommand.GetOption(1);
+                    if (!string.IsNullOrWhiteSpace(startFrom))
+                        dateStart = Utility.JavascriptToDate(long.Parse(startFrom));
+
+                    var nextList = new List<dynamic>();
+                    foreach (var schedulerItem in homegenie.ProgramManager.SchedulerService.Items)
+                    {
+                        if (!schedulerItem.IsEnabled)
+                            continue;
+
+                        var evt = new
+                        {
+                            Name = schedulerItem.Name, Description = schedulerItem.Description,
+                            RunScript = !string.IsNullOrWhiteSpace(schedulerItem.Script),
+                            Occurrences = new List<double>()
+                        };
+
+                        var dateEnd = dateStart.AddHours(hours);
+                        var occurs = homegenie.ProgramManager.SchedulerService.GetScheduling(
+                            dateStart, dateEnd, schedulerItem.CronExpression);
+                        occurs.Sort();
+                        foreach (var dt in occurs)
+                        {
+                            evt.Occurrences.Add(Utility.DateToJavascript(dt.ToUniversalTime()));
+                        }
+
+                        if (evt.Occurrences.Count > 0)
+                            nextList.Add(evt);
+                    }
+
+                    request.ResponseData = nextList;
+                    break;
+                case "Scheduling.List":
+                    homegenie.ProgramManager.SchedulerService.Items.Sort((s1, s2) => s1.Name.CompareTo(s2.Name));
+                    request.ResponseData = homegenie.ProgramManager.SchedulerService.Items;
+                    break;
+                case "Scheduling.Describe":
+                    var cronDescription = "";
+                    try
+                    {
+                        cronDescription = ExpressionDescriptor.GetDescription(migCommand.GetOption(0).Trim());
+                        cronDescription = char.ToLowerInvariant(cronDescription[0]) + cronDescription.Substring(1);
+                    }
+                    catch
+                    {
+                    }
+
+                    request.ResponseData = new ResponseText(cronDescription);
+                    break;
+                case "Scheduling.SolarTimes":
+                    var solarTimes = new SolarTimes(DateTime.Now,
+                        homegenie.ProgramManager.SchedulerService.Location["latitude"].Value,
+                        homegenie.ProgramManager.SchedulerService.Location["longitude"].Value);
+                    request.ResponseData = solarTimes;
+                    break;
             }
         }
 

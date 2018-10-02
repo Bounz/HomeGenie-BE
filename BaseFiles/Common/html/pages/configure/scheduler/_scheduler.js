@@ -96,7 +96,7 @@
         item += '</div>';
         item += '</li>';
         return item;
-    }
+    };
 
     $$.RefreshOccursTable = function() {
         var page = $('#' + $$.PageId);
@@ -106,35 +106,37 @@
         $.mobile.loading('show');
         var startDate = new Date($$._CurrentDate.getTime());
         startDate.setHours(0,0,0,0);
-        HG.Control.Modules.ApiCall('HomeAutomation.HomeGenie', 'Automation', 'Scheduling.ListOccurrences', (24*1).toString()+'/'+startDate.getTime(), function(schedules){
+
+        HG.Control.Modules.ApiCall('HomeAutomation.HomeGenie', 'Automation', 'Scheduling.ListOccurrences', (24).toString()+'/'+startDate.getTime(), function(schedules){
             occursList.empty();
             var d = new Date(); d.setSeconds(0);
             var occurrences = [];
             var currentGroup = '';
             $.each(schedules, function(k,v){
-              var n = v.Name;
-              if (n.indexOf('.') > 0) {
-                var scheduleGroup = n.substring(0, n.indexOf('.'));
-                if (scheduleGroup != currentGroup) {
+              var name = v.Name;
+              if (name.indexOf('.') > 0) {
+                var scheduleGroup = name.substring(0, name.indexOf('.'));
+                if (scheduleGroup !== currentGroup) {
                     occurrences.push({ title: scheduleGroup.replace(/\./g, ' / '), separator: true });
                     currentGroup = scheduleGroup;
                 }
-                n = n.substring(n.indexOf('.')+1);
+                name = name.substring(name.indexOf('.')+1);
               }
-              var entry = { name: v.Name, title: n, occurs: [] };
+              var entry = { name: v.Name, title: name, occurs: [] };
               $.each($$._ScheduleList, function(sk,sv){
-                if (sv.Name == v.Name) {
+                if (sv.Name === v.Name) {
                     entry.index = sk;
                     entry.description = sv.Description;
                     entry.boundModules = sv.BoundModules.length;
-                    entry.hasScript = (typeof sv.Script != 'undefined' && sv.Script != null && sv.Script.trim() != '');
+                    entry.hasScript = sv.Script && sv.Script.trim() !== '';
                     entry.prevOccurrence = 0;
                     entry.nextOccurrence = 0;
                 }
               });
               var prev = 0, start = 0;
               $.each(v.Occurrences, function(kk,vv){
-                if (prev == 0) prev = start = end = vv;
+                if (prev == 0)
+                    prev = start = end = vv;
                 if (vv - prev > 60000) {
                   entry.occurs.push({ from: start, to: end });
                   prev = start = vv;
@@ -191,8 +193,7 @@
                         stroke: "rgba(255,255,255, 70)",
                         "stroke-width": 1
                     });
-                });    
-
+                });
 
                 for (var t = 0; t < 24; t++) {
                     timeBar.text(t*(w/24)+(w/48), 18, t.toString()).attr({fill:'white'});
@@ -206,7 +207,7 @@
 
                 // build basic tooltip data
                 var desc = '';
-                if (typeof v.description != 'undefined' && v.description != null && v.description.trim() != '')
+                if (v.description && v.description.trim() !== '')
                     desc += v.description;
                 desc += '<p align="center"><strong>';
                 desc += moment($$._CurrentDate).format('LL');
@@ -225,7 +226,7 @@
                     }
                 }
 
-                var isToday = d.toDateString() == $$._CurrentDate.toDateString();
+                var isToday = d.toDateString() === $$._CurrentDate.toDateString();
                 if (isToday) {
                     d = d.getTime();
                     var d2 = new Date(); d2.setHours(0,0,0,0);
@@ -294,11 +295,11 @@
             // auto-refresh every minute
             if ($$._UpdateTimeout != null)
                 clearTimeout($$._UpdateTimeout);
-            if ($.mobile.activePage.attr("id") == $$.PageId)
+            if ($.mobile.activePage.attr("id") === $$.PageId)
                 $$._UpdateTimeout = setTimeout($$.RefreshOccursTable, 60000);
         });
 
-    }
+    };
 
     $$.LoadScheduling = function (callback) {
         $.mobile.loading('show');
