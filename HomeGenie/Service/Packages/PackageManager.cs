@@ -177,7 +177,9 @@ namespace HomeGenie.Service.Packages
                 "= Installing: " + program.Name
             );
 
-            var pid = int.Parse(program.Uid);
+            var pid = _homegenie.ProgramManager.GeneratePid();
+            if (program.Uid == null || !int.TryParse(program.Uid, out pid))
+                program.Uid = pid.ToString();
             var enabled = true; // by default enable package programs after installing them
             var oldProgram = _homegenie.ProgramManager.ProgramGet(pid);
             if (oldProgram != null)
