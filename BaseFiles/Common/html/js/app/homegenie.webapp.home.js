@@ -26,7 +26,7 @@ HG.WebApp.Home = HG.WebApp.Home || new function(){ var $$ = this;
                 var interfaces = HG.WebApp.Data.Interfaces = eval(data);
                 var status = '';
                 var isupdateavailable = false;
-                //
+
                 if (interfaces && interfaces != 'undefined')
                 {
                     for (i = 0; i < interfaces.length; i++) {
@@ -44,13 +44,15 @@ HG.WebApp.Home = HG.WebApp.Home || new function(){ var $$ = this;
                         }
                     }
                 }
-                //
+
                 if (isupdateavailable)
                 {
                     status += '<a href="#page_configure_maintenance" alt="Update available."><img title="Update available." src="images/update.png" height="28" width="28" style="margin-left:6px" vspace="2" hspace="0" /></a>';
                 }
-                //
-                $('#interfaces_status').html(status);
+
+                $('#interfaces_status')
+                    .html(status)
+                    .data('update_available', isupdateavailable);
             }
         });
     };
