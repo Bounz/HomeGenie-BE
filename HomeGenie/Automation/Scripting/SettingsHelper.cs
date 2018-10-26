@@ -22,8 +22,6 @@
 
 
 using System;
-using System.Collections.Generic;
-
 using HomeGenie.Service;
 using HomeGenie.Data;
 

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace HomeGenie
+﻿namespace HomeGenie
 {
     public static class SourceModule
     {

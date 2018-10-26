@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace HomeGenie.Service
 {
-    [Serializable()]
+    [Serializable]
     public class TsList<T> : List<T>
     {
         private object syncLock = new object();

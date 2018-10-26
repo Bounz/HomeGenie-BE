@@ -26,7 +26,7 @@ using HomeGenie.Data;
 
 namespace HomeGenie
 {
-    [Serializable()]
+    [Serializable]
     public class Store
     {
         public string Name;

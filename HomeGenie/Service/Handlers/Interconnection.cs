@@ -23,15 +23,7 @@
 using HomeGenie.Data;
 using MIG;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Net;
-
-using HomeGenie.Automation;
 
 namespace HomeGenie.Service.Handlers
 {

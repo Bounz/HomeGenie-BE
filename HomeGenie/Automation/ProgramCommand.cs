@@ -25,7 +25,7 @@ using System;
 namespace HomeGenie.Automation
 {
 
-    [Serializable()]
+    [Serializable]
     public class ProgramCommand
     {
         public string Domain { get; set; }

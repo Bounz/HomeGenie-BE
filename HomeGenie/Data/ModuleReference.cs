@@ -24,7 +24,7 @@ using System;
 
 namespace HomeGenie.Data
 {
-    [Serializable()]
+    [Serializable]
     public class ModuleReference
     {
         public string Address { get; set; }

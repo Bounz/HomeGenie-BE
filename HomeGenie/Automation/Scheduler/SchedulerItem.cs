@@ -31,7 +31,7 @@ namespace HomeGenie.Automation.Scheduler
     /// <summary>
     /// Scheduler item.
     /// </summary>
-    [Serializable()]
+    [Serializable]
     public class SchedulerItem
     {
         /// <summary>

@@ -23,9 +23,6 @@
 using HomeGenie.Automation.Scheduler;
 using HomeGenie.Service;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Innovative.SolarCalculator;
 
 namespace HomeGenie.Automation.Scripting
@@ -71,17 +68,6 @@ namespace HomeGenie.Automation.Scripting
         public SchedulerHelper SetSchedule(string cronExpression)
         {
             _homegenie.ProgramManager.SchedulerService.AddOrUpdate(_scheduleName, cronExpression);
-            return this;
-        }
-
-        /// <summary>
-        /// Sets the program id to run when the selected schedule occurs.
-        /// </summary>
-        /// <param name="programId">Program ID.</param>
-        [Obsolete()]
-        public SchedulerHelper SetProgram(string programId)
-        {
-            _homegenie.ProgramManager.SchedulerService.SetProgram(_scheduleName, programId);
             return this;
         }
 

@@ -25,7 +25,7 @@ using System;
 namespace HomeGenie.Automation
 {
 
-    [Serializable()]
+    [Serializable]
     public enum ConditionType
     {
         None = 0, // unused
@@ -36,7 +36,7 @@ namespace HomeGenie.Automation
         OnFalse
     }
 
-    [Serializable()]
+    [Serializable]
     public class ProgramCondition
     {
         public string Domain { get; set; }

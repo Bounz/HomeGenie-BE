@@ -23,8 +23,6 @@
 using MIG;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using HomeGenie.Service.Constants;
 
 namespace HomeGenie.Automation

@@ -102,29 +102,15 @@ namespace HomeGenie.Automation.Scheduler
                         eventItem.LastOccurrence = currentOccurrence;
 
                         // execute associated task if any
-                        if (!string.IsNullOrWhiteSpace(eventItem.Script))
+                        if (string.IsNullOrWhiteSpace(eventItem.Script))
+                            continue;
+
+                        if (eventItem.ScriptEngine == null)
                         {
-                            if (eventItem.ScriptEngine == null)
-                            {
-                                eventItem.ScriptEngine = new SchedulerScriptingEngine();
-                                eventItem.ScriptEngine.SetHost(masterControlProgram.HomeGenie, eventItem);
-                            }
-                            eventItem.ScriptEngine.StartScript();
+                            eventItem.ScriptEngine = new SchedulerScriptingEngine();
+                            eventItem.ScriptEngine.SetHost(masterControlProgram.HomeGenie, eventItem);
                         }
-                        // TODO: deprecate this! - temporarly left for compatibility with HG <= r522
-                        else if (!string.IsNullOrEmpty(eventItem.ProgramId))
-                        {
-                            var program = masterControlProgram.Programs.Find(p => p.Address.ToString() == eventItem.ProgramId || p.Name == eventItem.ProgramId);
-                            if (program != null)
-                            {
-                                masterControlProgram.HomeGenie.MigService.RaiseEvent(this, Domains.HomeAutomation_HomeGenie, SourceModule.Scheduler, "Scheduler Event '" + eventItem.Name + "'", Properties.SchedulerTriggeredEvent, "'" + eventItem.Name + "' running '" + eventItem.ProgramId + "'");
-                                masterControlProgram.Run(program, "");
-                            }
-                            else
-                            {
-                                masterControlProgram.HomeGenie.MigService.RaiseEvent(this, Domains.HomeAutomation_HomeGenie, SourceModule.Scheduler, "Scheduler Event '" + eventItem.Name + "'", Properties.SchedulerError, "No such program: '" + eventItem.ProgramId + "'");
-                            }
-                        }
+                        eventItem.ScriptEngine.StartScript();
                     }
                 }
             }
@@ -174,18 +160,6 @@ namespace HomeGenie.Automation.Scheduler
             if (eventItem != null)
             {
                 eventItem.Data = jsonData;
-                return true;
-            }
-            return false;
-        }
-
-        [Obsolete]
-        public bool SetProgram(string name, string pid)
-        {
-            var eventItem = Get(name);
-            if (eventItem != null)
-            {
-                eventItem.ProgramId = pid;
                 return true;
             }
             return false;

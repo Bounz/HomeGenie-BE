@@ -25,7 +25,7 @@ using System.Collections.Generic;
 
 namespace HomeGenie.Data
 {
-    [Serializable()]
+    [Serializable]
     public class Group
     {
         public string Name { get; set; }

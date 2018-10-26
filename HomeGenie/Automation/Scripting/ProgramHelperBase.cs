@@ -5,7 +5,6 @@ using HomeGenie.Automation.Scripting;
 using System.Threading;
 using System.IO;
 using System.Net;
-using Raspberry;
 
 namespace HomeGenie
 {

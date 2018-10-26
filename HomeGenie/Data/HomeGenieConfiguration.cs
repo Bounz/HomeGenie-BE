@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 
 namespace HomeGenie.Data
 {
-    [Serializable()]
+    [Serializable]
     public class HomeGenieConfiguration
     {
         public string GUID { get; set; }
@@ -16,7 +16,7 @@ namespace HomeGenie.Data
 
         public string EnableLogFile { get; set; }
 
-        [Serializable()]
+        [Serializable]
         public class StatisticsConfiguration
         {
 

@@ -21,10 +21,7 @@
  */
 
 using System;
-using System.Collections.Generic;
-
 using System.IO;
-using System.Xml.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
 using Newtonsoft.Json;
@@ -39,7 +36,7 @@ namespace HomeGenie.Data
     /// <summary>
     /// Module instance.
     /// </summary>
-    [Serializable()]
+    [Serializable]
     public class Module : ICloneable
     {
         /// <summary>

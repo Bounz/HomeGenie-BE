@@ -30,7 +30,7 @@ using Newtonsoft.Json;
 
 namespace HomeGenie.Automation
 {
-    [Serializable()]
+    [Serializable]
     public class ProgramBlock
     {
         private IProgramEngine programEngine;

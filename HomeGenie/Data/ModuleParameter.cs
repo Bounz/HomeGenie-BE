@@ -25,8 +25,6 @@ using System.Globalization;
 
 using Newtonsoft.Json;
 using System.Xml.Serialization;
-using HomeGenie.Service;
-using HomeGenie.Service.Logging;
 using System.Threading;
 
 namespace HomeGenie.Data
@@ -35,7 +33,7 @@ namespace HomeGenie.Data
     /// <summary>
     /// Module parameter.
     /// </summary>
-    [Serializable()]
+    [Serializable]
     public class ModuleParameter
     {
         [NonSerialized]

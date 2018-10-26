@@ -21,11 +21,10 @@
  */
 
 using System;
-using System.Collections.Generic;
 
 namespace HomeGenie.Automation
 {
-    [Serializable()]
+    [Serializable]
     public enum ComparisonOperator
     {
         LessThan = -1,
