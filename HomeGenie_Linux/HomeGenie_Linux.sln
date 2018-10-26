@@ -22,7 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SupportLibraries", "Support
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetClientLib", "..\SupportLibraries\NetClientLib\NetClientLib.csproj", "{318D2523-3C8B-4273-B1EA-DE339868403C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeGenieTests", "..\HomeGenieTests\HomeGenieTests.csproj", "{E6F52AFC-FE7F-4E8F-86E4-498B9F58F774}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeGenie.UnitTests", "..\HomeGenie.UnitTests\HomeGenie.UnitTests.csproj", "{E6F52AFC-FE7F-4E8F-86E4-498B9F58F774}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MIG", "MIG", "{B79CECC3-16B4-434D-A3F9-15B81C0792FA}"
 EndProject
