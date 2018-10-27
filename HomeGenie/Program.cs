@@ -61,8 +61,15 @@ namespace HomeGenie
 
             if (Homegenie != null)
             {
-                Homegenie.Stop(saveData);
-                Homegenie = null;
+                try
+                {
+                    Homegenie.Stop(saveData);
+                    Homegenie = null;
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e);
+                }
             }
 
             if (restart)
