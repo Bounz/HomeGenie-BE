@@ -4,6 +4,7 @@
     {
         Success,
         RestartRequired,
-        Error
+        Error,
+        DockerUpdateRequired
     }
 }

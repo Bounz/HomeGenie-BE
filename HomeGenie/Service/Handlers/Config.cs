@@ -159,7 +159,9 @@ namespace HomeGenie.Service.Handlers
                                 var installPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "_update", "files");
                                 Utility.FolderCleanUp(installPath);
                                 Directory.Move(Path.Combine(_tempFolderPath, "homegenie"), Path.Combine(installPath, "HomeGenie"));
-                                var installStatus = _homegenie.UpdateInstaller.InstallFiles();
+
+                                // TODO: this will not work for docker distribution
+                                var installStatus = _homegenie.UpdateInstaller.InstallUpdate();
                                 if (installStatus != InstallStatus.Error)
                                 {
                                     success = true;
@@ -241,27 +243,35 @@ namespace HomeGenie.Service.Handlers
                 {
                     var resultMessage = "OK";
                     _homegenie.SaveData();
-                    var installStatus = _homegenie.UpdateInstaller.InstallFiles();
-                    if (installStatus == InstallStatus.Error)
+                    var installStatus = _homegenie.UpdateInstaller.InstallUpdate();
+
+                    switch (installStatus)
                     {
-                        resultMessage = "ERROR";
-                    }
-                    else
-                    {
-                        if (installStatus == InstallStatus.RestartRequired)
-                        {
+                        case InstallStatus.Success:
+                            _homegenie.LoadConfiguration();
+                            _homegenie.UpdateChecker.Check();
+                            break;
+                        case InstallStatus.RestartRequired:
                             resultMessage = "RESTART";
                             Utility.RunAsyncTask(() =>
                             {
                                 Thread.Sleep(2000);
                                 Program.Quit(true);
                             });
-                        }
-                        else
-                        {
-                            _homegenie.LoadConfiguration();
-                            _homegenie.UpdateChecker.Check();
-                        }
+                            break;
+                        case InstallStatus.Error:
+                            resultMessage = "ERROR";
+                            break;
+                        case InstallStatus.DockerUpdateRequired:
+                            resultMessage = "RESTART";
+                            Utility.RunAsyncTask(() =>
+                            {
+                                Thread.Sleep(2000);
+                                Program.QuitAndUpdateDockerImage();
+                            });
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
                     request.ResponseData = new ResponseText(resultMessage);
                     break;

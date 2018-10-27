@@ -49,6 +49,12 @@ namespace HomeGenie
             IsRunning = false;
         }
 
+        internal static void QuitAndUpdateDockerImage()
+        {
+            Log.Info("...RESTARTING WITH DOCKER IMAGE UPDATE!");
+            Environment.Exit(5);
+        }
+
         private static void ShutDown(bool restart, bool saveData = true)
         {
             Log.Info("HomeGenie is now exiting...");

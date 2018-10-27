@@ -24,11 +24,11 @@ namespace HomeGenie.Service.Updates
         private static string UpdateFolder => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "_update");
         private static string UpdateBaseFolder => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "_update", "files");
 
-        private readonly HomeGenieService _homegenieService;
+        private readonly HomeGenieService _homeGenieService;
 
-        public UpdateInstaller(HomeGenieService homegenieService)
+        public UpdateInstaller(HomeGenieService homeGenieService)
         {
-            _homegenieService = homegenieService;
+            _homeGenieService = homeGenieService;
         }
 
         private bool AreFilesIdentical(string sourceFile, string destinationFile)
@@ -67,7 +67,15 @@ namespace HomeGenie.Service.Updates
             return false;
         }
 
-        public InstallStatus InstallFiles()
+        public InstallStatus InstallUpdate()
+        {
+            var isDockerInstallation = Environment.GetEnvironmentVariable(EnvVars.HgbeDocker);
+            return string.IsNullOrEmpty(isDockerInstallation)
+                ? InstallFromFiles()
+                : InstallStatus.DockerUpdateRequired;
+        }
+
+        private InstallStatus InstallFromFiles()
         {
             var status = InstallStatus.Success;
             var restartRequired = false;
@@ -308,7 +316,7 @@ namespace HomeGenie.Service.Updates
                         // Only system programs are to be updated
                         if (program.Address < ProgramManager.USERSPACE_PROGRAMS_START)
                         {
-                            var oldProgram = _homegenieService.ProgramManager.Programs.Find(p => p.Address == program.Address);
+                            var oldProgram = _homeGenieService.ProgramManager.Programs.Find(p => p.Address == program.Address);
                             if (oldProgram != null)
                             {
 
@@ -320,7 +328,7 @@ namespace HomeGenie.Service.Updates
                                 // Preserve IsEnabled status if program already exist
                                 program.IsEnabled = oldProgram.IsEnabled;
                                 LogMessage("* Updating Automation Program: " + program.Name + " (" + program.Address + ")");
-                                _homegenieService.ProgramManager.ProgramRemove(oldProgram);
+                                _homeGenieService.ProgramManager.ProgramRemove(oldProgram);
 
                             }
                             else
@@ -354,7 +362,7 @@ namespace HomeGenie.Service.Updates
                             }
 
                             // Add the new program to the ProgramEngine
-                            _homegenieService.ProgramManager.ProgramAdd(program);
+                            _homeGenieService.ProgramManager.ProgramAdd(program);
 
                             if (!configChanged)
                                 configChanged = true;
@@ -365,7 +373,7 @@ namespace HomeGenie.Service.Updates
                     if (configChanged)
                     {
                         // Save new programs config
-                        _homegenieService.UpdateProgramsDatabase();
+                        _homeGenieService.UpdateProgramsDatabase();
                     }
                 }
 
@@ -417,10 +425,10 @@ namespace HomeGenie.Service.Updates
                 var configChanged = false;
                 foreach (var group in modulesGroups)
                 {
-                    if (_homegenieService.Groups.Find(g => g.Name == group.Name) == null)
+                    if (_homeGenieService.Groups.Find(g => g.Name == group.Name) == null)
                     {
                         LogMessage("+ Adding Modules Group: " + group.Name);
-                        _homegenieService.Groups.Add(group);
+                        _homeGenieService.Groups.Add(group);
                         if (!configChanged)
                             configChanged = true;
                     }
@@ -428,7 +436,7 @@ namespace HomeGenie.Service.Updates
                 //
                 if (configChanged)
                 {
-                    _homegenieService.UpdateGroupsDatabase();
+                    _homeGenieService.UpdateGroupsDatabase();
                 }
             }
             catch
@@ -458,10 +466,10 @@ namespace HomeGenie.Service.Updates
                 var configChanged = false;
                 foreach (var group in automationGroups)
                 {
-                    if (_homegenieService.AutomationGroups.Find(g => g.Name == group.Name) == null)
+                    if (_homeGenieService.AutomationGroups.Find(g => g.Name == group.Name) == null)
                     {
                         LogMessage("+ Adding Automation Group: " + group.Name);
-                        _homegenieService.AutomationGroups.Add(group);
+                        _homeGenieService.AutomationGroups.Add(group);
                         if (!configChanged)
                             configChanged = true;
                     }
@@ -469,7 +477,7 @@ namespace HomeGenie.Service.Updates
                 //
                 if (configChanged)
                 {
-                    _homegenieService.UpdateAutomationGroupsDatabase();
+                    _homeGenieService.UpdateAutomationGroupsDatabase();
                 }
             }
             catch
@@ -483,7 +491,7 @@ namespace HomeGenie.Service.Updates
             return success;
         }
 
-        public bool UpdateScheduler(string file)
+        private bool UpdateScheduler(string file)
         {
             var success = true;
             //
@@ -500,10 +508,10 @@ namespace HomeGenie.Service.Updates
                 foreach (var item in schedulerItems)
                 {
                     // it will only import the new ones
-                    if (_homegenieService.ProgramManager.SchedulerService.Get(item.Name) == null)
+                    if (_homeGenieService.ProgramManager.SchedulerService.Get(item.Name) == null)
                     {
                         LogMessage("+ Adding Scheduler Item: " + item.Name);
-                        _homegenieService.ProgramManager.SchedulerService.AddOrUpdate(item.Name, item.CronExpression, item.Data, item.Description, item.Script);
+                        _homeGenieService.ProgramManager.SchedulerService.AddOrUpdate(item.Name, item.CronExpression, item.Data, item.Description, item.Script);
                         if (!configChanged)
                             configChanged = true;
                     }
@@ -511,7 +519,7 @@ namespace HomeGenie.Service.Updates
                 //
                 if (configChanged)
                 {
-                    _homegenieService.UpdateSchedulerDatabase();
+                    _homeGenieService.UpdateSchedulerDatabase();
                 }
             }
             catch
@@ -525,7 +533,7 @@ namespace HomeGenie.Service.Updates
             return success;
         }
         
-        public bool UpdateSystemConfig(string file)
+        private bool UpdateSystemConfig(string file)
         {
             var success = true;
             //
@@ -540,10 +548,10 @@ namespace HomeGenie.Service.Updates
                 var configChanged = false;
                 foreach (var iface in config.MigService.Interfaces)
                 {
-                    if (_homegenieService.SystemConfiguration.MigService.GetInterface(iface.Domain) == null)
+                    if (_homeGenieService.SystemConfiguration.MigService.GetInterface(iface.Domain) == null)
                     {
                         LogMessage("+ Adding MIG Interface: " + iface.Domain);
-                        _homegenieService.SystemConfiguration.MigService.Interfaces.Add(iface);
+                        _homeGenieService.SystemConfiguration.MigService.Interfaces.Add(iface);
                         if (!configChanged)
                             configChanged = true;
                     }
@@ -551,7 +559,7 @@ namespace HomeGenie.Service.Updates
 
                 if (configChanged)
                 {
-                    _homegenieService.SystemConfiguration.Update();
+                    _homeGenieService.SystemConfiguration.Update();
                 }
             }
             catch
