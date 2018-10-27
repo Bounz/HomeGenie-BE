@@ -126,6 +126,7 @@ namespace HomeGenie.Service.Handlers
                 case "UpdateManager.Check":
                 {
                     var checkSuccess = _homegenie.UpdateChecker.Check();
+                    // TODO don't return ERROR if there is no new release
                     request.ResponseData = new ResponseText(checkSuccess ? "OK" : "ERROR");
                     break;
                 }
