@@ -14,10 +14,13 @@ namespace HomeGenie.Service.Updates
     public class UpdateChecker
     {
         public delegate void UpdateProgressEvent(object sender, UpdateProgressEventArgs args);
+
         public UpdateProgressEvent UpdateProgress;
 
         private readonly string _githubReleases = "https://api.github.com/repos/Bounz/HomeGenie-BE/releases";
-        private readonly string _dockerHubReleases = "https://registry.hub.docker.com/v2/repositories/bounz/homegenie/tags";
+
+        private readonly string _dockerHubReleases =
+            "https://registry.hub.docker.com/v2/repositories/bounz/homegenie/tags";
 
         private ReleaseInfo _currentRelease;
         private List<ReleaseInfo> _newReleases;
@@ -90,8 +93,9 @@ namespace HomeGenie.Service.Updates
             var latestReleases = await GetLatestGitHubReleaseAsync(CurrentVersion);
             foreach (var gitHubRelease in latestReleases)
             {
-                var relFile = gitHubRelease.Assets.FirstOrDefault(x => x.BrowserDownloadUrl.EndsWith(".tgz"));
-                if(relFile == null)
+                var relFile = gitHubRelease.Assets.FirstOrDefault(x => x.BrowserDownloadUrl.EndsWith(".tgz") ||
+                                                                       x.BrowserDownloadUrl.EndsWith(".zip"));
+                if (relFile == null)
                     continue;
 
                 var release = new ReleaseInfo
@@ -108,7 +112,8 @@ namespace HomeGenie.Service.Updates
             return releases;
         }
 
-        private async Task<List<GitHubRelease>> GetLatestGitHubReleaseAsync(Version currentVersion, bool checkForPrereleases = false)
+        private async Task<List<GitHubRelease>> GetLatestGitHubReleaseAsync(Version currentVersion,
+            bool checkForPrereleases = false)
         {
 #if DEBUG
             checkForPrereleases = true;
@@ -150,10 +155,9 @@ namespace HomeGenie.Service.Updates
                         }
                     }
                 }
+
                 return update;
             }
         }
-
-
     }
 }
