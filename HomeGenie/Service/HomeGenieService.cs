@@ -417,19 +417,9 @@ namespace HomeGenie.Service
 
         public string GetJsonSerializedModules(bool hideProperties)
         {
-            string jsonModules = "";
             try
             {
-                jsonModules = "[";
-                for (int m = 0; m < _systemModules.Count; m++)// Module m in Modules)
-                {
-                    jsonModules += Utility.Module2Json(_systemModules[m], hideProperties) + ",\n";
-                    //System.Threading.Thread.Sleep(1);
-                }
-                jsonModules = jsonModules.TrimEnd(',', '\n');
-                jsonModules += "]";
-                // old code for generate json, it was too much cpu time consuming on ARM
-                //jsonmodules = JsonConvert.SerializeObject(Modules, Formatting.Indented);
+                return Utility.Modules2Json(Modules, hideProperties);
             }
             catch (Exception ex)
             {
@@ -440,9 +430,8 @@ namespace HomeGenie.Service
                     "Exception.StackTrace",
                     ex.StackTrace
                 );
+                return null;
             }
-            //
-            return jsonModules;
         }
 
         // TODO: move this to a better location
@@ -866,7 +855,8 @@ namespace HomeGenie.Service
                     Properties.SystemInfoHttpAddress,
                     _webGateway.GetOption("Host").Value + ":" + _webGateway.GetOption("Port").Value
                 );
-                // Try auto-binding to another port >= 8080 (up to 8090)
+
+                // Try auto-binding to another port >= 8080 (up to 8090) ?????
                 if (webPort < 8080)
                     webPort = 8080;
                 else

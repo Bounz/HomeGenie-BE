@@ -32,8 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LiteDB, Version=4.1.1.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27">
-      <HintPath>..\packages\LiteDB.4.1.1\lib\net40\LiteDB.dll</HintPath>
+    <Reference Include="LiteDB, Version=4.1.4.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27">
+      <HintPath>..\..\packages\LiteDB.4.1.4\lib\net40\LiteDB.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -45,13 +46,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\HomeGenie\HomeGenie.csproj">
       <Project>{bfd3c868-1f62-43ff-8771-cf21825f0c0a}</Project>
       <Name>HomeGenie</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

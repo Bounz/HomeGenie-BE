@@ -356,19 +356,29 @@ namespace MIG
         /// <param name="domain">Domain.</param>
         public MigInterface EnableInterface(string domain)
         {
-            MigInterface migInterface = GetInterface(domain);
-            if (migInterface != null)
+            var migInterface = GetInterface(domain);
+            try
             {
-                Log.Debug("Enabling Interface {0}", domain);
-                configuration.GetInterface(domain).IsEnabled = true;
-                migInterface.IsEnabled = true;
-                migInterface.Connect();
+                if (migInterface != null)
+                {
+                    Log.Debug("Enabling Interface {0}", domain);
+                    configuration.GetInterface(domain).IsEnabled = true;
+                    migInterface.IsEnabled = true;
+                    migInterface.Connect();
+                }
+                else
+                {
+                    Log.Debug("Interface not found {0}", domain);
+                }
+                return migInterface;
             }
-            else
+            catch (Exception e)
             {
-                Log.Debug("Interface not found {0}", domain);
+                Log.Error(e, $"Error during starting interface {domain}");
+                Console.WriteLine(e);
+                return migInterface;
             }
-            return migInterface;
+            
         }
 
         /// <summary>

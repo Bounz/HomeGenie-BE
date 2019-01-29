@@ -64,14 +64,27 @@ namespace HomeGenie.Service
             return timestamp;
         }
 
-        public static string Module2Json(Module module, bool hideProperties)
+        public static string Modules2Json(List<Module> modules, bool hideProperties)
         {
-            var settings = new JsonSerializerSettings{ Formatting = Formatting.Indented };
+            var settings = new JsonSerializerSettings {Formatting = Formatting.Indented};
             if (hideProperties)
             {
-                var resolver = new IgnorePropertyContractResolver(new List<string>{ "Properties" });
+                var resolver = new IgnorePropertyContractResolver(new List<string> {"Properties"});
                 settings.ContractResolver = resolver;
             }
+
+            return JsonConvert.SerializeObject(modules, settings);
+        }
+
+        public static string Module2Json(Module module, bool hideProperties)
+        {
+            var settings = new JsonSerializerSettings {Formatting = Formatting.Indented};
+            if (hideProperties)
+            {
+                var resolver = new IgnorePropertyContractResolver(new List<string> {"Properties"});
+                settings.ContractResolver = resolver;
+            }
+
             return JsonConvert.SerializeObject(module, settings);
         }
 

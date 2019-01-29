@@ -706,19 +706,13 @@ namespace HomeGenie.Service.Handlers
                     var theGroup = _homegenie.Groups.Find(z => z.Name.ToLower() == migCommand.GetOption(0).Trim().ToLower());
                     if (theGroup != null)
                     {
-                        var jsonmodules = "[";
-                        for (var m = 0; m < theGroup.Modules.Count; m++)
-                        {
-                            var groupModule = _homegenie.Modules.Find(mm => mm.Domain == theGroup.Modules[m].Domain && mm.Address == theGroup.Modules[m].Address);
-                            if (groupModule != null)
-                            {
-                                jsonmodules += Utility.Module2Json(groupModule, false) + ",\n";
-                            }
-                        }
+                        var groupModules = theGroup.Modules
+                            .Select(x => _homegenie.Modules.Find(m => m.Domain == x.Domain &&
+                                                                      m.Address == x.Address))
+                            .Where(x => x != null)
+                            .ToList();
 
-                        jsonmodules = jsonmodules.TrimEnd(',', '\n');
-                        jsonmodules += "]";
-                        request.ResponseData = jsonmodules;
+                        request.ResponseData = Utility.Modules2Json(groupModules, false);
                     }
                     break;
 
@@ -1026,7 +1020,8 @@ namespace HomeGenie.Service.Handlers
                 case "Modules.Get":
                     try
                     {
-                        var module = _homegenie.Modules.Find(m => m.Domain == migCommand.GetOption(0) && m.Address == migCommand.GetOption(1));
+                        var module = _homegenie.Modules.Find(m => m.Domain == migCommand.GetOption(0) &&
+                                                                  m.Address == migCommand.GetOption(1));
                         request.ResponseData = Utility.Module2Json(module, false);
                     }
                     catch (Exception ex)

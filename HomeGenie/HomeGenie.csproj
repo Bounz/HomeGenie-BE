@@ -110,8 +110,9 @@
     <Reference Include="KNXLib, Version=1.1.9.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\KNX.net.1.1.9\lib\net40\KNXLib.dll</HintPath>
     </Reference>
-    <Reference Include="LiteDB, Version=4.1.1.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27">
-      <HintPath>..\packages\LiteDB.4.1.1\lib\net40\LiteDB.dll</HintPath>
+    <Reference Include="LiteDB, Version=4.1.4.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27">
+      <HintPath>..\packages\LiteDB.4.1.4\lib\net40\LiteDB.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="M2Mqtt.Net, Version=4.3.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\M2Mqtt.4.3.0.0\lib\net45\M2Mqtt.Net.dll</HintPath>

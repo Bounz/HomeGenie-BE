@@ -356,7 +356,7 @@ namespace HomeGenie.Automation.Scheduler
 
                         default:
                         {
-                            // Check expresion from scheduled item with a given name
+                            // Check expression from scheduled item with a given name
                             var eventItem = Get(eventName);
                             if (eventItem == null)
                             {
