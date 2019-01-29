@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using HomeGenie.Service;
 using HomeGenie.Service.Constants;
 using LiteDB;
+using Logger = NLog.Logger;
 
 namespace HomeGenie.Database
 {
@@ -15,8 +16,11 @@ namespace HomeGenie.Database
         private readonly string _dbFileName;
         private readonly string _collectionName;
 
-        public GenericRepository(string dbFileName)
+        private readonly Logger _log;
+
+        protected GenericRepository(string dbFileName, Logger log)
         {
+            _log = log;
             var attribute = typeof(T).GetCustomAttribute<LiteDbCollectionAttribute>();
             _dbFileName = dbFileName;
             _collectionName = attribute.CollectionName;
@@ -34,23 +38,52 @@ namespace HomeGenie.Database
 
         protected void Execute(Action<LiteCollection<T>> action, [CallerMemberName] string caller = "")
         {
-            var sw = StartExecute();
-            using (var db = new LiteDatabase(_dbFileName))
+            void PerformAction(LiteDatabase db)
             {
                 var collection = db.GetCollection<T>(_collectionName);
                 action(collection);
+            }
+
+            var sw = StartExecute();
+            using (var db = new LiteDatabase(_dbFileName))
+            {
+                try
+                {
+                    PerformAction(db);
+                }
+                catch (Exception e)
+                {
+                    _log.Error(e);
+                    db.Shrink();
+                    PerformAction(db);
+                }
+
             }
             StopExecute(sw, caller);
         }
 
         protected TOut Execute<TOut>(Func<LiteCollection<T>, TOut> action, [CallerMemberName] string caller = "")
         {
+            TOut PerformAction(LiteDatabase db)
+            {
+                var collection = db.GetCollection<T>(_collectionName);
+                return action(collection);
+            }
+
             TOut result;
             var sw = StartExecute();
             using (var db = new LiteDatabase(_dbFileName))
             {
-                var collection = db.GetCollection<T>(_collectionName);
-                result = action(collection);
+                try
+                {
+                    result = PerformAction(db);
+                }
+                catch (Exception e)
+                {
+                    _log.Error(e);
+                    db.Shrink();
+                    result = PerformAction(db);
+                }
             }
             StopExecute(sw, caller);
             return result;

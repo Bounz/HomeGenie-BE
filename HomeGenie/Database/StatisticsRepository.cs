@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using HomeGenie.Data;
 using HomeGenie.Service.Logging;
+using NLog;
 
 namespace HomeGenie.Database
 {
     public class StatisticsRepository : GenericRepository<StatisticsDbEntry>, IStatisticsRepository
     {
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
+
         public StatisticsRepository()
-            : base(FilePaths.StatisticsDbFilePath)
+            : base(FilePaths.StatisticsDbFilePath, Log)
         {
             Execute(collection =>
             {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using HomeGenie.Automation.Scheduler;
 using NUnit.Framework;
 
-namespace HomeGenieTests
+namespace HomeGenie.UnitTests
 {
     [TestFixture]
     public class SchedulerServiceTest
@@ -22,22 +22,22 @@ namespace HomeGenieTests
         public void BasicCronExpression()
         {
             var expression = "0 * * * *";
-            var occurences = GetOccurencesForDate(_scheduler, _start, expression);
+            var occurrences = GetOccurrencesForDate(_scheduler, _start, expression);
 
-            DisplayOccurences(expression, occurences);
-            Assert.That(occurences.Count, Is.EqualTo(24));
+            DisplayOccurrences(expression, occurrences);
+            Assert.That(occurrences.Count, Is.EqualTo(24));
         }
 
         [Test]
         [TestCase("(30 22 * * *) > (49 22 * * *)", 20)]
         [TestCase("(50 23 * * *) > (9 0 * * *)", 20)]
         [TestCase("(50 23 * * *) > (9 1 * * *)", 80)]
-        public void CronExpressionWithSpan(string expression, int expectedOccurences)
+        public void CronExpressionWithSpan(string expression, int expectedOccurrences)
         {
-            var occurences = GetOccurencesForDate(_scheduler, _start, expression);
+            var occurrences = GetOccurrencesForDate(_scheduler, _start, expression);
 
-            DisplayOccurences(expression, occurences);
-            Assert.That(occurences.Count, Is.EqualTo(expectedOccurences));
+            DisplayOccurrences(expression, occurrences);
+            Assert.That(occurrences.Count, Is.EqualTo(expectedOccurrences));
         }
 
         [Test]
@@ -45,10 +45,10 @@ namespace HomeGenieTests
         [TestCase("(30 * * * *) & (* 22,23 * * *)")]
         public void CronExpressionWithAnd(string expression)
         {
-            var occurences = GetOccurencesForDate(_scheduler, _start, expression);
+            var occurrences = GetOccurrencesForDate(_scheduler, _start, expression);
 
-            DisplayOccurences(expression, occurences);
-            Assert.That(occurences.Count, Is.EqualTo(2));
+            DisplayOccurrences(expression, occurrences);
+            Assert.That(occurrences.Count, Is.EqualTo(2));
         }
 
         [Test]
@@ -56,10 +56,10 @@ namespace HomeGenieTests
         [TestCase("(30 22 * * *) | (49 22 * * *)")]
         public void CronExpressionWithOr(string expression)
         {
-            var occurences = GetOccurencesForDate(_scheduler, _start, expression);
+            var occurrences = GetOccurrencesForDate(_scheduler, _start, expression);
 
-            DisplayOccurences(expression, occurences);
-            Assert.That(occurences.Count, Is.EqualTo(2));
+            DisplayOccurrences(expression, occurrences);
+            Assert.That(occurrences.Count, Is.EqualTo(2));
         }
 
         [Test]
@@ -67,25 +67,44 @@ namespace HomeGenieTests
         [TestCase("(30 * * * *) ! (* 1-12 * * *)")]
         public void CronExpressionWithExcept(string expression)
         {
-            var occurences = GetOccurencesForDate(_scheduler, _start, expression);
+            var occurrences = GetOccurrencesForDate(_scheduler, _start, expression);
 
-            DisplayOccurences(expression, occurences);
-            Assert.That(occurences.Count, Is.EqualTo(12));
+            DisplayOccurrences(expression, occurrences);
+            Assert.That(occurrences.Count, Is.EqualTo(12));
         }
 
-        private static List<DateTime> GetOccurencesForDate(SchedulerService scheduler, DateTime date, string expression)
+        [Test]
+        public void Test()
+        {
+            var expression = "0 0 1 1 *";
+            var occurrences = GetOccurrencesForYear(_scheduler, _start, expression);
+
+            DisplayOccurrences(expression, occurrences);
+            //Assert.That(occurrences.Count, Is.EqualTo(12));
+            //59 59 23 ? 11 THU#4 *
+        }
+
+        private static List<DateTime> GetOccurrencesForDate(SchedulerService scheduler, DateTime date, string expression)
         {
             date = DateTime.SpecifyKind(date, DateTimeKind.Local);
             return scheduler.GetScheduling(date.Date, date.Date.AddHours(24).AddMinutes(-1), expression);
         }
 
-        private void DisplayOccurences(string cronExpression, List<DateTime> occurences)
+        private void DisplayOccurrences(string cronExpression, List<DateTime> occurrences)
         {
             Console.WriteLine("Cron expression: {0}", cronExpression);
-            foreach (var dateTime in occurences)
+            foreach (var dateTime in occurrences)
             {
                 Console.WriteLine(dateTime.ToString("yyyy.MM.dd HH:mm:ss"));
             }
+        }
+
+        private static List<DateTime> GetOccurrencesForYear(SchedulerService scheduler, DateTime date, string expression)
+        {
+            date = DateTime.SpecifyKind(date, DateTimeKind.Local);
+            var start = new DateTime(date.Year, 1, 1, 0, 0, 0 , DateTimeKind.Local);
+            var end = new DateTime(date.Year, 12, 31, 23, 59, 59 , DateTimeKind.Local);
+            return scheduler.GetScheduling(start, end, expression);
         }
     }
 }
