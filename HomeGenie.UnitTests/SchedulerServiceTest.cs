@@ -74,6 +74,23 @@ namespace HomeGenie.UnitTests
         }
 
         [Test]
+        [TestCase(08, 01, 0)]
+        [TestCase(02, 01, 241)]
+        [TestCase(11, 03, 241)]
+        public void ComplexCronExpression(int month, int day, int occurencesExpected)
+        {
+            var expression =
+                "[ (* * * 11,12,1,2 *) : (* * 1-15 3 *) ] ; [(30 6 * * *) > (30 10 * * *)]";
+                //"[ ((* * * 11-12 *)) : ((* * 1 1 *) > (* * 15 3 *))] ; [(30 6 * * *) > (30 10 * * *)]";
+                //"[ ((* * * 11-12 *)) : ((* * 1 1 *) > (* * 15 3 *))] ; [(30 6 * * *) > (30 10 * * *)]";
+            var date = new DateTime(2019, month, day);
+            var occurrences = GetOccurrencesForDate(_scheduler, date, expression);
+            // DisplayOccurrences(expression, occurrences);
+            Assert.That(occurrences.Count, Is.EqualTo(occurencesExpected));
+
+        }
+
+        [Test]
         public void Test()
         {
             var expression = "0 0 1 1 *";

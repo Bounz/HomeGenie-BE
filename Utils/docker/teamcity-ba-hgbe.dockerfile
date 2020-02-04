@@ -9,9 +9,13 @@ RUN echo "deb http://download.mono-project.com/repo/debian stable-jessie/snapsho
   && apt-get update \
   && apt-get install -y \
     mono-complete \
-    hashdeep \
-	qemu qemu-user-static qemu-user binfmt-support \
   && rm -rf /var/lib/apt/lists/* /tmp/*
 
 RUN curl -O -L https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2
 RUN tar -xjvf linux-amd64-github-release.tar.bz2 && mv bin/linux/amd64/github-release /opt/github-release
+
+RUN apt-get install -y \
+    hashdeep \
+    unzip \
+    qemu qemu-user-static qemu-user binfmt-support \
+  && rm -rf /var/lib/apt/lists/* /tmp/*

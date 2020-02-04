@@ -490,34 +490,6 @@ namespace HomeGenie.Automation.Scheduler
             }
         }
 
-        private bool EvaluateCronEntry(DateTime date, string cronExpression)
-        {
-            if (date.Kind != DateTimeKind.Local)
-                date = date.ToLocalTime();
-            var cronSchedule = NCrontab.CrontabSchedule.TryParse(cronExpression);
-            if (!cronSchedule.IsError)
-            {
-                var occurrence = cronSchedule.Value.GetNextOccurrence(date.AddMinutes(-1));
-                var d1 = date.ToUniversalTime().ToString(FORMAT_DATETIME);
-                var d2 = occurrence.ToUniversalTime().ToString(FORMAT_DATETIME);
-                if (d1 == d2)
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                masterControlProgram.HomeGenie.MigService.RaiseEvent(
-                    this,
-                    Domains.HomeAutomation_HomeGenie,
-                    SourceModule.Scheduler,
-                    cronExpression,
-                    Properties.SchedulerError,
-                    JsonConvert.SerializeObject("Syntax error in expression '"+cronExpression+"'"));
-            }
-            return false;
-        }
-
         private List<DateTime> GetNextOccurrences(DateTime dateStart, DateTime dateEnd, string cronExpression)
         {
             if (dateStart.Kind != DateTimeKind.Local)
