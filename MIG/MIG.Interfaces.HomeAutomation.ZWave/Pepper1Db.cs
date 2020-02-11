@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using SharpCompress.Common;
 using SharpCompress.Readers;
 
 namespace MIG.Interfaces.HomeAutomation
