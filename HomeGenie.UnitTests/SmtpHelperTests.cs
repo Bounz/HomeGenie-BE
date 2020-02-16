@@ -6,10 +6,10 @@ using NLog.Config;
 using NLog.Targets;
 using NUnit.Framework;
 
-namespace HomeGenieTests
+namespace HomeGenie.UnitTests
 {
     [TestFixture]
-    public class SmptHelperTests
+    public class SmtpHelperTests
     {
         [Test]
         public void SendMessage_MessageWithAttachments_ShouldLogMessageToSend()
@@ -24,13 +24,13 @@ namespace HomeGenieTests
             configuration.LoggingRules.Add(new LoggingRule("*", LogLevel.Trace, memoryTarget));
             LogManager.Configuration = configuration;
 
-            var paramenters = new List<ModuleParameter>
+            var parameters = new List<ModuleParameter>
             {
                 new ModuleParameter {Name = "Messaging.Email.SmtpServer", Value = "smtp.domain.tld"},
                 new ModuleParameter {Name = "Messaging.Email.SmtpPort", Value = "25"}
             };
 
-            var netHelper = new NetHelper(paramenters, "");
+            var netHelper = new NetHelper(parameters, "");
             netHelper.AddAttachment("some.file", new byte[] {0x00});
 
             // Act

@@ -69,7 +69,7 @@
     <Compile Include="SchedulerScriptingEngineTests.cs" />
     <Compile Include="SchedulerServiceTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SmptHelperTests.cs" />
+    <Compile Include="SmtpHelperTests.cs" />
     <Compile Include="StatisticsCoreServiceTests.cs" />
     <Compile Include="StringCipherTests.cs" />
   </ItemGroup>
