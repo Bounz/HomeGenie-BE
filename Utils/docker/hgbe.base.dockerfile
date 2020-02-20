@@ -1,4 +1,5 @@
-FROM mono
+ARG arch
+FROM ${arch}/mono
 LABEL maintainer="Alexander Sidorenko <me@bounz.net>"
 
 RUN apt-get update && apt-get install -y \

@@ -1,4 +1,5 @@
-FROM bounz/hgbe.base
+ARG arch
+FROM bounz/hgbe.base:${arch}-latest
 LABEL maintainer="Alexander Sidorenko <me@bounz.net>"
 
 COPY ./hg_compiled /usr/local/bin/homegenie/bin/

@@ -19,3 +19,6 @@ packages/
 !HomeGenie/Service/Packages
 
 \.vs/
+secrets.txt
+hg_compiled
+testrunner
