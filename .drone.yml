@@ -1,71 +1,75 @@
+---
 kind: pipeline
 type: docker
 name: build
 
+platform:
+  os: linux
+  arch: amd64
+
 steps:
-  - name: build-with-mono
-    image: mono
-    commands:
-      - nuget restore HomeGenie_Linux/HomeGenie_Linux.sln
-      - xbuild /p:Configuration=Debug HomeGenie_Linux/HomeGenie_Linux.sln
+- name: build-with-mono
+  image: mono
+  commands:
+  - nuget restore HomeGenie_Linux/HomeGenie_Linux.sln
+  - xbuild /p:Configuration=Debug HomeGenie_Linux/HomeGenie_Linux.sln
 
-  - name: test
-    image: mono
-    commands:
-      - nuget install NUnit.ConsoleRunner -Version 3.9.0 -OutputDirectory testrunner
-      - mono ./testrunner/NUnit.ConsoleRunner.3.9.0/tools/nunit3-console.exe HomeGenie.UnitTests/bin/Debug/HomeGenie.UnitTests.dll
+- name: test
+  image: mono
+  commands:
+  - nuget install NUnit.ConsoleRunner -Version 3.9.0 -OutputDirectory testrunner
+  - mono ./testrunner/NUnit.ConsoleRunner.3.9.0/tools/nunit3-console.exe HomeGenie.UnitTests/bin/Debug/HomeGenie.UnitTests.dll
 
-  - name: copy artifacts
-    image: alpine
-    commands:
-      - cp -R HomeGenie/bin/Debug/ Utils/docker/hg_compiled/
+- name: copy artifacts
+  image: alpine
+  commands:
+  - cp -R HomeGenie/bin/Debug/ Utils/docker/hg_compiled/
 
-  - name: build images
-    image: docker:19.03.5-dind
-    when:
-      ref:
-      - refs/tags/V*
-    environment:
-      DOCKER_DRIVER: overlay2
-      USERNAME:
-       from_secret: docker_username
-      PASSWORD:
-       from_secret: docker_password
-    volumes:
-      - name: dockersock
-        path: /var/run
-    commands:
-      - docker login -u $USERNAME -p $PASSWORD
-      - cd Utils/docker
-      - docker build -f hgbe.dockerfile --build-arg arch=amd64 -t bounz/hgbe:amd64-${DRONE_TAG} -t bounz/hgbe:amd64-latest .
-      - docker push bounz/hgbe:amd64-${DRONE_TAG}
-      - docker push bounz/hgbe:amd64-latest
-      - docker build -f hgbe.dockerfile --build-arg arch=arm32v7 -t bounz/hgbe:arm32v7-${DRONE_TAG} -t bounz/hgbe:arm32v7-latest .
-      - docker push bounz/hgbe:arm32v7-${DRONE_TAG}
-      - docker push bounz/hgbe:arm32v7-latest
+- name: build images
+  image: docker:19.03.5-dind
+  commands:
+  - docker login -u ${USERNAME} -p ${PASSWORD}
+  - cd Utils/docker
+  - docker build -f hgbe.dockerfile --build-arg arch=amd64 -t bounz/hgbe:amd64-${DRONE_TAG=noop} -t bounz/hgbe:amd64-latest .
+  - docker push bounz/hgbe:amd64-${DRONE_TAG=noop}
+  - docker push bounz/hgbe:amd64-latest
+  - docker build -f hgbe.dockerfile --build-arg arch=arm32v7 -t bounz/hgbe:arm32v7-${DRONE_TAG=noop} -t bounz/hgbe:arm32v7-latest .
+  - docker push bounz/hgbe:arm32v7-${DRONE_TAG=noop}
+  - docker push bounz/hgbe:arm32v7-latest
+  environment:
+    DOCKER_DRIVER: overlay2
+    PASSWORD:
+      from_secret: docker_password
+    USERNAME:
+      from_secret: docker_username
+  volumes:
+  - name: dockersock
+    path: /var/run
+  when:
+    ref:
+    - refs/tags/V*
 
-  - name: create manifest
-    image: docker:19.03.5-dind
-    when:
-      ref:
-      - refs/tags/V*
-    environment:
-      DOCKER_DRIVER: overlay2
-      USERNAME:
-       from_secret: docker_username
-      PASSWORD:
-       from_secret: docker_password
-    volumes:
-      - name: dockersock
-        path: /var/run
-    commands:
-      - export DOCKER_CLI_EXPERIMENTAL=enabled
-      - docker login -u $USERNAME -p $PASSWORD
-      - docker manifest create bounz/hgbe:${DRONE_TAG} bounz/hgbe:amd64-${DRONE_TAG} bounz/hgbe:arm32v7-${DRONE_TAG}
-      - docker manifest push bounz/hgbe:${DRONE_TAG}
-      - docker manifest create bounz/hgbe:latest bounz/hgbe:amd64-latest bounz/hgbe:arm32v7-latest
-      - docker manifest push bounz/hgbe:latest
-
+- name: create manifest
+  image: docker:19.03.5-dind
+  commands:
+  - export DOCKER_CLI_EXPERIMENTAL=enabled
+  - docker login -u ${USERNAME} -p ${PASSWORD}
+  - docker manifest create bounz/hgbe:${DRONE_TAG=noop} bounz/hgbe:amd64-${DRONE_TAG=noop} bounz/hgbe:arm32v7-${DRONE_TAG=noop}
+  - docker manifest push bounz/hgbe:${DRONE_TAG=noop}
+  - docker manifest create bounz/hgbe:latest bounz/hgbe:amd64-latest bounz/hgbe:arm32v7-latest
+  - docker manifest push bounz/hgbe:latest
+  environment:
+    DOCKER_DRIVER: overlay2
+    PASSWORD:
+      from_secret: docker_password
+    USERNAME:
+      from_secret: docker_username
+  volumes:
+  - name: dockersock
+    path: /var/run
+  when:
+    ref:
+    - refs/tags/V*
 
 services:
 - name: docker
@@ -79,92 +83,76 @@ volumes:
 - name: dockersock
   temp: {}
 
-# volumes:
-# - name: docker.sock
-#   host:
-#     path: /var/run/docker.sock
-  
-# ---
-# kind: pipeline
-# type: docker
-# name: pack-deb
-
-# steps:
-#   - gdebi
-
-
-
-
-
-
-
 ---
 kind: pipeline
 type: docker
 name: build-base-image
 
-trigger:
-  ref:
-  - refs/tags/base-image-V*
+platform:
+  os: linux
+  arch: amd64
 
 steps:
-  - name: build base image amd64
-    image: docker:19.03.5-dind
-    environment:
-      DOCKER_DRIVER: overlay2
-      USERNAME:
-       from_secret: docker_username
-      PASSWORD:
-       from_secret: docker_password
-    volumes:
-      - name: docker.sock
-        path: /var/run/docker.sock
-    commands:
-      - docker login -u $USERNAME -p $PASSWORD
-      - cd Utils/docker
-      - docker build -f hgbe.base.dockerfile --build-arg arch=amd64 -t bounz/hgbe.base:amd64-${DRONE_TAG} -t bounz/hgbe.base:amd64-latest .
-      - docker push bounz/hgbe.base:amd64-${DRONE_TAG}
-      - docker push bounz/hgbe.base:amd64-latest
+- name: build base image amd64
+  image: docker:19.03.5-dind
+  commands:
+  - docker login -u ${USERNAME} -p ${PASSWORD}
+  - cd Utils/docker
+  - docker build -f hgbe.base.dockerfile --build-arg arch=amd64 -t bounz/hgbe.base:amd64-${DRONE_TAG=noop} -t bounz/hgbe.base:amd64-latest .
+  - docker push bounz/hgbe.base:amd64-${DRONE_TAG=noop}
+  - docker push bounz/hgbe.base:amd64-latest
+  environment:
+    DOCKER_DRIVER: overlay2
+    PASSWORD:
+      from_secret: docker_password
+    USERNAME:
+      from_secret: docker_username
+  volumes:
+  - name: docker.sock
+    path: /var/run/docker.sock
 
-  - name: build base image arm32v7
-    image: docker:19.03.5-dind
-    environment:
-      DOCKER_DRIVER: overlay2
-      USERNAME:
-       from_secret: docker_username
-      PASSWORD:
-       from_secret: docker_password
-    volumes:
-      - name: docker.sock
-        path: /var/run/docker.sock
-    commands:
-      - docker login -u $USERNAME -p $PASSWORD
-      - cd Utils/docker
-      - docker build -f hgbe.base.dockerfile --build-arg arch=arm32v7 -t bounz/hgbe.base:arm32v7-${DRONE_TAG} -t bounz/hgbe.base:arm32v7-latest .
-      - docker push bounz/hgbe.base:arm32v7-${DRONE_TAG}
-      - docker push bounz/hgbe.base:arm32v7-latest
+- name: build base image arm32v7
+  image: docker:19.03.5-dind
+  commands:
+  - docker login -u ${USERNAME} -p ${PASSWORD}
+  - cd Utils/docker
+  - docker build -f hgbe.base.dockerfile --build-arg arch=arm32v7 -t bounz/hgbe.base:arm32v7-${DRONE_TAG=noop} -t bounz/hgbe.base:arm32v7-latest .
+  - docker push bounz/hgbe.base:arm32v7-${DRONE_TAG=noop}
+  - docker push bounz/hgbe.base:arm32v7-latest
+  environment:
+    DOCKER_DRIVER: overlay2
+    PASSWORD:
+      from_secret: docker_password
+    USERNAME:
+      from_secret: docker_username
+  volumes:
+  - name: docker.sock
+    path: /var/run/docker.sock
 
-  - name: create manifest
-    image: docker:19.03.5-dind
-    environment:
-      DOCKER_DRIVER: overlay2
-      USERNAME:
-       from_secret: docker_username
-      PASSWORD:
-       from_secret: docker_password
-    volumes:
-      - name: docker.sock
-        path: /var/run/docker.sock
-    commands:
-      - export DOCKER_CLI_EXPERIMENTAL=enabled
-      - docker login -u $USERNAME -p $PASSWORD
-      - docker manifest create bounz/hgbe.base:${DRONE_TAG} bounz/hgbe.base:amd64-${DRONE_TAG} bounz/hgbe.base:arm32v7-${DRONE_TAG}
-      - docker manifest push bounz/hgbe.base:${DRONE_TAG}
-      - docker manifest create bounz/hgbe.base:latest bounz/hgbe.base:amd64-latest bounz/hgbe.base:arm32v7-latest
-      - docker manifest push bounz/hgbe.base:latest
-
+- name: create manifest
+  image: docker:19.03.5-dind
+  commands:
+  - export DOCKER_CLI_EXPERIMENTAL=enabled
+  - docker login -u ${USERNAME} -p ${PASSWORD}
+  - docker manifest create bounz/hgbe.base:${DRONE_TAG=noop} bounz/hgbe.base:amd64-${DRONE_TAG=noop} bounz/hgbe.base:arm32v7-${DRONE_TAG=noop}
+  - docker manifest push bounz/hgbe.base:${DRONE_TAG=noop}
+  - docker manifest create bounz/hgbe.base:latest bounz/hgbe.base:amd64-latest bounz/hgbe.base:arm32v7-latest
+  - docker manifest push bounz/hgbe.base:latest
+  environment:
+    DOCKER_DRIVER: overlay2
+    PASSWORD:
+      from_secret: docker_password
+    USERNAME:
+      from_secret: docker_username
+  volumes:
+  - name: docker.sock
+    path: /var/run/docker.sock
 
 volumes:
 - name: docker.sock
   host:
     path: /var/run/docker.sock
+
+trigger:
+  ref:
+  - refs/tags/base-image-V*
