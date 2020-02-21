@@ -1,10 +1,5 @@
 ARG arch
-ARG qemu
-FROM multiarch/qemu-user-static:x86_64-${qemu} as qemu
 FROM ${arch}/mono
-
-ARG qemu
-COPY --from=qemu /usr/bin/qemu-${qemu}-static /usr/bin
 LABEL maintainer="Alexander Sidorenko <me@bounz.net>"
 
 RUN apt-get update && apt-get install -y \

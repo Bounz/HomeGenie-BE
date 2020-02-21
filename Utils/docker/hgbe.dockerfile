@@ -3,7 +3,6 @@ FROM bounz/hgbe.base:${arch}-latest
 LABEL maintainer="Alexander Sidorenko <me@bounz.net>"
 
 COPY ./hg_compiled /usr/local/bin/homegenie/bin/
-
 RUN chmod -R 777 /usr/local/bin/homegenie
 CMD ["/usr/bin/mono" , "/usr/local/bin/homegenie/bin/HomeGenie.exe"] 
 
