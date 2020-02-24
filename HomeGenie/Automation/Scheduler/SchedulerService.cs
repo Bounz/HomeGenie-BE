@@ -496,10 +496,16 @@ namespace HomeGenie.Automation.Scheduler
                 dateStart = dateStart.ToLocalTime();
             if (dateEnd.Kind != DateTimeKind.Local)
                 dateEnd = dateEnd.ToLocalTime();
-            var cronSchedule = CrontabSchedule.TryParse(cronExpression);
-            return !cronSchedule.IsError
-                ? cronSchedule.Value.GetNextOccurrences(dateStart.AddMinutes(-1), dateEnd).ToList()
-                : null;
+            try
+            {
+                var cronSchedule = CrontabSchedule.TryParse(cronExpression);
+                return cronSchedule?.GetNextOccurrences(dateStart.AddMinutes(-1), dateEnd).ToList();
+            }
+            catch (Exception e)
+            {
+                _log.Error(e);
+                return null;
+            }
         }
 
         private bool IsBetween(DateTime date, DateTime dateStart, DateTime dateEnd)

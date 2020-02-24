@@ -51,7 +51,7 @@
     <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
     <Reference Include="XTenLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\packages\XTenLib.1.0.7\lib\XTenLib.dll</HintPath>
+      <HintPath>..\..\packages\XTenLib.1.0.15\lib\XTenLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

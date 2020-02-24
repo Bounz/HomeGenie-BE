@@ -317,7 +317,8 @@ namespace MIG.Interfaces.HomeAutomation
             case X10RfSecurityEvent.Motion_Normal:
                 OnInterfacePropertyChanged(module.Domain, module.Address, "X10 Security Sensor", ModuleEvents.Status_Level, 0);
                 break;
-            case X10RfSecurityEvent.Remote_Arm:
+            case X10RfSecurityEvent.Remote_ArmHome:
+            case X10RfSecurityEvent.Remote_ArmAway:
             case X10RfSecurityEvent.Remote_Disarm:
             case X10RfSecurityEvent.Remote_Panic:
             case X10RfSecurityEvent.Remote_Panic_15:
