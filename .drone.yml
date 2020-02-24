@@ -8,11 +8,25 @@ platform:
   arch: amd64
 
 steps:
-- name: build-with-mono
+- name: build-commit
   image: mono
   commands:
   - nuget restore HomeGenie_Linux/HomeGenie_Linux.sln
-  - msbuild -p:Configuration=Debug -v:normal HomeGenie_Linux/HomeGenie_Linux.sln
+  - msbuild -p:"Configuration=Debug;AssemblyVersionNumber=1.0.0.${DRONE_BUILD_NUMBER}" -v:normal HomeGenie_Linux/HomeGenie_Linux.sln
+  when:
+    event:
+      exclude:
+      - tag
+
+- name: build-tag
+  image: mono
+  commands:
+  - nuget restore HomeGenie_Linux/HomeGenie_Linux.sln
+  - msbuild -p:"Configuration=Debug;AssemblyVersionNumber=${DRONE_TAG}" -v:normal HomeGenie_Linux/HomeGenie_Linux.sln
+  when:
+    event:
+      include:
+      - tag
 
 - name: test
   image: mono
@@ -25,8 +39,8 @@ steps:
   commands:
   - cp -R HomeGenie/bin/Debug/. Utils/docker/hg_compiled/
   when:
-    ref:
-    - refs/tags/V*
+    event:
+    - tag
 
 - name: build images
   image: docker:19.03.5-dind
@@ -48,8 +62,8 @@ steps:
   - name: docker.sock
     path: /var/run/docker.sock
   when:
-    ref:
-    - refs/tags/V*
+    event:
+    - tag
 
 - name: create manifest
   image: docker:19.03.5-dind
@@ -69,8 +83,8 @@ steps:
   - name: docker.sock
     path: /var/run/docker.sock
   when:
-    ref:
-    - refs/tags/V*
+    event:
+    - tag
 
 volumes:
 - name: docker.sock
@@ -92,8 +106,8 @@ steps:
   commands:
   - docker login -u $USERNAME -p $PASSWORD
   - cd Utils/docker
-  - "docker build -f hgbe.base.x86.dockerfile --build-arg arch=amd64 -t bounz/hgbe.base:${DRONE_TAG:11}-amd64 -t bounz/hgbe.base:latest-amd64 ."
-  - "docker push bounz/hgbe.base:${DRONE_TAG:11}-amd64"
+  - "docker build -f hgbe.base.x86.dockerfile --build-arg arch=amd64 -t bounz/hgbe.base:${DRONE_TAG:10}-amd64 -t bounz/hgbe.base:latest-amd64 ."
+  - "docker push bounz/hgbe.base:${DRONE_TAG:10}-amd64"
   - docker push bounz/hgbe.base:latest-amd64
   environment:
     PASSWORD:
@@ -109,8 +123,8 @@ steps:
   commands:
   - docker login -u $USERNAME -p $PASSWORD
   - cd Utils/docker
-  - "docker build -f hgbe.base.dockerfile --build-arg arch=arm32v7 --build-arg qemu=arm -t bounz/hgbe.base:${DRONE_TAG:11}-arm32v7 -t bounz/hgbe.base:latest-arm32v7 ."
-  - "docker push bounz/hgbe.base:${DRONE_TAG:11}-arm32v7"
+  - "docker build -f hgbe.base.dockerfile --build-arg arch=arm32v7 --build-arg qemu=arm -t bounz/hgbe.base:${DRONE_TAG:10}-arm32v7 -t bounz/hgbe.base:latest-arm32v7 ."
+  - "docker push bounz/hgbe.base:${DRONE_TAG:10}-arm32v7"
   - docker push bounz/hgbe.base:latest-arm32v7
   environment:
     PASSWORD:
@@ -126,8 +140,8 @@ steps:
   commands:
   - export DOCKER_CLI_EXPERIMENTAL=enabled
   - docker login -u $USERNAME -p $PASSWORD
-  - "docker manifest create bounz/hgbe.base:${DRONE_TAG:11} bounz/hgbe.base:${DRONE_TAG:11}-amd64 bounz/hgbe.base:${DRONE_TAG:11}-arm32v7"
-  - "docker manifest push bounz/hgbe.base:${DRONE_TAG:11}"
+  - "docker manifest create bounz/hgbe.base:${DRONE_TAG:10} bounz/hgbe.base:${DRONE_TAG:10}-amd64 bounz/hgbe.base:${DRONE_TAG:10}-arm32v7"
+  - "docker manifest push bounz/hgbe.base:${DRONE_TAG:10}"
   - docker manifest create bounz/hgbe.base:latest bounz/hgbe.base:latest-amd64 bounz/hgbe.base:latest-arm32v7
   - docker manifest push bounz/hgbe.base:latest
   environment:
@@ -146,4 +160,4 @@ volumes:
 
 trigger:
   ref:
-  - refs/tags/base-image-v*
+  - refs/tags/base-image-*
