@@ -4,4 +4,13 @@
 .idea
 node_modules
 
-
+BaseFiles/
+HomeGenie*/
+MIG/
+SupportLibraries/
+packages/
+Utils/
+testrunner/
+.DS_Store
+TestResult.xml
+secrets.txt
