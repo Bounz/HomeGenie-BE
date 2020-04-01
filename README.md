@@ -8,7 +8,7 @@ https://bounz.github.io/HomeGenie-BE/
 
 ## Status
 
-![Build Version status](http://tc.homegenie.club:8880/app/rest/builds/buildType:(id:HomeGenieBe_BuildVersion)/statusIcon.png)
+![Build Version status](http://195.201.101.14:44340/api/badges/Bounz/HomeGenie-BE/status.svg)
 [![CodeFactor](https://www.codefactor.io/repository/github/bounz/homegenie-be/badge)](https://www.codefactor.io/repository/github/bounz/homegenie-be)
 
 ## Precompiled packages and install instructions
