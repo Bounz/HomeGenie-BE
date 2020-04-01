@@ -8,6 +8,7 @@
 
 # Temporary and local IDE/System files
 *.userprefs
+*.user
 *.suo
 *.pidb
 Thumbs.db
@@ -22,3 +23,7 @@ packages/
 secrets.txt
 hg_compiled
 testrunner
+
+.DS_Store
+TestResult.xml
+secrets.txt
