@@ -169,8 +169,9 @@
     <Reference Include="Raspberry.System, Version=3.1.1.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Raspberry.System3.3.1.1\lib\net40\Raspberry.System.dll</HintPath>
     </Reference>
-    <Reference Include="SerialPortLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\SerialPortLib.1.0.18\lib\SerialPortLib.dll</HintPath>
+    <Reference Include="SerialPortLib, Version=1.0.20.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\SerialPortLib.1.0.23\lib\net461\SerialPortLib.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="SharpCompress, Version=0.26.0.0, Culture=neutral, PublicKeyToken=afb0a02973931d96">
       <HintPath>..\packages\SharpCompress.0.26.0\lib\net46\SharpCompress.dll</HintPath>
