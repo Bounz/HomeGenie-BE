@@ -1275,8 +1275,8 @@
       <Link>factory_config\interfaces\ZWave\ZWaveLib.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\MIG\MIG.Interfaces.HomeAutomation.X10\bin\Release\LibUsbDotNet.dll">
-      <Link>factory_config\interfaces\X10\LibUsbDotNet.dll</Link>
+    <None Include="..\..\MIG\MIG.Interfaces.HomeAutomation.X10\bin\Release\LibUsbDotNet.LibUsbDotNet.dll">
+      <Link>factory_config\interfaces\X10\LibUsbDotNet.LibUsbDotNet.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="..\..\MIG\MIG.Interfaces.HomeAutomation.X10\bin\Release\MIG.Interfaces.HomeAutomation.X10.dll">
