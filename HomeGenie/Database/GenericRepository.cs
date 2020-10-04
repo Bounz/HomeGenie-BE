@@ -13,30 +13,30 @@ namespace HomeGenie.Database
     {
         private const int LongRequestThresholdMs = 1000;
 
-        private readonly string _dbFileName;
+        private readonly string _connectionString;
         private readonly string _collectionName;
 
         private readonly Logger _log;
 
-        protected GenericRepository(string dbFileName, Logger log)
+        protected GenericRepository(string connectionString, Logger log)
         {
             _log = log;
             var attribute = typeof(T).GetCustomAttribute<LiteDbCollectionAttribute>();
-            _dbFileName = dbFileName;
+            _connectionString = connectionString;
             _collectionName = attribute.CollectionName;
         }
         
         protected void Execute(Action<LiteDatabase> action, [CallerMemberName] string caller = "")
         {
             var sw = StartExecute();
-            using (var db = new LiteDatabase(_dbFileName))
+            using (var db = new LiteDatabase(_connectionString))
             {
                 action(db);
             }
             StopExecute(sw, caller);
         }
 
-        protected void Execute(Action<LiteCollection<T>> action, [CallerMemberName] string caller = "")
+        protected void Execute(Action<ILiteCollection<T>> action, [CallerMemberName] string caller = "")
         {
             void PerformAction(LiteDatabase db)
             {
@@ -45,7 +45,7 @@ namespace HomeGenie.Database
             }
 
             var sw = StartExecute();
-            using (var db = new LiteDatabase(_dbFileName))
+            using (var db = new LiteDatabase(_connectionString))
             {
                 try
                 {
@@ -54,7 +54,7 @@ namespace HomeGenie.Database
                 catch (Exception e)
                 {
                     _log.Error(e);
-                    db.Shrink();
+                    db.Rebuild();
                     PerformAction(db);
                 }
 
@@ -62,7 +62,7 @@ namespace HomeGenie.Database
             StopExecute(sw, caller);
         }
 
-        protected TOut Execute<TOut>(Func<LiteCollection<T>, TOut> action, [CallerMemberName] string caller = "")
+        protected TOut Execute<TOut>(Func<ILiteCollection<T>, TOut> action, [CallerMemberName] string caller = "")
         {
             TOut PerformAction(LiteDatabase db)
             {
@@ -72,7 +72,7 @@ namespace HomeGenie.Database
 
             TOut result;
             var sw = StartExecute();
-            using (var db = new LiteDatabase(_dbFileName))
+            using (var db = new LiteDatabase(_connectionString))
             {
                 try
                 {
@@ -81,7 +81,7 @@ namespace HomeGenie.Database
                 catch (Exception e)
                 {
                     _log.Error(e);
-                    db.Shrink();
+                    db.Rebuild();
                     result = PerformAction(db);
                 }
             }

@@ -12,7 +12,7 @@ namespace HomeGenie.Database
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
         public StatisticsRepository()
-            : base(FilePaths.StatisticsDbFilePath, Log)
+            : base($"Filename={FilePaths.StatisticsDbFilePath};connection=shared", Log)
         {
             Execute(collection =>
             {
@@ -182,14 +182,14 @@ namespace HomeGenie.Database
             Execute(db =>
             {
                 db.DropCollection("statistics");
-                db.Shrink();
+                db.Rebuild();
             });
         }
 
         public void CleanOldValues(DateTime thresholdDate)
         {
-            Execute(statistics => statistics.Delete(x => x.TimeStart < thresholdDate));
-            Execute(db => db.Shrink());
+            Execute(statistics => statistics.DeleteMany(x => x.TimeStart < thresholdDate));
+            Execute(db => db.Rebuild());
         }
 
         public void AddStat(StatisticsDbEntry entry)
@@ -199,7 +199,7 @@ namespace HomeGenie.Database
 
         public void DeleteStatByDateAndValue(DateTime starTime, double value)
         {
-            Execute(statistics => statistics.Delete(x => x.TimeStart == starTime && x.AvgValue == value));
+            Execute(statistics => statistics.DeleteMany(x => x.TimeStart == starTime && x.AvgValue == value));
         }
     }
 }
