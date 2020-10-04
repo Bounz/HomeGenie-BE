@@ -1,6 +1,6 @@
 #!/bin/bash
 cont_name="homegenie_be"
-image_and_tag="bounz/homegenie:latest"
+image_and_tag="bounz/hgbe:latest"
 install_directory="__install_directory__"
 
 # Проверить и при необходимости создать папки для HG
