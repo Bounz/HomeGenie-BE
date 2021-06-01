@@ -1,0 +1,22 @@
+version: 2
+updates:
+- package-ecosystem: nuget
+  directory: "/HomeGenie"
+  schedule:
+    interval: daily
+    time: "02:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: NLog
+    versions:
+    - 4.7.7
+    - 4.7.8
+  - dependency-name: SharpCompress
+    versions:
+    - 0.27.1
+    - 0.28.0
+    - 0.28.1
+  - dependency-name: Microsoft.NETCore.Platforms
+    versions:
+    - 5.0.0
+    - 5.0.1
